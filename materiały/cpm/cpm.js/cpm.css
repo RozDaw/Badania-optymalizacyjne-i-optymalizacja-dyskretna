@@ -1,0 +1,96 @@
+body
+{
+  background-color: #000;
+  color: gray;
+  font-family: "Courier";
+}
+
+#boxMain
+{
+  margin-left: auto;
+  margin-right: auto;
+  width: 900px;
+}
+
+#tytul
+{
+  font-size: 32px;
+  width: 890px;
+  height: 40px;
+  text-align: center;
+  background-color: #322;
+  margin: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.btn
+{
+  font-size: 24px;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  padding: 2px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border: 2px solid gray;
+  cursor: pointer;
+  border-radius: 15px;
+}
+
+.btn:hover
+{
+  background: #343;
+  color: white;
+  border: 2px solid white;
+}
+
+.btnMin
+{
+  font-size: 14px;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  padding-bottom: 1px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border: 1px solid gray;
+  cursor: pointer;
+  border-radius: 15px;
+}
+.btnMin:hover
+{
+  //background: #474;
+  color: white;
+  border: 1px solid white;
+}
+
+.box
+{
+  float:  left;
+  width:  440px;
+  height: 270px;
+  margin: 5px;
+  background-color: #222;
+  color:#766;
+}
+
+.boxTxt
+{
+  width: 440px;
+  height: 20px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  text-align: center;
+  background-color: #322;
+  font-size: 16px;
+}
+.boxDat
+{
+  width: 440px;
+  height: 240px;
+  text-align: left;
+  background-color: #211;
+  font-size: 12px;
+  white-space: pre;
+}

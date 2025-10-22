@@ -1,0 +1,19 @@
+﻿System M|G|1
+
+Wymagania:
+
+Program powinien zwrócić Tb średni czas przebywania zgłoszenia w buforze.
+
+- Zgłoszenia przychodzą niezależnie średnio co 120s.
+- Czas obsługi zgłoszenia wynosi:
+  a) dokładnie 60s,
+  b) jest zmienną losową o rozkładzie U(0,120),
+  c) jest zmienną losową o rozkładzie E(60),
+  d) jest zmienną losową o rozkładzie N(60,20).
+
+uwagi:
+ - za oddanie w terminie
+ - własne generatory
+ - badania porównawcze generatora własnego z wbudowanym, 4 x 0,5 pkt
+ - za dokładność 0.1% w stosunku do wartości obliczonych, 4 x 0,5 pkt
+ - za sprawozdanie z badaniami

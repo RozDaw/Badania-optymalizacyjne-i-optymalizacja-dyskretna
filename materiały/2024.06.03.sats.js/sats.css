@@ -1,0 +1,70 @@
+body
+{
+  background-color: #000;
+  color: gray;
+  font-family: "Courier";
+}
+
+#box
+{
+  margin-left: auto;
+  margin-right: auto;
+  width: 900px;
+}
+
+#title
+{
+  font-size: 32px;
+  width: 890px;
+  height: 40px;
+  text-align: center;
+  background-color: #322;
+  margin: 5px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+
+#saPath,#saDist,#tsPath,#tsDist
+{
+  float:  left;
+  width:  440px;
+  height: 260px;
+  margin: 5px;
+}
+
+#saPathTxt,#saDistTxt,#tsPathTxt,#tsDistTxt
+{
+  width: 440px;
+  height: 20px;
+  text-align: center;
+  background-color: #322;
+  font-size: 16px;
+}
+#saPathSvg,#saDistSvg,#tsPathSvg,#tsDistSvg
+{
+  width: 440px;
+  height: 240px;
+  text-align: center;
+  background-color: #211;
+}
+
+#rand,#run
+{
+  font-size: 24px;
+  height: 30px;
+  text-align: center;
+  padding: 2px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border: 3px solid gray;
+  cursor: pointer;
+  border-radius: 15px;
+}
+
+#rand:hover,#run:hover
+{
+  background: #474;
+  color: white;
+  border: 3px solid white;
+}

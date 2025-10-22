@@ -1,0 +1,95 @@
+body
+{
+  background-color: #000;
+  color: #777;
+  font-family: "Courier";
+}
+
+#boxMain
+{
+  margin-left: auto;
+  margin-right: auto;
+  width: 900px;
+}
+
+#tytul
+{
+  line-height:1.0;
+  font-size: 32px;
+  width: 900px;
+  height: 70px;
+  text-align: center;
+  background-color: #322;
+  margin: 0px;
+  margin-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.btn
+{
+  font-size: 16px;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  padding: 2px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border: 2px solid gray;
+  cursor: pointer;
+  border-radius: 15px;
+}
+
+.btn:hover
+{
+  background: #343;
+  color: white;
+  border: 2px solid white;
+}
+
+#path,#dist,#praw,#temp,#delta,#pWykres
+{
+  float:  left;
+  width:  900px;
+  height: 470px;
+  margin: 0px;
+}
+
+#txtPath,#txtDist,#txtPraw,#txtTemp,#txtDelta,#txtPWykres
+{
+  padding-top: 5px;
+  padding-bottom: 5px;
+  width: 900px;
+  height: 20px;
+  text-align: center;
+  background-color: #322;
+  font-size: 16px;
+}
+#canPath,#canDist,#canPraw,#canTemp,#canDelta,#canPWykres
+{
+  width: 900px;
+  height: 440px;
+  text-align: center;
+  background-color: #211;
+}
+
+#slider
+{
+  -webkit-appearance: none;
+  margin: 0px;
+  padding: 5px;
+  width: 890px;
+  height: 20px;
+  background: #322;
+  outline: none;
+}
+
+#slider::-webkit-slider-thumb
+{
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: #232;
+  cursor: pointer;
+}

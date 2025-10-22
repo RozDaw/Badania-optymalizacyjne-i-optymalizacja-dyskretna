@@ -1,0 +1,24 @@
+﻿-------------------------------------------------------------------------------
+ocena 3.0:
+  - wyznaczenie długości harmonogramu dla danych posortowanych topologicznie,
+  - sprawozdanie,
+-------------------------------------------------------------------------------
+ocena 3.5:
+  - wyznaczenie ES,EF,LS,LF, dla danych posortowanych topologicznie,
+  - sprawozdanie,
+-------------------------------------------------------------------------------
+ocena 4.0:
+  - wyznaczenie ES,EF,LS,LF,
+  - sprawozdanie,
+-------------------------------------------------------------------------------
+ocena 4.5:
+  - wyznaczenie ES,EF,LS,LF, 
+  - wyznaczenie jednej ścieżki krytycznej,
+  - sprawozdanie z opisem teoretycznym,
+-------------------------------------------------------------------------------
+ocena 5.0: 
+  - wyznaczenie ES,EF,LS,LF, oraz ścieżki krytycznej,
+  - obliczenia poprzez relaksacje w porządku topologicznym,
+  - obliczenia poprzez algorytm Belmana-Forda,
+  - sprawozdanie z opisem teoretycznym i badaniami porównującymi oba algorytmy.
+-------------------------------------------------------------------------------

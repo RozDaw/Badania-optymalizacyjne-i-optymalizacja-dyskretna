@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+  <head>
+    <title>TSP:SA</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="tsp_sa.css">
+    <script src="tsp_sa.js" defer></script>
+  </head>
+
+  <body>
+      <div id="boxMain">
+        <div id="tytul">
+          Problem komiwojażera 2D<br>
+          <span class="btn" id="btnRand">Losuj dane</span>
+          <span class="btn" id="btnSA" >Symulowane wyżarzanie</span>
+          <span class="btn" id="btnReport">Raport</span>
+        </div>
+        <div id="path">
+           <div id="txtPath">ścieżka</div>
+           <canvas id="canPath"></canvas>
+        </div>
+        <div id="dist">
+           <div id="txtDist">długość</div>
+           <canvas id="canDist"></canvas>
+        </div>
+        <div id="delta">
+          <div id="txtDelta">przyrost drogi: diagram</div>
+          <canvas id="canDelta"></canvas>
+        </div>
+        <div id="temp">
+          <div id="txtTemp">temperatura: wykres</div>
+          <canvas id="canTemp"></canvas>
+        </div>        
+        <div id="pWykres">
+          <div id="txtPWykres">prawdopodobieństwa akceptacji: P(d)</div>
+          <canvas id="canPWykres"></canvas>
+        </div>
+        <div id="praw">
+          <div id="txtPraw">prawdopodobieństwa akceptacji: diagram</div>
+          <canvas id="canPraw"></canvas>
+        </div>
+        <input  id="slider" type="range">
+        <br>
+      </div>
+    </body>
+
+</html>

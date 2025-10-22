@@ -1,0 +1,46 @@
+5
+  0  9  7  8  4
+  5  0  0  0  0
+  0  0  0  7  6
+  6  0  5  0  9
+  7  0  6  0  0
+
+
+Maksymalny przepływ:
+ 19
+
+Graf przepływów:
+ 19 [0, 0, 7, 8, 4]
+  0 [0, 0, 0, 0, 0]
+  7 [0, 0, 0, 1, 6]
+  9 [0, 0, 0, 0, 9]
+  0 [0, 0, 0, 0, 0]
+
+Ścieżki przepływów:
+  4 [0, 4]
+  8 [0, 3, 4]
+  6 [0, 2, 4]
+  1 [0, 2, 3, 4]
+
+
+Opis danych wejściowych:
+     Graf skierowany z dodatnimi wagami na krawędziach.
+     Pierwsza liczba N to liczba wierzchołków.
+     Kolejne N linii zawiera po N liczb.
+     Waga z węzła A do węzła B jest w wierszu A i kolumnie B
+     Waga łuku oznacza maksymalny przepływ w danym łuku
+     
+Opis Maksymalny przepływ:
+     Jest to maksymalna suma przepływów z pierwszego do ostatniego węzła.
+
+Opis Graf przepływów:
+     Jest macierzą maksymalnych przepływów w sieci.
+     Kolejne linie oznaczają opis kolejnych węzłów.
+     Pierwsza liczba to całkowity przepływ wypływający z węzła.
+     Następnie następuje lista przepływów z danego węzła do pozostałych węzłów.
+
+Opis Ścieżki przepływów:
+     Jest to lista ścieżek przepływów, od pierwszego do ostatniego węzła.
+     Kolejne linie oznaczają opis kolejnych ścieżek przepływu.
+     Pierwsza liczba to przepływ w danej ścieżce.
+     Następnie następuje lista węzłów na ścieżce.
