@@ -2,6 +2,7 @@ import math
 from collections import defaultdict, deque
 from random import Random
 import numpy as np
+from belman_ford import *
 
 def parse_input_file(filename):
     with open(filename, 'r') as f:
@@ -23,6 +24,7 @@ def parse_input_file(filename):
         b = dependencies_raw[i * 2 + 1] - 1
         dependencies.append((a, b))
     X, Y = map(float, lines[3].split())
+
     return N, M, durations, dependencies, X, Y
 
 def topological_order(N, dependencies):
@@ -105,50 +107,88 @@ def project_duration_for_probability(exp_length, stddev, Y):
     except ImportError:
         return None
 
-def generate_instance(filename, numInstances=10000):
-    # N, M, durations, dependencies, X, Y = parse_input_file(filename)
-    # for duration in durations:
-    #     # duration['actual_value'] = np.random.normal(loc= duration['expected'], scale=math.sqrt(duration['variance']), size = numInstances)
-    #     print(duration)
-    N, M, durations, dependencies, X, Y = parse_input_file(filename)
+def generate_instance(filename, N=10, M=10 ):
+    # N, M, dur, dep, X, Y = parse_input_file(filename)
+    time = 5
+    probability = 50
+    rand = Random()
 
-    task_times = []
-    for _ in durations :
-        task_times.append([])
-    for i in range(len(durations)):
-        task_times[i] = np.random.normal(loc= durations[i]['expected'], scale=math.sqrt(durations[i]['variance']), size = numInstances)
+    durations = []
+    dependencies = []
+    for _ in range(N):
+        prob = rand.randint(1,9)
+        higher = rand.randint(1,9)
+        lower = rand.randint(1,9)
+        #sort prob, higher, lower
+        if lower > prob:
+            lower, prob = prob, lower
+        if lower > higher:
+            lower, higher = higher, lower
+        if prob > higher:
+            prob, higher = higher, prob
+        durations.append((lower,prob,higher))
 
-    instances = []
-    for j in range(len(task_times[0])):
-        for i in range(len(task_times)):
-            instances.append((i, task_times[i][j]))
+    for _ in range(M): # generate edges without repetitions
+        a = rand.randint(1,N)
+        b = rand.randint(1,N)
+        while a == b or (a,b) in dependencies:
+            a = rand.randint(1,N)
+            b = rand.randint(1,N)
+        if a > b:
+            a, b = b, a
+        dependencies.append((a,b))
 
+    with open("gen"+filename, "w") as f:
+        f.write(f"{N} {M}\n")
+        for d in durations:
+            f.write(f"{d[0]} {d[1]} {d[2]}   ")
+        f.write("\n")
+        for dep in dependencies:
+            f.write(f"{dep[0]} {dep[1]}   ")
+        f.write(f"\n{time} {probability}\n")
 
+def get_random_instance(durations):
+    times = []
+    for dur in durations:
+        times.append(np.random.normal(loc= dur['expected'], scale=math.sqrt(dur['variance'])))
+    return times
 
-
-
-
-
-def main():
-    filename = "data2.txt"
-    N, M, durations, dependencies, X, Y = parse_input_file(filename)
+def main(filename):
+    N, M, durations, dependencies, time, probability = parse_input_file(filename)
 
     critical_path, exp_length, stddev, project_time, ES, EF, LS, LF = cpm_pert(N, durations, dependencies)
     print(f"Ścieżka krytyczna: {len(critical_path)}:", ' '.join(str(i + 1) for i in critical_path))
     print(f"Przewidywany czas: {exp_length:.2f} {stddev:.2f}")
     mode = int(input("Wybierz tryb (0 - czas X, 1 - prawdopodobieństwo Y): "))
     if mode == 0:
-        X = float(input("Podaj czas ukończenia X: "))
-        p = probability_finish_in_time(exp_length, stddev, X)
-        print(f"Prawdopodobieństwo ukończenia w czasie {X:.2f} to {p:.4f} %")
+        time = float(input("Podaj czas ukończenia X: "))
+        p = probability_finish_in_time(exp_length, stddev, time)
+        print(f"Prawdopodobieństwo ukończenia w czasie {time:.2f} to {p:.4f} %")
     else:
-        Y = float(input("Podaj prawdopodobieństwo Y: "))
-        duration_Y = project_duration_for_probability(exp_length, stddev, Y / 100)
-        print(f"Czas ukończenia z prawdopodobieństwem {Y:.4f}% to {duration_Y:.2f}")
+        probability = float(input("Podaj prawdopodobieństwo Y: "))
+        duration_Y = project_duration_for_probability(exp_length, stddev, probability / 100)
+        print(f"Czas ukończenia z prawdopodobieństwem {probability:.4f}% to {duration_Y:.2f}")
 
 
 
 if __name__ == "__main__":
-    # main()
     filename = "data2.txt"
-    generate_instance(filename)
+    # generate_instance(filename,10,10)
+    # filename = "gendata2.txt"
+    main(filename)
+    N, M, durations, dependencies, X, Y = parse_input_file("data2.txt")
+
+
+
+    belman_times = []
+    for _ in range(10000):
+        times = get_random_instance(durations)
+        x,y,z = belman_ford_run(N, M, times, dependencies)
+        belman_times.append(z)
+    # narysuj z tego histogram
+    import matplotlib
+    matplotlib.use('TkAgg')
+    import matplotlib.pyplot as plt
+    plt.hist(belman_times, bins=30, alpha=0.7, color='blue')
+    plt.show()
+
