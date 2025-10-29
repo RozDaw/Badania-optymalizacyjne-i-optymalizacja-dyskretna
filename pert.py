@@ -4,6 +4,7 @@ from random import Random
 import numpy as np
 from belman_ford import *
 
+
 def parse_input_file(filename):
     with open(filename, 'r') as f:
         lines = [line.strip() for line in f if line.strip()]
@@ -27,6 +28,7 @@ def parse_input_file(filename):
 
     return N, M, durations, dependencies, X, Y
 
+
 def topological_order(N, dependencies):
     adj = [[] for _ in range(N)]
     indegree = [0] * N
@@ -43,6 +45,7 @@ def topological_order(N, dependencies):
             if indegree[v] == 0:
                 dq.append(v)
     return order, adj
+
 
 def cpm_pert(N, durations, dependencies):
     order, adj = topological_order(N, dependencies)
@@ -91,12 +94,14 @@ def cpm_pert(N, durations, dependencies):
 
     return critical_path, exp_length, stddev, project_time, ES, EF, LS, LF
 
+
 def probability_finish_in_time(exp_length, stddev, X):
     if stddev == 0:
         return 1.0 if X >= exp_length else 0.0
     z = (X - exp_length) / stddev
     p = 0.5 * (1 + math.erf(z / math.sqrt(2)))
     return p
+
 
 def project_duration_for_probability(exp_length, stddev, Y):
     from math import sqrt
@@ -107,7 +112,8 @@ def project_duration_for_probability(exp_length, stddev, Y):
     except ImportError:
         return None
 
-def generate_instance(filename, N=10, M=10 ):
+
+def generate_instance(filename, N=10, M=10):
     # N, M, dur, dep, X, Y = parse_input_file(filename)
     time = 5
     probability = 50
@@ -116,9 +122,9 @@ def generate_instance(filename, N=10, M=10 ):
     durations = []
     dependencies = []
     for _ in range(N):
-        prob = rand.randint(1,9)
-        higher = rand.randint(1,9)
-        lower = rand.randint(1,9)
+        prob = rand.randint(1, 9)
+        higher = rand.randint(1, 9)
+        lower = rand.randint(1, 9)
         #sort prob, higher, lower
         if lower > prob:
             lower, prob = prob, lower
@@ -126,19 +132,19 @@ def generate_instance(filename, N=10, M=10 ):
             lower, higher = higher, lower
         if prob > higher:
             prob, higher = higher, prob
-        durations.append((lower,prob,higher))
+        durations.append((lower, prob, higher))
 
-    for _ in range(M): # generate edges without repetitions
-        a = rand.randint(1,N)
-        b = rand.randint(1,N)
-        while a == b or (a,b) in dependencies:
-            a = rand.randint(1,N)
-            b = rand.randint(1,N)
+    for _ in range(M):  # generate edges without repetitions
+        a = rand.randint(1, N)
+        b = rand.randint(1, N)
+        while a == b or (a, b) in dependencies:
+            a = rand.randint(1, N)
+            b = rand.randint(1, N)
         if a > b:
             a, b = b, a
-        dependencies.append((a,b))
+        dependencies.append((a, b))
 
-    with open("gen"+filename, "w") as f:
+    with open("gen" + filename, "w") as f:
         f.write(f"{N} {M}\n")
         for d in durations:
             f.write(f"{d[0]} {d[1]} {d[2]}   ")
@@ -147,12 +153,19 @@ def generate_instance(filename, N=10, M=10 ):
             f.write(f"{dep[0]} {dep[1]}   ")
         f.write(f"\n{time} {probability}\n")
 
+
+# def get_random_instance(durations):
+#     times = []
+#     for dur in durations:
+#         print(dur)
+#         times.append(np.random.normal(loc=dur['expected'], scale=math.sqrt(dur['variance'])))
+#     return times
+
 def get_random_instance(durations):
     times = []
     for dur in durations:
-        times.append(np.random.normal(loc= dur['expected'], scale=math.sqrt(dur['variance'])))
+        times.append(np.random.triangular(left=dur['min'], mode=dur['prob'], right=dur['max']))
     return times
-
 def main(filename):
     N, M, durations, dependencies, time, probability = parse_input_file(filename)
 
@@ -170,7 +183,6 @@ def main(filename):
         print(f"Czas ukończenia z prawdopodobieństwem {probability:.4f}% to {duration_Y:.2f}")
 
 
-
 if __name__ == "__main__":
     filename = "data2.txt"
     # generate_instance(filename,10,10)
@@ -178,17 +190,16 @@ if __name__ == "__main__":
     main(filename)
     N, M, durations, dependencies, X, Y = parse_input_file("data2.txt")
 
-
-
     belman_times = []
-    for _ in range(10000):
+    for _ in range(1000000):
         times = get_random_instance(durations)
-        x,y,z = belman_ford_run(N, M, times, dependencies)
+        x, y, z = belman_ford_run(N, M, times, dependencies)
         belman_times.append(z)
     # narysuj z tego histogram
     import matplotlib
+
     matplotlib.use('TkAgg')
     import matplotlib.pyplot as plt
+
     plt.hist(belman_times, bins=30, alpha=0.7, color='blue')
     plt.show()
-
