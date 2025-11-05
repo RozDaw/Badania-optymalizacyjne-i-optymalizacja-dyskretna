@@ -187,11 +187,11 @@ if __name__ == "__main__":
     filename = "data2.txt"
     # generate_instance(filename,10,10)
     # filename = "gendata2.txt"
-    main(filename)
+    # main(filename)
     N, M, durations, dependencies, X, Y = parse_input_file("data2.txt")
 
     belman_times = []
-    for _ in range(1000000):
+    for _ in range(100000):
         times = get_random_instance(durations)
         x, y, z = belman_ford_run(N, M, times, dependencies)
         belman_times.append(z)
@@ -202,4 +202,14 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
 
     plt.hist(belman_times, bins=30, alpha=0.7, color='blue')
+
+# dodaj jeszcze wzorowy rozklad normalny na plt
+    mu = sum(belman_times) / len(belman_times)
+    sigma = math.sqrt(sum((x - mu) ** 2 for x in belman_times) / len(belman_times))
+    xmin, xmax = plt.xlim()
+    x = np.linspace(xmin, xmax, 100)
+    p = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - mu) / sigma) ** 2)
+    plt.plot(x, p * len(belman_times) * (xmax - xmin) / 30, 'k', linewidth=2)
+    plt.title('Histogram czasów trwania projektu')
+
     plt.show()
