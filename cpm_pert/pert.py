@@ -1,4 +1,5 @@
 import math
+import time
 from collections import defaultdict, deque
 from random import Random
 import numpy as np
@@ -132,9 +133,11 @@ def generate_instance(filename, N=10, M=10):
             lower, higher = higher, lower
         if prob > higher:
             prob, higher = higher, prob
+        if prob == higher:
+            higher+=1
         durations.append((lower, prob, higher))
 
-    for _ in range(M):  # generate edges without repetitions
+    for _ in range(M):
         a = rand.randint(1, N)
         b = rand.randint(1, N)
         while a == b or (a, b) in dependencies:
@@ -152,14 +155,6 @@ def generate_instance(filename, N=10, M=10):
         for dep in dependencies:
             f.write(f"{dep[0]} {dep[1]}   ")
         f.write(f"\n{time} {probability}\n")
-
-
-# def get_random_instance(durations):
-#     times = []
-#     for dur in durations:
-#         print(dur)
-#         times.append(np.random.normal(loc=dur['expected'], scale=math.sqrt(dur['variance'])))
-#     return times
 
 def get_random_instance(durations):
     times = []
@@ -182,34 +177,40 @@ def main(filename):
         duration_Y = project_duration_for_probability(exp_length, stddev, probability / 100)
         print(f"Czas ukończenia z prawdopodobieństwem {probability:.4f}% to {duration_Y:.2f}")
 
+def create_latex_chart():
+    pass
+    # for n in N:
+    #     nn, M, durations, dependencies, X, Y = parse_input_file(f"gen_n_{n}.txt")
+    #     times = get_random_instance(durations)
+    #     start_time = time.time()
+    #     belman_ford_run(nn,M, times, dependencies)
+    #     end_time = time.time()-start_time
+    #     print(f"{n}: {end_time}")
+
+
 
 if __name__ == "__main__":
-    filename = "data2.txt"
-    # generate_instance(filename,10,10)
-    # filename = "gendata2.txt"
-    # main(filename)
+    # filename = "data2.txt"
     N, M, durations, dependencies, X, Y = parse_input_file("data2.txt")
-
+    #
     belman_times = []
-    for _ in range(100000):
+    for _ in range(100):
         times = get_random_instance(durations)
         x, y, z = belman_ford_run(N, M, times, dependencies)
         belman_times.append(z)
-    # narysuj z tego histogram
-    import matplotlib
-
-    matplotlib.use('TkAgg')
-    import matplotlib.pyplot as plt
-
-    plt.hist(belman_times, bins=30, alpha=0.7, color='blue')
-
-# dodaj jeszcze wzorowy rozklad normalny na plt
-    mu = sum(belman_times) / len(belman_times)
-    sigma = math.sqrt(sum((x - mu) ** 2 for x in belman_times) / len(belman_times))
-    xmin, xmax = plt.xlim()
-    x = np.linspace(xmin, xmax, 100)
-    p = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - mu) / sigma) ** 2)
-    plt.plot(x, p * len(belman_times) * (xmax - xmin) / 30, 'k', linewidth=2)
-    plt.title('Histogram czasów trwania projektu')
-
-    plt.show()
+    #
+    # # histogram
+    # import matplotlib
+    # matplotlib.use('TkAgg')
+    # import matplotlib.pyplot as plt
+    # plt.hist(belman_times, bins=30, alpha=0.7, color='blue')
+    # mu = sum(belman_times) / len(belman_times)
+    # sigma = math.sqrt(sum((x - mu) ** 2 for x in belman_times) / len(belman_times))
+    # xmin, xmax = plt.xlim()
+    # x = np.linspace(xmin, xmax, 100)
+    # p = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - mu) / sigma) ** 2)
+    # plt.plot(x, p * len(belman_times) * (xmax - xmin) / 30, 'k', linewidth=2)
+    # plt.title('Histogram czasów trwania projektu')
+    #
+    # plt.show()
+    create_latex_chart()

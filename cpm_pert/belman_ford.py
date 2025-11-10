@@ -92,18 +92,6 @@ def cpm_with_path(N, durations, dependencies):
 
     return ES, path, project_end
 
-# # Przykład użycia:
-# N = 10
-# durations = [93, 14, 53, 1, 5, 68, 22, 68, 75, 46]
-# dependencies = [(3, 5), (3, 8), (4, 5), (4, 6), (4, 7), (4, 10), (7, 1), (7, 6), (8, 1), (10, 7)]
-#
-# ES, critical_path, project_end = cpm_with_path(N, durations, dependencies)
-# print("Najwcześniejsze rozpoczęcia:", ES)
-# print("Ścieżka krytyczna:", critical_path)
-# print("Czas trwania projektu:", project_end)
-#
-# create_data_file()
-
 def belman_ford_run(N,M, durations, dependencies):
     ES, critical_path, project_end = cpm_with_path(N, durations, dependencies)
     # print("Najwcześniejsze rozpoczęcia:", ES)
