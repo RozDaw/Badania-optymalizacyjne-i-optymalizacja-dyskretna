@@ -177,15 +177,38 @@ def main(filename):
         duration_Y = project_duration_for_probability(exp_length, stddev, probability / 100)
         print(f"Czas ukończenia z prawdopodobieństwem {probability:.4f}% to {duration_Y:.2f}")
 
-def create_latex_chart():
-    pass
-    # for n in N:
-    #     nn, M, durations, dependencies, X, Y = parse_input_file(f"gen_n_{n}.txt")
-    #     times = get_random_instance(durations)
-    #     start_time = time.time()
-    #     belman_ford_run(nn,M, times, dependencies)
-    #     end_time = time.time()-start_time
-    #     print(f"{n}: {end_time}")
+def tests(number_of_repetition = 1000):
+    results_n = []
+    N = [10, 100, 1000, 10000,100000]
+    for n in N:
+        nn, M, durations, dependencies, X, Y = parse_input_file(f"gen_n_{n}.txt")
+        times = get_random_instance(durations)
+        end_time = 0
+        for _ in range(number_of_repetition):
+            start_time = time.time()
+            belman_ford_run(nn,M, times, dependencies)
+            end_time += time.time()-start_time
+        print(f"n={n}: {end_time} s ")
+        results_n.append((n,end_time))
+
+    results_m = []
+    M = [1000, 10000, 100000]
+    n = 1000
+    for m in M:
+        nn, mm, durations, dependencies, X, Y = parse_input_file(f"gen_n_{n}_m_{m}.txt")
+        times = get_random_instance(durations)
+        end_time = 0
+        for _ in range(number_of_repetition):
+            start_time = time.time()
+            belman_ford_run(nn, mm, times, dependencies)
+            end_time += time.time() - start_time
+        print(f"m={m}: {end_time} s")
+        results_m.append((m,end_time))
+
+    print(results_n)
+    print(results_m)
+
+
 
 
 
@@ -213,4 +236,4 @@ if __name__ == "__main__":
     # plt.title('Histogram czasów trwania projektu')
     #
     # plt.show()
-    create_latex_chart()
+    tests()
