@@ -5,6 +5,7 @@ from random import Random
 import numpy as np
 from belman_ford import *
 
+from scipy.special import erfinv
 
 def parse_input_file(filename):
     with open(filename, 'r') as f:
@@ -52,11 +53,11 @@ def cpm_pert(N, durations, dependencies):
     order, adj = topological_order(N, dependencies)
 
     ES = [0.0] * N
-    for _ in range(N):
-        for u in order:
-            for v in adj[u]:
-                if ES[u] + durations[u]['expected'] > ES[v]:
-                    ES[v] = ES[u] + durations[u]['expected']
+    # for _ in range(N):
+    for u in order:
+        for v in adj[u]:
+            if ES[u] + durations[u]['expected'] > ES[v]:
+                ES[v] = ES[u] + durations[u]['expected']
 
     EF = [ES[i] + durations[i]['expected'] for i in range(N)]
     project_time = max(EF)
@@ -107,10 +108,10 @@ def probability_finish_in_time(exp_length, stddev, X):
 def project_duration_for_probability(exp_length, stddev, Y):
     from math import sqrt
     try:
-        from scipy.special import erfinv
         z = sqrt(2) * erfinv(2 * Y - 1)
         return exp_length + stddev * z
     except ImportError:
+        print("Scipy is required for this function.")
         return None
 
 
@@ -147,7 +148,7 @@ def generate_instance(filename, N=10, M=10):
             a, b = b, a
         dependencies.append((a, b))
 
-    with open("gen" + filename, "w") as f:
+    with open("data\\gen" + filename, "w") as f:
         f.write(f"{N} {M}\n")
         for d in durations:
             f.write(f"{d[0]} {d[1]} {d[2]}   ")
@@ -177,50 +178,97 @@ def main(filename):
         duration_Y = project_duration_for_probability(exp_length, stddev, probability / 100)
         print(f"Czas ukończenia z prawdopodobieństwem {probability:.4f}% to {duration_Y:.2f}")
 
-def tests(number_of_repetition = 1000):
-    results_n = []
-    N = [10, 100, 1000, 10000,100000]
-    for n in N:
-        nn, M, durations, dependencies, X, Y = parse_input_file(f"gen_n_{n}.txt")
-        times = get_random_instance(durations)
-        end_time = 0
-        for _ in range(number_of_repetition):
-            start_time = time.time()
-            belman_ford_run(nn,M, times, dependencies)
-            end_time += time.time()-start_time
-        print(f"n={n}: {end_time} s ")
-        results_n.append((n,end_time))
+def time_measure(number_of_repetition = 1000, bf_only_n = False, bf_only_m = False, pert_only_n = False, pert_only_m = False):
+    N = [10, 100, 1000, 10000, 20000, 30000,40000,50000,60000,70000,80000,90000, 100000]
+    M = [1000, 10000, 20000, 30000,40000,50000,60000,70000,80000,90000, 100000]
+    results_bf_only_n = []
+    results_bf_only_m = []
+    results_pert_only_n = []
+    results_pert_only_m = []
+    if bf_only_n or pert_only_n:
+        for n in N: # belmann - ford
+            nn, M, durations, dependencies, X, Y = parse_input_file(f"data\\gen_n_{n}.txt")
+            end_time = 0
+            if bf_only_n:
+                times = get_random_instance(durations)
+                for _ in range(number_of_repetition):
+                    start_time = time.time()
+                    belman_ford_run(nn,M, times, dependencies)
+                    end_time += time.time()-start_time
+                results_bf_only_n.append((n,end_time))
+            if pert_only_n:
+                for _ in range(number_of_repetition):
+                    start_time = time.time()
+                    cpm_pert(nn, durations, dependencies)
+                    end_time += time.time() - start_time
+                results_pert_only_n.append((n, end_time))
 
-    results_m = []
-    M = [1000, 10000, 100000]
-    n = 1000
-    for m in M:
-        nn, mm, durations, dependencies, X, Y = parse_input_file(f"gen_n_{n}_m_{m}.txt")
-        times = get_random_instance(durations)
-        end_time = 0
-        for _ in range(number_of_repetition):
-            start_time = time.time()
-            belman_ford_run(nn, mm, times, dependencies)
-            end_time += time.time() - start_time
-        print(f"m={m}: {end_time} s")
-        results_m.append((m,end_time))
+    if bf_only_m or pert_only_m:
+        n = 1000
+        for m in M:
+            nn, mm, durations, dependencies, X, Y = parse_input_file(f"data\\gen_n_{n}_m_{m}.txt")
+            end_time = 0
+            if bf_only_m:
+                times = get_random_instance(durations)
+                for _ in range(number_of_repetition):
+                    start_time = time.time()
+                    belman_ford_run(nn, mm, times, dependencies)
+                    end_time += time.time() - start_time
+                results_bf_only_m.append((m,end_time))
+            if pert_only_m:
+                for _ in range(number_of_repetition):
+                    start_time = time.time()
+                    cpm_pert(nn, durations, dependencies)
+                    end_time += time.time() - start_time
+                results_pert_only_m.append((m, end_time))
 
-    print(results_n)
-    print(results_m)
+    if bf_only_n:
+        return results_bf_only_n
+    if bf_only_m:
+        return results_bf_only_m
+    if pert_only_n:
+        return results_pert_only_n
+    if pert_only_m:
+        return results_pert_only_m
 
-
-
-
+def create_latex_chart(filename,caption,label, y_label, x_label, data, legend_entry):
+    if data.__len__() != legend_entry.__len__():
+        print("Długość danych i legendy muszą być takie same")
+        return
+    with open(filename, "w") as f:
+        f.write("\\begin{figure}[H]\n")
+        f.write("\\centering\n")
+        f.write("\\begin{tikzpicture}\n")
+        f.write("\\begin{axis}[\n")
+        f.write(f"xlabel = {{{x_label}}},\n")
+        f.write(f"ylabel = {{{y_label}}},\n")
+        f.write("legend pos = north west,\n")
+        f.write("grid = both,\n")
+        f.write("width=0.7\\linewidth,\n")
+        f.write("]\n")
+        for i in range(data.__len__()):
+            f.write("\\addplot + [mark = *, thick] coordinates\n")
+            f.write("    {\n")
+            for e in data[i]:
+                f.write(f"{e}")
+            f.write("};\n")
+            f.write("\\addlegendentry\n")
+            f.write(f"{{{legend_entry[i]}}}\n")
+        f.write("\\end{axis}\n")
+        f.write("\\end{tikzpicture}\n")
+        f.write(f"\\caption\n{{{caption}}}\n")
+        f.write(f"\\label{{{label}}}\n")
+        f.write("\\end{figure}\n")
 
 if __name__ == "__main__":
     # filename = "data2.txt"
-    N, M, durations, dependencies, X, Y = parse_input_file("data2.txt")
-    #
-    belman_times = []
-    for _ in range(100):
-        times = get_random_instance(durations)
-        x, y, z = belman_ford_run(N, M, times, dependencies)
-        belman_times.append(z)
+    # N, M, durations, dependencies, X, Y = parse_input_file("data2.txt")
+    # #
+    # belman_times = []
+    # for _ in range(100):
+    #     times = get_random_instance(durations)
+    #     x, y, z = belman_ford_run(N, M, times, dependencies)
+    #     belman_times.append(z)
     #
     # # histogram
     # import matplotlib
@@ -236,4 +284,34 @@ if __name__ == "__main__":
     # plt.title('Histogram czasów trwania projektu')
     #
     # plt.show()
-    tests()
+
+
+    number_of_repetition = 100
+    # results_bf_only_n = time_measure(number_of_repetition, bf_only_n=True)
+    # print("BF only n:", results_bf_only_n)
+    #
+    # results_pert_only_n = time_measure(number_of_repetition,pert_only_n=True)
+    # print("Pert only n:", results_pert_only_n)
+    #
+    # results = [results_bf_only_n, results_pert_only_n]
+    # legend = ["Belman-Ford varying N", "PERT varying N"]
+    # filename = "time_measurements_n.tex"
+    # caption = "Porównanie czasów wykonania algorytmów Belman-Ford i PERT w zależności od liczby wierzchołków N"
+    # label = "fig:time_measurements_n"
+    # y_label = "Czas wykonania [s]"
+    # x_label = "Liczba wierzcholkow N"
+    # create_latex_chart(filename, caption, label, y_label, x_label, results, legend)
+
+    results_bf_only_m = time_measure(number_of_repetition, bf_only_m=True)
+    print("BF only m:", results_bf_only_m)
+    results_pert_only_m = time_measure(number_of_repetition, pert_only_m=True)
+    print("Pert only m:", results_pert_only_m)
+
+    results = [results_bf_only_m, results_pert_only_m]
+    legend = ["Belman-Ford varying M", "PERT varying M"]
+    filename = "time_measurements_m.tex"
+    caption = "Porównanie czasów wykonania algorytmów Belman-Ford i PERT przy stałym N=1000 i różnej liczbie krawędzi M"
+    label = "fig:time_measurements_m"
+    y_label = "Czas wykonania [s]"
+    x_label = "Liczba krawędzi M"
+    create_latex_chart(filename, caption, label, y_label, x_label, results, legend)
