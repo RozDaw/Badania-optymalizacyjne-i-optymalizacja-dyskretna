@@ -4,7 +4,9 @@ from collections import defaultdict, deque
 from random import Random
 import numpy as np
 from belman_ford import *
-
+import matplotlib
+matplotlib.use('TkAgg')
+import matplotlib.pyplot as plt
 from scipy.special import erfinv
 
 def parse_input_file(filename):
@@ -261,32 +263,30 @@ def create_latex_chart(filename,caption,label, y_label, x_label, data, legend_en
         f.write("\\end{figure}\n")
 
 if __name__ == "__main__":
-    # filename = "data2.txt"
-    # N, M, durations, dependencies, X, Y = parse_input_file("data2.txt")
-    # #
-    # belman_times = []
-    # for _ in range(100):
-    #     times = get_random_instance(durations)
-    #     x, y, z = belman_ford_run(N, M, times, dependencies)
-    #     belman_times.append(z)
+    filename = "data\\data2.txt"
+    N, M, durations, dependencies, X, Y = parse_input_file(filename)
     #
-    # # histogram
-    # import matplotlib
-    # matplotlib.use('TkAgg')
-    # import matplotlib.pyplot as plt
-    # plt.hist(belman_times, bins=30, alpha=0.7, color='blue')
-    # mu = sum(belman_times) / len(belman_times)
-    # sigma = math.sqrt(sum((x - mu) ** 2 for x in belman_times) / len(belman_times))
-    # xmin, xmax = plt.xlim()
-    # x = np.linspace(xmin, xmax, 100)
-    # p = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - mu) / sigma) ** 2)
-    # plt.plot(x, p * len(belman_times) * (xmax - xmin) / 30, 'k', linewidth=2)
-    # plt.title('Histogram czasów trwania projektu')
-    #
-    # plt.show()
+    belman_times = []
+    for _ in range(1000000):
+        times = get_random_instance(durations)
+        x, y, z = belman_ford_run(N, M, times, dependencies)
+        belman_times.append(z)
+
+    # histogram
+
+    plt.hist(belman_times, bins=30, alpha=0.7, color='blue')
+    mu = sum(belman_times) / len(belman_times)
+    sigma = math.sqrt(sum((x - mu) ** 2 for x in belman_times) / len(belman_times))
+    xmin, xmax = plt.xlim()
+    x = np.linspace(xmin, xmax, 100)
+    p = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - mu) / sigma) ** 2)
+    plt.plot(x, p * len(belman_times) * (xmax - xmin) / 30, 'k', linewidth=2)
+    plt.title('Histogram czasów trwania projektu')
+
+    plt.show()
 
 
-    number_of_repetition = 100
+    # number_of_repetition = 100
     # results_bf_only_n = time_measure(number_of_repetition, bf_only_n=True)
     # print("BF only n:", results_bf_only_n)
     #
@@ -302,16 +302,16 @@ if __name__ == "__main__":
     # x_label = "Liczba wierzcholkow N"
     # create_latex_chart(filename, caption, label, y_label, x_label, results, legend)
 
-    results_bf_only_m = time_measure(number_of_repetition, bf_only_m=True)
-    print("BF only m:", results_bf_only_m)
-    results_pert_only_m = time_measure(number_of_repetition, pert_only_m=True)
-    print("Pert only m:", results_pert_only_m)
-
-    results = [results_bf_only_m, results_pert_only_m]
-    legend = ["Belman-Ford varying M", "PERT varying M"]
-    filename = "time_measurements_m.tex"
-    caption = "Porównanie czasów wykonania algorytmów Belman-Ford i PERT przy stałym N=1000 i różnej liczbie krawędzi M"
-    label = "fig:time_measurements_m"
-    y_label = "Czas wykonania [s]"
-    x_label = "Liczba krawędzi M"
-    create_latex_chart(filename, caption, label, y_label, x_label, results, legend)
+    # results_bf_only_m = time_measure(number_of_repetition, bf_only_m=True)
+    # print("BF only m:", results_bf_only_m)
+    # results_pert_only_m = time_measure(number_of_repetition, pert_only_m=True)
+    # print("Pert only m:", results_pert_only_m)
+    #
+    # results = [results_bf_only_m, results_pert_only_m]
+    # legend = ["Belman-Ford varying M", "PERT varying M"]
+    # filename = "time_measurements_m.tex"
+    # caption = "Porównanie czasów wykonania algorytmów Belman-Ford i PERT przy stałym N=1000 i różnej liczbie krawędzi M"
+    # label = "fig:time_measurements_m"
+    # y_label = "Czas wykonania [s]"
+    # x_label = "Liczba krawędzi M"
+    # create_latex_chart(filename, caption, label, y_label, x_label, results, legend)
