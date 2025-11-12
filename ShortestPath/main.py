@@ -32,7 +32,7 @@ def generate_random_data(rows,cols):
         file.write(f"{M} {N}\n")
         for row in grid:
             file.write(' '.join(map(str, row)) + '\n')
-    return grid
+    return rows, cols, grid
 
 def build_graph(rows, cols, grid):
     graph = {}
@@ -182,9 +182,7 @@ if __name__ == "__main__":
         cols = rows
         print(rows)
         for rep in range(repetitions):
-
-            generate_random_data(rows, cols)
-            rows, cols, grid = load_data(f'generated_data_{cols}-{rows}.txt')
+            rows, cols, grid = generate_random_data(rows, cols)
             graph, start, end = build_graph(rows, cols, grid)
             start_time = time.time()
             dijkstra_length = dijkstra(graph, start, end)
@@ -196,6 +194,8 @@ if __name__ == "__main__":
             start_time = time.time()
             a_star_length = a_star(graph, start, end)
             a_star_time += time.time() - start_time
+            if dijkstra_length != a_star_length:
+                print("Błąd: różne długości ścieżek!", dijkstra_length, a_star_length)
 
         dijkstra_results.append((cols, dijkstra_time))
         a_start_results.append((cols, a_star_time))
