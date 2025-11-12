@@ -1,0 +1,26 @@
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+xlabel = {Liczba krawêdzi M},
+ylabel = {Czas wykonania [s]},
+legend pos = north west,
+grid = both,
+width=0.7\linewidth,
+]
+\addplot + [mark = *, thick] coordinates
+    {
+(1000, 0.03538918495178223)(10000, 0.27114152908325195)(20000, 0.4640352725982666)(30000, 0.6423048973083496)(40000, 0.8345282077789307)(50000, 1.0470974445343018)(60000, 1.3008620738983154)(70000, 1.471170425415039)(80000, 1.6948182582855225)(90000, 1.9267289638519287)(100000, 2.0118443965911865)};
+\addlegendentry
+{Belman-Ford varying M}
+\addplot + [mark = *, thick] coordinates
+    {
+(1000, 0.0792388916015625)(10000, 0.344515323638916)(20000, 0.6336071491241455)(30000, 0.9529924392700195)(40000, 1.3348870277404785)(50000, 1.6118481159210205)(60000, 1.9648966789245605)(70000, 2.569270133972168)(80000, 3.2211344242095947)(90000, 3.5543971061706543)(100000, 4.386701583862305)};
+\addlegendentry
+{PERT varying M}
+\end{axis}
+\end{tikzpicture}
+\caption
+{Porównanie czasów wykonania algorytmów Belman-Ford i PERT przy sta³ym N=1000 i ró¿nej liczbie krawêdzi M}
+\label{fig:time_measurements_m}
+\end{figure}

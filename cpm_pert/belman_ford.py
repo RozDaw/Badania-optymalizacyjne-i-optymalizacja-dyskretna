@@ -77,18 +77,18 @@ def cpm_with_path(N, durations, dependencies):
     project_end = ES[end_task] + durations[end_task]
 
     path = []
-    current = end_task
-    while True:
-        path.append(current + 1)
-        found = False
-        for p in prev[current]:
-            if ES[p] + durations[p] == ES[current]:
-                current = p
-                found = True
-                break
-        if not found:
-            break
-    path.reverse()
+    # current = end_task
+    # while True:
+    #     path.append(current + 1)
+    #     found = False
+    #     for p in prev[current]:
+    #         if ES[p] + durations[p] == ES[current]:
+    #             current = p
+    #             found = True
+    #             break
+    #     if not found:
+    #         break
+    # path.reverse()
 
     return ES, path, project_end
 

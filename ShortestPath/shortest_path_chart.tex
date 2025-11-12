@@ -1,0 +1,26 @@
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+xlabel = {Liczba wierzcho³ków},
+ylabel = {Czas [s]},
+legend pos = north west,
+grid = both,
+width=0.7\linewidth,
+]
+\addplot + [mark = *, thick] coordinates
+    {
+(100, 0.010999202728271484)(200, 0.0367586612701416)(300, 0.030197858810424805)(400, 0.036000728607177734)(500, 0.026994705200195312)(600, 0.3611464500427246)(700, 0.3224360942840576)(800, 0.5078408718109131)(900, 0.6862680912017822)(1000, 1.241495132446289)};
+\addlegendentry
+{Dijkstra}
+\addplot + [mark = *, thick] coordinates
+    {
+(100, 0.00599980354309082)(200, 0.01564502716064453)(300, 0.01809835433959961)(400, 0.033998727798461914)(500, 0.04250144958496094)(600, 0.2547271251678467)(700, 0.23781585693359375)(800, 0.3786342144012451)(900, 0.3869013786315918)(1000, 1.0473361015319824)};
+\addlegendentry
+{A*}
+\end{axis}
+\end{tikzpicture}
+\caption
+{Porównanie czasów dzia³ania algorytmów znajdowania najkrótszej œcie¿ki}
+\label{fig:shortest_path_chart}
+\end{figure}

@@ -73,27 +73,27 @@ def cpm_pert(N, durations, dependencies):
     LS = [LF[i] - durations[i]['expected'] for i in range(N)]
 
     critical_path = []
-    current = end_task
-    prev = defaultdict(list)
-    for a, b in dependencies:
-        prev[b].append(a)
-    while True:
-        critical_path.append(current)
-        found = False
-        for p in prev[current]:
-            if ES[p] + durations[p]['expected'] == ES[current]:
-                current = p
-                found = True
-                break
-        if not found:
-            break
-    critical_path.reverse()
-
+    # current = end_task
+    # prev = defaultdict(list)
+    # for a, b in dependencies:
+    #     prev[b].append(a)
+    # while True:
+    #     critical_path.append(current)
+    #     found = False
+    #     for p in prev[current]:
+    #         if ES[p] + durations[p]['expected'] == ES[current]:
+    #             current = p
+    #             found = True
+    #             break
+    #     if not found:
+    #         break
+    # critical_path.reverse()
+    #
     exp_length = 0.0
     variance = 0.0
-    for idx in critical_path:
-        exp_length += durations[idx]['expected']
-        variance += durations[idx]['variance']
+    # for idx in critical_path:
+    #     exp_length += durations[idx]['expected']
+    #     variance += durations[idx]['variance']
     stddev = math.sqrt(variance)
 
     return critical_path, exp_length, stddev, project_time, ES, EF, LS, LF
@@ -263,55 +263,55 @@ def create_latex_chart(filename,caption,label, y_label, x_label, data, legend_en
         f.write("\\end{figure}\n")
 
 if __name__ == "__main__":
-    filename = "data\\data2.txt"
-    N, M, durations, dependencies, X, Y = parse_input_file(filename)
+    # filename = "data\\data2.txt"
+    # N, M, durations, dependencies, X, Y = parse_input_file(filename)
+    # #
+    # belman_times = []
+    # for _ in range(1000000):
+    #     times = get_random_instance(durations)
+    #     x, y, z = belman_ford_run(N, M, times, dependencies)
+    #     belman_times.append(z)
     #
-    belman_times = []
-    for _ in range(1000000):
-        times = get_random_instance(durations)
-        x, y, z = belman_ford_run(N, M, times, dependencies)
-        belman_times.append(z)
-
-    # histogram
-
-    plt.hist(belman_times, bins=30, alpha=0.7, color='blue')
-    mu = sum(belman_times) / len(belman_times)
-    sigma = math.sqrt(sum((x - mu) ** 2 for x in belman_times) / len(belman_times))
-    xmin, xmax = plt.xlim()
-    x = np.linspace(xmin, xmax, 100)
-    p = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - mu) / sigma) ** 2)
-    plt.plot(x, p * len(belman_times) * (xmax - xmin) / 30, 'k', linewidth=2)
-    plt.title('Histogram czasów trwania projektu')
-
-    plt.show()
-
-
-    # number_of_repetition = 100
-    # results_bf_only_n = time_measure(number_of_repetition, bf_only_n=True)
-    # print("BF only n:", results_bf_only_n)
+    # # histogram
     #
-    # results_pert_only_n = time_measure(number_of_repetition,pert_only_n=True)
-    # print("Pert only n:", results_pert_only_n)
+    # plt.hist(belman_times, bins=30, alpha=0.7, color='blue')
+    # mu = sum(belman_times) / len(belman_times)
+    # sigma = math.sqrt(sum((x - mu) ** 2 for x in belman_times) / len(belman_times))
+    # xmin, xmax = plt.xlim()
+    # x = np.linspace(xmin, xmax, 100)
+    # p = (1 / (sigma * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x - mu) / sigma) ** 2)
+    # plt.plot(x, p * len(belman_times) * (xmax - xmin) / 30, 'k', linewidth=2)
+    # plt.title('Histogram czasów trwania projektu')
     #
-    # results = [results_bf_only_n, results_pert_only_n]
-    # legend = ["Belman-Ford varying N", "PERT varying N"]
-    # filename = "time_measurements_n.tex"
-    # caption = "Porównanie czasów wykonania algorytmów Belman-Ford i PERT w zależności od liczby wierzchołków N"
-    # label = "fig:time_measurements_n"
-    # y_label = "Czas wykonania [s]"
-    # x_label = "Liczba wierzcholkow N"
-    # create_latex_chart(filename, caption, label, y_label, x_label, results, legend)
+    # plt.show()
 
-    # results_bf_only_m = time_measure(number_of_repetition, bf_only_m=True)
-    # print("BF only m:", results_bf_only_m)
-    # results_pert_only_m = time_measure(number_of_repetition, pert_only_m=True)
-    # print("Pert only m:", results_pert_only_m)
-    #
-    # results = [results_bf_only_m, results_pert_only_m]
-    # legend = ["Belman-Ford varying M", "PERT varying M"]
-    # filename = "time_measurements_m.tex"
-    # caption = "Porównanie czasów wykonania algorytmów Belman-Ford i PERT przy stałym N=1000 i różnej liczbie krawędzi M"
-    # label = "fig:time_measurements_m"
-    # y_label = "Czas wykonania [s]"
-    # x_label = "Liczba krawędzi M"
-    # create_latex_chart(filename, caption, label, y_label, x_label, results, legend)
+
+    number_of_repetition = 100
+    results_bf_only_n = time_measure(number_of_repetition, bf_only_n=True)
+    print("BF only n:", results_bf_only_n)
+
+    results_pert_only_n = time_measure(number_of_repetition,pert_only_n=True)
+    print("Pert only n:", results_pert_only_n)
+
+    results = [results_bf_only_n, results_pert_only_n]
+    legend = ["Belman-Ford varying N", "PERT varying N"]
+    filename = "time_measurements_n_x.tex"
+    caption = "Porównanie czasów wykonania algorytmów Belman-Ford i PERT w zależności od liczby wierzchołków N"
+    label = "fig:time_measurements_n"
+    y_label = "Czas wykonania [s]"
+    x_label = "Liczba wierzcholkow N"
+    create_latex_chart(filename, caption, label, y_label, x_label, results, legend)
+
+    results_bf_only_m = time_measure(number_of_repetition, bf_only_m=True)
+    print("BF only m:", results_bf_only_m)
+    results_pert_only_m = time_measure(number_of_repetition, pert_only_m=True)
+    print("Pert only m:", results_pert_only_m)
+
+    results = [results_bf_only_m, results_pert_only_m]
+    legend = ["Belman-Ford varying M", "PERT varying M"]
+    filename = "time_measurements_m_x.tex"
+    caption = "Porównanie czasów wykonania algorytmów Belman-Ford i PERT przy stałym N=1000 i różnej liczbie krawędzi M"
+    label = "fig:time_measurements_m"
+    y_label = "Czas wykonania [s]"
+    x_label = "Liczba krawędzi M"
+    create_latex_chart(filename, caption, label, y_label, x_label, results, legend)
