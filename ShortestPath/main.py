@@ -169,35 +169,75 @@ def create_latex_chart(filename,caption,label, y_label, x_label, data, legend_en
 if __name__ == "__main__":
     # rs = [100,1000,2000,3000,4000,5000,6000,7000,8000,9000,10000]
     rs = [100,200,300,400,500,600,700,800,900,1000]
-    belman_results = []
+    rs_bellman = [10, 20, 30, 40, 50]  # Smaller instances for Bellman-Ford (it's much slower)
+    bellman_results = []
     dijkstra_results = []
+    dijkstra_results_small = []
     a_start_results = []
+    a_start_results_small = []
     legend_entry = ["Dijkstra","A*"]
+    legend_entry_all = ["Dijkstra","A*", "Bellman-Ford"]
 
     repetitions = 10
-    for rows in rs:
+    repetitions_bellman = 5  # Fewer repetitions for slow Bellman-Ford
+    
+    # Run Bellman-Ford for smaller instances
+    print("Pomiary dla algorytmu Bellmana-Forda (małe instancje):")
+    for rows in rs_bellman:
         dijkstra_time = 0
         a_star_time = 0
-        belman_time = 0
+        bellman_time = 0
         cols = rows
-        print(rows)
-        for rep in range(repetitions):
-            rows, cols, grid = generate_random_data(rows, cols)
-            graph, start, end = build_graph(rows, cols, grid)
+        print(f"  {rows}x{rows}")
+        for rep in range(repetitions_bellman):
+            rows_temp, cols_temp, grid = generate_random_data(rows, cols)
+            graph, start, end = build_graph(rows_temp, cols_temp, grid)
+            
             start_time = time.time()
             dijkstra_length = dijkstra(graph, start, end)
             dijkstra_time += time.time() - start_time
-            # start_time = time.time()
-            # bellman_ford_length = bellman_ford(graph, start, end)
-            # bellman_ford_time = time.time() - start_time
-            # print("Bellman-Ford length:", bellman_ford_length, "Time:", bellman_ford_time)
+            
             start_time = time.time()
             a_star_length = a_star(graph, start, end)
             a_star_time += time.time() - start_time
+            
+            start_time = time.time()
+            bellman_ford_length = bellman_ford(graph, start, end)
+            bellman_time += time.time() - start_time
+            
+            if dijkstra_length != a_star_length or dijkstra_length != bellman_ford_length:
+                print(f"    Błąd: różne długości ścieżek! Dijkstra: {dijkstra_length}, A*: {a_star_length}, Bellman-Ford: {bellman_ford_length}")
+
+        dijkstra_results_small.append((cols, dijkstra_time))
+        a_start_results_small.append((cols, a_star_time))
+        bellman_results.append((cols, bellman_time))
+    
+    # Run Dijkstra and A* for larger instances
+    print("\nPomiary dla algorytmów Dijkstry i A* (duże instancje):")
+    for rows in rs:
+        dijkstra_time = 0
+        a_star_time = 0
+        cols = rows
+        print(f"  {rows}x{rows}")
+        for rep in range(repetitions):
+            rows_temp, cols_temp, grid = generate_random_data(rows, cols)
+            graph, start, end = build_graph(rows_temp, cols_temp, grid)
+            
+            start_time = time.time()
+            dijkstra_length = dijkstra(graph, start, end)
+            dijkstra_time += time.time() - start_time
+            
+            start_time = time.time()
+            a_star_length = a_star(graph, start, end)
+            a_star_time += time.time() - start_time
+            
             if dijkstra_length != a_star_length:
-                print("Błąd: różne długości ścieżek!", dijkstra_length, a_star_length)
+                print(f"    Błąd: różne długości ścieżek! Dijkstra: {dijkstra_length}, A*: {a_star_length}")
 
         dijkstra_results.append((cols, dijkstra_time))
         a_start_results.append((cols, a_star_time))
-    create_latex_chart("shortest_path_chart.tex","Porównanie czasów działania algorytmów znajdowania najkrótszej ścieżki","fig:shortest_path_chart","Czas [s]","Liczba wierzchołków",[dijkstra_results,a_start_results],legend_entry)
+    
+    # Create charts
+    create_latex_chart("shortest_path_chart.tex","Porównanie czasów działania algorytmów Dijkstry i A* (duże instancje)","fig:shortest_path_chart","Czas [s]","Liczba wierzchołków",[dijkstra_results,a_start_results],legend_entry)
+    create_latex_chart("shortest_path_chart_bellman.tex","Porównanie czasów działania algorytmów dla małych instancji","fig:shortest_path_chart_bellman","Czas [s]","Liczba wierzchołków",[dijkstra_results_small,a_start_results_small,bellman_results],legend_entry_all)
 
