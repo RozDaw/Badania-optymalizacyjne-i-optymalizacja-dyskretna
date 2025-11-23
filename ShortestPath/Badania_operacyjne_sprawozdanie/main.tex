@@ -110,13 +110,13 @@
 \clearpage
 \section{Wstęp}
 
-Celem laboratorium było zaimplementowanie oraz porównanie algorytmów Dijkstry i A* w problemie wyznaczania najkrótszej ścieżki w grafie dwuwymiarowym reprezentującym siatkę.
+Celem laboratorium było zaimplementowanie oraz porównanie algorytmów Dijkstry, A* oraz Bellmana-Forda w problemie wyznaczania najkrótszej ścieżki w grafie dwuwymiarowym reprezentującym siatkę.
 
 Problem najkrótszej ścieżki jest jednym z fundamentalnych zagadnień teorii grafów i znajduje szerokie zastosowanie w nawigacji, planowaniu tras, grach komputerowych oraz systemach automatyki. W pracy rozważano konkretne zastosowanie: wyznaczanie najkrótszej ścieżki w dwuwymiarowej siatce z przeszkodami, gdzie każde pole może być wolne, być ścianą (przeszkodą), punktem startowym lub punktem końcowym.
 
-Algorytm Dijkstry jest klasycznym rozwiązaniem problemu najkrótszej ścieżki, które gwarantuje znalezienie optymalnej trasy w grafach z nieujemnymi wagami krawędzi. Algorytm A* stanowi rozszerzenie metody Dijkstry poprzez wprowadzenie funkcji heurystycznej, która kieruje przeszukiwaniem w stronę celu, co często prowadzi do szybszego znalezienia rozwiązania.
+Algorytm Dijkstry jest klasycznym rozwiązaniem problemu najkrótszej ścieżki, które gwarantuje znalezienie optymalnej trasy w grafach z nieujemnymi wagami krawędzi. Algorytm A* stanowi rozszerzenie metody Dijkstry poprzez wprowadzenie funkcji heurystycznej, która kieruje przeszukiwaniem w stronę celu, co często prowadzi do szybszego znalezienia rozwiązania. Algorytm Bellmana-Forda, choć znacznie wolniejszy, ma tę przewagę, że potrafi obsłużyć grafy z ujemnymi wagami krawędzi oraz wykrywać ujemne cykle.
 
-W pracy przeprowadzono pomiary czasów wykonania obu algorytmów w zależności od rozmiaru siatki. Uzyskane wyniki umożliwiają ocenę wydajności badanych metod oraz porównanie efektywności podejścia klasycznego (Dijkstra) z podejściem heurystycznym (A*).
+W pracy przeprowadzono pomiary czasów wykonania wszystkich trzech algorytmów w zależności od rozmiaru siatki. Ze względu na znacznie wyższą złożoność obliczeniową algorytmu Bellmana-Forda, jego pomiary ograniczono do małych instancji problemu (siatki do $50 \times 50$ wierzchołków). Uzyskane wyniki umożliwiają ocenę wydajności badanych metod oraz porównanie efektywności różnych podejść do rozwiązywania problemu najkrótszej ścieżki.
 
 \section{Pomiary czasów}
 \subsection{Analiza wyników pomiarów czasu wykonania}
@@ -127,7 +127,7 @@ Z wykresu wynika, że czas wykonania obu algorytmów rośnie wraz ze wzrostem ro
 
 Dla siatki $1000 \times 1000$ algorytm Dijkstry osiąga czas wykonania około 7,45 sekundy, podczas gdy A* potrzebuje około 5,20 sekundy. Oznacza to, że A* jest o około 30\% szybszy dla dużych instancji problemu. Ta przewaga wynika z zastosowania funkcji heurystycznej (odległość euklidesowa do celu), która kieruje przeszukiwaniem w stronę punktu końcowego, zmniejszając liczbę odwiedzanych wierzchołków.
 
-\subsection{Wnioski}
+\subsection{Wnioski dla algorytmów Dijkstry i A*}
 
 \begin{itemize}
     \item Czas wykonania obu algorytmów rośnie wraz ze wzrostem rozmiaru siatki, co jest zgodne z ich teoretyczną złożonością obliczeniową.
@@ -143,10 +143,23 @@ Algorytm Dijkstry posiada złożoność czasową rzędu $O((V + E) \log V)$ przy
 
 Algorytm A* ma teoretycznie taką samą złożoność jak Dijkstra — $O((V + E) \log V)$ — jednak w praktyce jest szybszy dzięki funkcji heurystycznej. Heurystyka (w tym przypadku odległość euklidesowa) pozwala na inteligentniejsze przeszukiwanie grafu, kierując eksplorację w stronę celu. W najlepszym przypadku, gdy heurystyka jest dokładna, A* może odwiedzić znacznie mniej wierzchołków niż Dijkstra, co przekłada się na krótszy czas wykonania.
 
-W efekcie, choć oba algorytmy mają podobną asymptotyczną złożoność, A* jest szybszy w praktyce dzięki zmniejszeniu liczby odwiedzanych wierzchołków. Dla badanej siatki $1000 \times 1000$ A* był o około 30\% szybszy od Dijkstry.
+Algorytm Bellmana-Forda ma złożoność czasową $O(V \cdot E)$. Dla siatki dwuwymiarowej $N \times N$ z $V = N^2$ wierzchołkami i $E \approx 4N^2$ krawędziami daje to złożoność $O(N^4)$, która jest znacznie gorsza od $O(N^2 \log N)$ algorytmów Dijkstry i A*. Ta różnica jest szczególnie widoczna dla większych instancji problemu — podczas gdy Dijkstra i A* radzą sobie z siatkami $1000 \times 1000$, algorytm Bellmana-Forda staje się niepraktyczny już dla siatek powyżej $50 \times 50$.
+
+W efekcie, choć algorytmy Dijkstry i A* mają podobną asymptotyczną złożoność, A* jest szybszy w praktyce dzięki zmniejszeniu liczby odwiedzanych wierzchołków. Dla badanej siatki $1000 \times 1000$ A* był o około 30\% szybszy od Dijkstry. Z kolei algorytm Bellmana-Forda, mimo swojej uniwersalności (obsługa ujemnych wag), jest o kilka rzędów wielkości wolniejszy dla większych instancji.
 
 \include*{shortest_path_chart}
 
+\subsection{Porównanie z algorytmem Bellmana-Forda dla małych instancji}
+
+Ze względu na znacznie wyższą złożoność obliczeniową algorytmu Bellmana-Forda przeprowadzono dodatkowe pomiary dla małych instancji problemu (siatki od $10 \times 10$ do $50 \times 50$ wierzchołków). Wyniki przedstawiono na rysunku \ref{fig:shortest_path_chart_bellman}.
+
+Algorytm Bellmana-Forda ma złożoność czasową $O(V \cdot E)$, co w przypadku siatki dwuwymiarowej $N \times N$ przekłada się na $O(N^4)$ — znacznie gorzej niż $O(N^2 \log N)$ dla algorytmów Dijkstry i A*. Ta teoretyczna różnica jest wyraźnie widoczna w praktycznych pomiarach.
+
+Z wykresu wynika, że dla najmniejszej testowanej instancji ($10 \times 10$) algorytm Bellmana-Forda jest około 37 razy wolniejszy od Dijkstry i 36 razy wolniejszy od A*. Różnica ta rośnie wraz ze wzrostem rozmiaru siatki — dla instancji $50 \times 50$ Bellman-Ford jest już około 1017 razy wolniejszy od Dijkstry i 1066 razy wolniejszy od A*.
+
+Algorytm Bellmana-Forda znajduje zastosowanie w sytuacjach, gdy graf może zawierać ujemne wagi krawędzi lub gdy istnieje potrzeba wykrywania ujemnych cykli. Jednak w przypadku problemów z nieujemnymi wagami (jak badana siatka) algorytmy Dijkstry lub A* są znacznie lepszym wyborem ze względu na wydajność.
+
+\include*{shortest_path_chart_bellman}
 
 \section{Opis implementacji algorytmów}
 
@@ -182,6 +195,25 @@ Algorytm A* operuje na dwóch funkcjach:
 
 Kluczową różnicą w stosunku do Dijkstry jest priorytetyzacja wierzchołków według wartości $f(n)$ zamiast samego $g(n)$. Dzięki temu algorytm A* kieruje przeszukiwanie w stronę celu, odwiedzając mniej wierzchołków niż Dijkstra.
 
+\subsection{Algorytm Bellmana-Forda}
+
+Algorytm Bellmana-Forda jest klasycznym algorytmem służącym do znajdowania najkrótszych ścieżek od jednego źródła do wszystkich pozostałych wierzchołków w grafie. W przeciwieństwie do algorytmu Dijkstry, Bellman-Ford może obsługiwać grafy z ujemnymi wagami krawędzi i dodatkowo wykrywać obecność ujemnych cykli.
+
+Algorytm działa w następujący sposób:
+\begin{enumerate}
+    \item Inicjalizacja: wszystkie wierzchołki otrzymują odległość $\infty$, z wyjątkiem wierzchołka startowego, którego odległość wynosi 0.
+    \item Relaksacja krawędzi: algorytm wykonuje $|V| - 1$ iteracji, gdzie $|V|$ to liczba wierzchołków. W każdej iteracji:
+    \begin{itemize}
+        \item Dla każdego wierzchołka $u$ i jego sąsiada $v$ z wagą krawędzi $w$:
+        \item Jeśli $d[u] + w < d[v]$, zaktualizuj $d[v] = d[u] + w$
+    \end{itemize}
+    \item Wykrywanie ujemnych cykli: wykonaj dodatkową iterację — jeśli jakakolwiek odległość może zostać jeszcze poprawiona, oznacza to obecność ujemnego cyklu.
+\end{enumerate}
+
+Złożoność czasowa algorytmu wynosi $O(V \cdot E)$, gdzie $V$ to liczba wierzchołków, a $E$ to liczba krawędzi. Dla siatki dwuwymiarowej $N \times N$ mamy $V = N^2$ i $E \approx 4N^2$, co daje złożoność $O(N^4)$ — znacznie gorszą niż $O(N^2 \log N)$ dla Dijkstry i A*.
+
+W implementacji testowej algorytm Bellmana-Forda był używany tylko dla małych instancji ze względu na jego niską wydajność. Jednak w zastosowaniach wymagających obsługi ujemnych wag lub wykrywania ujemnych cykli algorytm ten pozostaje niezbędnym narzędziem.
+
 \subsection{Reprezentacja problemu}
 
 Problem został zaimplementowany jako siatka dwuwymiarowa, gdzie każde pole może być:
@@ -206,18 +238,26 @@ Do eksperymentów wykorzystano losowo generowane instancje problemu. Każda inst
 Taki sposób generowania danych pozwala na symulację różnorodnych scenariuszy i zapewnia reprezentatywność wyników pomiarów.
 \section{Podsumowanie}
 
-W ramach przeprowadzonych badań przeanalizowano dwa algorytmy wyznaczania najkrótszej ścieżki w grafie dwuwymiarowym: algorytm Dijkstry oraz algorytm A*. Otrzymane wyniki potwierdziły przewagę algorytmu A* w zakresie wydajności obliczeniowej dla większych instancji problemu.
+W ramach przeprowadzonych badań przeanalizowano trzy algorytmy wyznaczania najkrótszej ścieżki w grafie dwuwymiarowym: algorytm Dijkstry, algorytm A* oraz algorytm Bellmana-Forda. Otrzymane wyniki pozwoliły na wszechstronną ocenę wydajności różnych podejść do rozwiązywania tego fundamentalnego problemu teorii grafów.
 
-Algorytm Dijkstry, będący klasycznym rozwiązaniem problemu najkrótszej ścieżki, charakteryzuje się prostotą implementacji i gwarantuje znalezienie optymalnej trasy. Jest to solidny wybór, gdy nie dysponujemy dobrą funkcją heurystyczną lub gdy priorytetem jest prostota kodu.
+Algorytm Dijkstry, będący klasycznym rozwiązaniem problemu najkrótszej ścieżki, charakteryzuje się prostotą implementacji i gwarantuje znalezienie optymalnej trasy w grafach z nieujemnymi wagami. Jest to solidny wybór, gdy nie dysponujemy dobrą funkcją heurystyczną lub gdy priorytetem jest prostota kodu. Jego złożoność czasowa wynosi $O(N^2 \log N)$ dla siatki $N \times N$.
 
-Z kolei algorytm A*, wykorzystując funkcję heurystyczną (odległość euklidesowa do celu), kieruje przeszukiwaniem w stronę punktu docelowego, co prowadzi do zmniejszenia liczby odwiedzanych wierzchołków. W przeprowadzonych eksperymentach A* okazał się o około 30\% szybszy od Dijkstry dla siatek o rozmiarze $1000 \times 1000$, przy zachowaniu gwarancji znalezienia optymalnej ścieżki.
+Algorytm A*, wykorzystując funkcję heurystyczną (odległość euklidesowa do celu), kieruje przeszukiwaniem w stronę punktu docelowego, co prowadzi do zmniejszenia liczby odwiedzanych wierzchołków. W przeprowadzonych eksperymentach A* okazał się o około 30\% szybszy od Dijkstry dla siatek o rozmiarze $1000 \times 1000$, przy zachowaniu gwarancji znalezienia optymalnej ścieżki. Pomimo teoretycznie takiej samej złożoności jak Dijkstra, A* jest w praktyce znacznie szybszy dzięki zastosowaniu heurystyki.
 
-Pomiary czasowe wykazały, że dla małych instancji (do $300 \times 300$) różnica w wydajności jest niewielka, jednak staje się ona znacząca wraz ze wzrostem rozmiaru problemu. Oba algorytmy wykazują złożoność obliczeniową rzędu $O(N^2 \log N)$ dla siatki $N \times N$, jednak dzięki heurystyce A* odwiedza mniej wierzchołków w praktyce.
+Algorytm Bellmana-Forda, choć o znacznie wyższej złożoności czasowej $O(N^4)$ dla siatki dwuwymiarowej, ma unikalne właściwości — potrafi obsługiwać grafy z ujemnymi wagami krawędzi oraz wykrywać ujemne cykle. W pomiarach dla małych instancji (do $50 \times 50$) okazał się on być ponad 1000 razy wolniejszy od Dijkstry i A* dla większych siatek. Ze względu na tę znaczną różnicę w wydajności algorytm Bellmana-Forda jest praktyczny tylko dla małych grafów lub w sytuacjach wymagających obsługi ujemnych wag.
+
+Pomiary czasowe wykazały, że:
+\begin{itemize}
+    \item Dla małych instancji (do $300 \times 300$) różnica w wydajności między Dijkstrą a A* jest niewielka, jednak staje się ona znacząca wraz ze wzrostem rozmiaru problemu.
+    \item Algorytm A* odwiedza mniej wierzchołków w praktyce dzięki heurystyce, co przekłada się na lepszą wydajność.
+    \item Algorytm Bellmana-Forda, mimo swojej uniwersalności, jest niepraktyczny dla większych instancji ze względu na bardzo wysoką złożoność obliczeniową.
+\end{itemize}
 
 Podsumowując, wybór odpowiedniego algorytmu zależy od kontekstu zastosowania:
 \begin{itemize}
     \item gdy priorytetem jest prostota implementacji i brak jest dobrej funkcji heurystycznej — algorytm Dijkstry jest właściwym wyborem,
-    \item gdy dostępna jest sensowna heurystyka i istotna jest wydajność — algorytm A* zapewnia lepszą efektywność przy zachowaniu optymalności rozwiązania.
+    \item gdy dostępna jest sensowna heurystyka i istotna jest wydajność — algorytm A* zapewnia lepszą efektywność przy zachowaniu optymalności rozwiązania,
+    \item gdy graf może zawierać ujemne wagi krawędzi lub wymagane jest wykrywanie ujemnych cykli — algorytm Bellmana-Forda jest jedyną opcją spośród badanych, jednak należy liczyć się z bardzo długim czasem wykonania dla większych instancji.
 \end{itemize}
 
 \end{document}
