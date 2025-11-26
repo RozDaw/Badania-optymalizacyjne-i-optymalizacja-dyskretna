@@ -156,8 +156,8 @@ def load_coordinates_raw(text):
             if i == j:
                 row.append(0)
             else:
-                dist = math.sqrt((coords[i][0] - coords[j][0])**2 + 
-                               (coords[i][1] - coords[j][1])**2)
+                dist = math.hypot(coords[i][0] - coords[j][0],
+                                  coords[i][1] - coords[j][1])
                 row.append(int(round(dist)))
         matrix.append(row)
     
