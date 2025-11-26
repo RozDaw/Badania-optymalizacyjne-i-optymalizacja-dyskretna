@@ -1,7 +1,9 @@
 import time
 from collections import deque
 import copy
-
+import matplotlib
+matplotlib.use('tkAgg')
+import matplotlib.pyplot as plt
 
 import random
 
@@ -245,50 +247,44 @@ def ford_fulkerson(capacity, s, t):
     return max_flow, flow
 
 
-data = generate_random_graph(100, max_capacity=15, density=0.4)
+sizes = [20, 40, 60, 80, 100, 120, ]   # możesz dodać więcej np. do 500
+times_ek = []
+times_dinic = []
+times_ff = []
+n=20
+while n < 100:
+    print(f"\nBadanie dla n = {n}...")
 
+    g = generate_random_graph(n)
 
-print("\n==================== EDMONDS–KARP ====================")
-start_time = time.time()
-max_flow1, flow_matrix1 = edmonds_karp(data, 0, len(data)-1)
-end_time = time.time()
-paths1 = decompose_flow(flow_matrix1, 0, len(data)-1)
+    # Edmonds–Karp
+    start = time.time()
+    edmonds_karp(g, 0, n - 1)
+    times_ek.append(time.time() - start)
 
-print("Maksymalny przepływ:", max_flow1, " Czas wykonania: %.6f sekund" % (end_time - start_time))
-# print("Graf przepływów:")
-# for i in range(len(data)):
-#     print(sum(flow_matrix1[i]), flow_matrix1[i])
-# print("Ścieżki:")
-# for f, p in paths1:
-#     print(f, p)
+    # Dinic
+    start = time.time()
+    dinic(g, 0, n - 1)
+    times_dinic.append(time.time() - start)
 
+    # Ford–Fulkerson
+    start = time.time()
+    ford_fulkerson(g, 0, n - 1)
+    times_ff.append(time.time() - start)
+    n+=20
 
-print("\n======================== DINIC ========================")
-start_time = time.time()
-max_flow2, flow_matrix2 = dinic(data, 0, len(data)-1)
-end_time = time.time()
-paths2 = decompose_flow(flow_matrix2, 0, len(data)-1)
+# ============================================================
+# RYSOWANIE WYKRESU
+# ============================================================
 
-print("Maksymalny przepływ:", max_flow2, " Czas wykonania: %.6f sekund" % (end_time - start_time))
-# print("Graf przepływów:")
-# for i in range(len(data)):
-#     print(sum(flow_matrix2[i]), flow_matrix2[i])
-# print("Ścieżki:")
-# for f, p in paths2:
-#     print(f, p)
+plt.figure(figsize=(10, 6))
+plt.plot(sizes, times_ek, label="Edmonds–Karp")
+plt.plot(sizes, times_dinic, label="Dinic")
+plt.plot(sizes, times_ff, label="Ford–Fulkerson")
 
-print("\n===================== FORD–FULKERSON =====================")
-start_time = time.time()
-max_flow3, flow_matrix3 = ford_fulkerson(data, 0, len(data)-1)
-end_time = time.time()
-
-paths3 = decompose_flow(flow_matrix3, 0, len(data)-1)
-
-print("Maksymalny przepływ:", max_flow3, " Czas wykonania: %.6f sekund" % (end_time - start_time))
-# print("Graf przepływów:")
-# for i in range(len(data)):
-#     print(sum(flow_matrix3[i]), flow_matrix3[i])
-#
-# print("Ścieżki:")
-# for f, p in paths3:
-#     print(f, p)
+plt.xlabel("n (liczba wierzchołków)")
+plt.ylabel("czas wykonania [s]")
+plt.title("Porównanie algorytmów maksymalnego przepływu")
+plt.legend()
+plt.grid(True)
+plt.show()

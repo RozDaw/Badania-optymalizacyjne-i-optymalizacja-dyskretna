@@ -401,8 +401,9 @@ if __name__ == "__main__":
     print("PORÓWNANIE CZASÓW WYKONANIA")
     print("=" * 60)
 
-    sizes_bruteforce = [5, 6, 7, 8, 9, 10]
-    sizes_bb_dp = [10, 12, 14, 15]
+    sizes_bruteforce = [5, 6, 7, 8, 9, 10] # max 12
+    sizes_bb = [5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,21,22]
+    sizes_dp = [5,6,7,8,9,10,11,12,13,14,16,17,18,19,20,21,22]
 
     print("\n--- Brute Force (małe instancje) ---")
     for size in sizes_bruteforce:
@@ -413,7 +414,7 @@ if __name__ == "__main__":
         print(f"n={size}: koszt={cost}, czas={elapsed:.6f} s")
 
     print("\n--- Branch and Bound ---")
-    for size in sizes_bb_dp:
+    for size in sizes_bb:
         matrix, _ = generate_tsp_data(size, size)
         start_time = time.time()
         cost, path = tsp_branch_and_bound(matrix)
@@ -421,7 +422,7 @@ if __name__ == "__main__":
         print(f"n={size}: koszt={cost}, czas={elapsed:.6f} s")
 
     print("\n--- Programowanie Dynamiczne ---")
-    for size in sizes_bb_dp:
+    for size in sizes_dp:
         matrix, _ = generate_tsp_data(size, size)
         start_time = time.time()
         cost, path = tsp_dynamic_programming(matrix)
