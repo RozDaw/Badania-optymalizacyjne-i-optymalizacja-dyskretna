@@ -4,9 +4,11 @@ TSP (Traveling Salesman Problem) - implementacje algorytmów:
 2. Branch and Bound (metoda podziału i ograniczeń)
 3. Programowanie dynamiczne (algorytm Held-Karp)
 4. K-Nearest Neighbor (heurystyka najbliższego sąsiada)
+5. Algorytm 123 (trasa sekwencyjna)
 """
 import heapq
 import itertools
+import math
 import time
 import sys
 
@@ -114,6 +116,52 @@ def save_cost_matrix(filename, matrix):
         f.write(f"data: {n}\n")
         for row in matrix:
             f.write(' '.join('{:2d}'.format(d) for d in row) + '\n')
+
+
+def load_coordinates_raw(text):
+    """
+    Wczytuje współrzędne miast z tekstu i tworzy macierz kosztów.
+    Format:
+    data:
+    N
+    x1 y1   x2 y2   x3 y3   ...
+    
+    Zwraca macierz kosztów opartą na odległościach euklidesowych.
+    """
+    lines = text.strip().splitlines()
+    
+    # Znajdź liczbę miast
+    idx = 0
+    if lines[idx].strip().startswith("data"):
+        idx += 1
+    n = int(lines[idx].strip())
+    idx += 1
+    
+    # Wczytaj współrzędne - wszystkie mogą być w jednej linii lub wielu
+    coords_text = ' '.join(lines[idx:])
+    values = list(map(int, coords_text.split()))
+    
+    # Parsuj pary współrzędnych (x, y)
+    coords = []
+    for i in range(0, n * 2, 2):
+        x = values[i]
+        y = values[i + 1]
+        coords.append((x, y))
+    
+    # Twórz macierz kosztów opartą na odległościach euklidesowych
+    matrix = []
+    for i in range(n):
+        row = []
+        for j in range(n):
+            if i == j:
+                row.append(0)
+            else:
+                dist = math.sqrt((coords[i][0] - coords[j][0])**2 + 
+                               (coords[i][1] - coords[j][1])**2)
+                row.append(int(round(dist)))
+        matrix.append(row)
+    
+    return matrix, coords
 
 
 # ============================================================
@@ -401,6 +449,39 @@ def tsp_nearest_neighbor_best(matrix):
 
 
 # ============================================================
+# ALGORYTM 123 (TRASA SEKWENCYJNA)
+# ============================================================
+def tsp_123(matrix):
+    """
+    Rozwiązuje TSP metodą trasy sekwencyjnej (algorytm 123).
+    Tworzy trasę: 0 -> 1 -> 2 -> 3 -> ... -> n-1 -> 0
+    
+    Jest to najprostsza możliwa heurystyka - odwiedzamy miasta
+    w kolejności ich numeracji.
+    
+    Złożoność czasowa: O(n)
+    
+    Uwaga: Algorytm nie próbuje optymalizować trasy, służy jako
+    punkt odniesienia (baseline) do porównań z innymi algorytmami.
+    """
+    n = len(matrix)
+    if n == 0:
+        return 0, []
+    if n == 1:
+        return 0, [0, 0]
+    
+    # Tworzymy trasę sekwencyjną: 0 -> 1 -> 2 -> ... -> n-1 -> 0
+    path = list(range(n)) + [0]
+    
+    # Obliczamy koszt trasy
+    total_cost = 0
+    for i in range(n):
+        total_cost += matrix[path[i]][path[i + 1]]
+    
+    return total_cost, path
+
+
+# ============================================================
 # FUNKCJE POMOCNICZE
 # ============================================================
 def print_matrix(matrix):
@@ -487,6 +568,15 @@ if __name__ == "__main__":
     print(f"Ścieżka: {nnb_path}")
     print(f"Czas: {nnb_time:.6f} s")
 
+    # Algorytm 123 (trasa sekwencyjna)
+    print("\n--- Algorytm 123 (trasa sekwencyjna) ---")
+    start_time = time.time()
+    seq_cost, seq_path = tsp_123(test_matrix)
+    seq_time = time.time() - start_time
+    print(f"Koszt: {seq_cost}")
+    print(f"Ścieżka: {seq_path}")
+    print(f"Czas: {seq_time:.6f} s")
+
     # Weryfikacja
     print("\n--- Weryfikacja ---")
     print(f"Brute Force: {'OK' if verify_solution(test_matrix, bf_path, bf_cost) else 'BŁĄD'}")
@@ -494,14 +584,17 @@ if __name__ == "__main__":
     print(f"Dynamic Programming: {'OK' if verify_solution(test_matrix, dp_path, dp_cost) else 'BŁĄD'}")
     print(f"Nearest Neighbor: {'OK' if verify_solution(test_matrix, nn_path, nn_cost) else 'BŁĄD'}")
     print(f"Nearest Neighbor Best: {'OK' if verify_solution(test_matrix, nnb_path, nnb_cost) else 'BŁĄD'}")
+    print(f"Algorytm 123: {'OK' if verify_solution(test_matrix, seq_path, seq_cost) else 'BŁĄD'}")
 
     if bf_cost == bb_cost == dp_cost:
         print("\nWszystkie algorytmy dokładne zwróciły ten sam koszt optymalny!")
         print(f"Koszt optymalny: {dp_cost}")
         if dp_cost > 0:
+            print(f"Koszt Algorytm 123: {seq_cost} (różnica: {seq_cost - dp_cost}, {100*(seq_cost - dp_cost)/dp_cost:.1f}%)")
             print(f"Koszt Nearest Neighbor: {nn_cost} (różnica: {nn_cost - dp_cost}, {100*(nn_cost - dp_cost)/dp_cost:.1f}%)")
             print(f"Koszt Nearest Neighbor Best: {nnb_cost} (różnica: {nnb_cost - dp_cost}, {100*(nnb_cost - dp_cost)/dp_cost:.1f}%)")
         else:
+            print(f"Koszt Algorytm 123: {seq_cost}")
             print(f"Koszt Nearest Neighbor: {nn_cost}")
             print(f"Koszt Nearest Neighbor Best: {nnb_cost}")
     else:
@@ -509,9 +602,11 @@ if __name__ == "__main__":
         optimal_cost = min(bf_cost, bb_cost, dp_cost)
         print(f"Najlepszy koszt: {optimal_cost}")
         if optimal_cost > 0:
+            print(f"Koszt Algorytm 123: {seq_cost} (różnica: {seq_cost - optimal_cost}, {100*(seq_cost - optimal_cost)/optimal_cost:.1f}%)")
             print(f"Koszt Nearest Neighbor: {nn_cost} (różnica: {nn_cost - optimal_cost}, {100*(nn_cost - optimal_cost)/optimal_cost:.1f}%)")
             print(f"Koszt Nearest Neighbor Best: {nnb_cost} (różnica: {nnb_cost - optimal_cost}, {100*(nnb_cost - optimal_cost)/optimal_cost:.1f}%)")
         else:
+            print(f"Koszt Algorytm 123: {seq_cost}")
             print(f"Koszt Nearest Neighbor: {nn_cost}")
             print(f"Koszt Nearest Neighbor Best: {nnb_cost}")
 
@@ -609,3 +704,59 @@ if __name__ == "__main__":
     print(f"\nKoszt (NN Best): {nnb_cost}")
     print(f"Ścieżka: {nnb_path}")
     print(f"Czas: {elapsed:.6f} s")
+
+    start_time = time.time()
+    seq_cost, seq_path = tsp_123(loaded_matrix)
+    elapsed = time.time() - start_time
+    print(f"\nKoszt (Algorytm 123): {seq_cost}")
+    print(f"Ścieżka: {seq_path}")
+    print(f"Czas: {elapsed:.6f} s")
+
+    # Demonstracja wczytywania współrzędnych
+    print("\n" + "=" * 60)
+    print("DEMONSTRACJA WCZYTYWANIA WSPÓŁRZĘDNYCH")
+    print("=" * 60)
+
+    coords_data = """data:
+40
+30 43   70 48   87 19   80 18   74 40   98 23   14 16   91 22   91  7   68  3   25 25   68 18   73 10   27 47   16 33   31 24   13  8   40 32   80  9   49  5   97 13   23 25   62 22   65  1   25 31   34 12    8 38   94 16   63  4    5 19   20 11   59 29   84 17   70 24   53 39   65 18   96 44   19 31   48  2   76 21"""
+
+    coords_matrix, coords = load_coordinates_raw(coords_data)
+    print(f"\nWczytano {len(coords)} miast ze współrzędnymi:")
+    for i, (x, y) in enumerate(coords):
+        print(f"  Miasto {i}: ({x}, {y})")
+
+    print("\n--- Rozwiązanie dla danych ze współrzędnymi ---")
+
+    # Algorytm 123
+    start_time = time.time()
+    seq_cost, seq_path = tsp_123(coords_matrix)
+    elapsed = time.time() - start_time
+    print(f"\nAlgorytm 123:")
+    print(f"Koszt: {seq_cost}")
+    print(f"Ścieżka: {seq_path}")
+    print(f"Czas: {elapsed:.6f} s")
+
+    # Nearest Neighbor
+    start_time = time.time()
+    nn_cost, nn_path = tsp_nearest_neighbor(coords_matrix)
+    elapsed = time.time() - start_time
+    print(f"\nNearest Neighbor:")
+    print(f"Koszt: {nn_cost}")
+    print(f"Ścieżka: {nn_path}")
+    print(f"Czas: {elapsed:.6f} s")
+
+    # Nearest Neighbor Best
+    start_time = time.time()
+    nnb_cost, nnb_path = tsp_nearest_neighbor_best(coords_matrix)
+    elapsed = time.time() - start_time
+    print(f"\nNearest Neighbor Best:")
+    print(f"Koszt: {nnb_cost}")
+    print(f"Ścieżka: {nnb_path}")
+    print(f"Czas: {elapsed:.6f} s")
+
+    # Porównanie
+    print(f"\n--- Porównanie dla danych ze współrzędnymi (n={len(coords)}) ---")
+    print(f"Algorytm 123: {seq_cost}")
+    print(f"Nearest Neighbor: {nn_cost} (poprawa o {seq_cost - nn_cost}, {100*(seq_cost - nn_cost)/seq_cost:.1f}%)")
+    print(f"Nearest Neighbor Best: {nnb_cost} (poprawa o {seq_cost - nnb_cost}, {100*(seq_cost - nnb_cost)/seq_cost:.1f}%)")
