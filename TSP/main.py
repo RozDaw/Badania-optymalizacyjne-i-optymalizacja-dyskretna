@@ -3,6 +3,7 @@ TSP (Traveling Salesman Problem) - implementacje algorytmów:
 1. Bruteforce (przegląd zupełny)
 2. Branch and Bound (metoda podziału i ograniczeń)
 3. Programowanie dynamiczne (algorytm Held-Karp)
+4. K-Nearest Neighbor (heurystyka najbliższego sąsiada)
 """
 import heapq
 import itertools
@@ -317,6 +318,89 @@ def tsp_dynamic_programming(matrix):
 
 
 # ============================================================
+# ALGORYTM K-NEAREST NEIGHBOR (HEURYSTYKA NAJBLIŻSZEGO SĄSIADA)
+# ============================================================
+def tsp_nearest_neighbor(matrix, start=0):
+    """
+    Rozwiązuje TSP metodą najbliższego sąsiada (Nearest Neighbor Heuristic).
+    Jest to algorytm zachłanny, który w każdym kroku wybiera najbliższe
+    nieodwiedzone miasto.
+    
+    Parametry:
+        matrix: macierz kosztów przejść między miastami
+        start: indeks miasta początkowego (domyślnie 0)
+    
+    Złożoność czasowa: O(n^2)
+    
+    Uwaga: Algorytm nie gwarantuje optymalnego rozwiązania, ale jest szybki
+    i daje przybliżone rozwiązanie.
+    """
+    n = len(matrix)
+    if n == 0:
+        return 0, []
+    if n == 1:
+        return 0, [0, 0]
+    if n == 2:
+        return matrix[0][1] + matrix[1][0], [0, 1, 0]
+    
+    visited = [False] * n
+    path = [start]
+    visited[start] = True
+    total_cost = 0
+    current = start
+    
+    # Odwiedzamy wszystkie pozostałe miasta
+    for _ in range(n - 1):
+        nearest = -1
+        min_dist = float('inf')
+        
+        # Szukamy najbliższego nieodwiedzonego miasta
+        for j in range(n):
+            if not visited[j] and matrix[current][j] < min_dist:
+                min_dist = matrix[current][j]
+                nearest = j
+        
+        # Przechodzimy do najbliższego miasta
+        visited[nearest] = True
+        path.append(nearest)
+        total_cost += min_dist
+        current = nearest
+    
+    # Powrót do miasta początkowego
+    total_cost += matrix[current][start]
+    path.append(start)
+    
+    return total_cost, path
+
+
+def tsp_nearest_neighbor_best(matrix):
+    """
+    Rozwiązuje TSP metodą najbliższego sąsiada, próbując wszystkie
+    możliwe miasta startowe i wybierając najlepsze rozwiązanie.
+    
+    Złożoność czasowa: O(n^3)
+    
+    Zwraca najlepszy wynik spośród wszystkich możliwych punktów startowych.
+    """
+    n = len(matrix)
+    if n == 0:
+        return 0, []
+    if n == 1:
+        return 0, [0, 0]
+    
+    best_cost = float('inf')
+    best_path = None
+    
+    for start in range(n):
+        cost, path = tsp_nearest_neighbor(matrix, start)
+        if cost < best_cost:
+            best_cost = cost
+            best_path = path
+    
+    return best_cost, best_path
+
+
+# ============================================================
 # FUNKCJE POMOCNICZE
 # ============================================================
 def print_matrix(matrix):
@@ -385,14 +469,37 @@ if __name__ == "__main__":
     print(f"Ścieżka: {dp_path}")
     print(f"Czas: {dp_time:.6f} s")
 
+    # Nearest Neighbor (KNN)
+    print("\n--- Nearest Neighbor (KNN) ---")
+    start_time = time.time()
+    nn_cost, nn_path = tsp_nearest_neighbor(test_matrix)
+    nn_time = time.time() - start_time
+    print(f"Koszt: {nn_cost}")
+    print(f"Ścieżka: {nn_path}")
+    print(f"Czas: {nn_time:.6f} s")
+
+    # Nearest Neighbor Best (KNN ze wszystkich startów)
+    print("\n--- Nearest Neighbor Best (KNN wszystkie starty) ---")
+    start_time = time.time()
+    nnb_cost, nnb_path = tsp_nearest_neighbor_best(test_matrix)
+    nnb_time = time.time() - start_time
+    print(f"Koszt: {nnb_cost}")
+    print(f"Ścieżka: {nnb_path}")
+    print(f"Czas: {nnb_time:.6f} s")
+
     # Weryfikacja
     print("\n--- Weryfikacja ---")
     print(f"Brute Force: {'OK' if verify_solution(test_matrix, bf_path, bf_cost) else 'BŁĄD'}")
     print(f"Branch and Bound: {'OK' if verify_solution(test_matrix, bb_path, bb_cost) else 'BŁĄD'}")
     print(f"Dynamic Programming: {'OK' if verify_solution(test_matrix, dp_path, dp_cost) else 'BŁĄD'}")
+    print(f"Nearest Neighbor: {'OK' if verify_solution(test_matrix, nn_path, nn_cost) else 'BŁĄD'}")
+    print(f"Nearest Neighbor Best: {'OK' if verify_solution(test_matrix, nnb_path, nnb_cost) else 'BŁĄD'}")
 
     if bf_cost == bb_cost == dp_cost:
-        print("\nWszystkie algorytmy zwróciły ten sam koszt optymalny!")
+        print("\nWszystkie algorytmy dokładne zwróciły ten sam koszt optymalny!")
+        print(f"Koszt optymalny: {dp_cost}")
+        print(f"Koszt Nearest Neighbor: {nn_cost} (różnica: {nn_cost - dp_cost}, {100*(nn_cost - dp_cost)/dp_cost:.1f}%)")
+        print(f"Koszt Nearest Neighbor Best: {nnb_cost} (różnica: {nnb_cost - dp_cost}, {100*(nnb_cost - dp_cost)/dp_cost:.1f}%)")
     else:
         print(f"\nUWAGA: Różne koszty! BF={bf_cost}, BB={bb_cost}, DP={dp_cost}")
 
@@ -429,6 +536,25 @@ if __name__ == "__main__":
         elapsed = time.time() - start_time
         print(f"n={size}: koszt={cost}, czas={elapsed:.6f} s")
 
+    # KNN może działać na znacznie większych instancjach
+    sizes_nn = [5, 10, 20, 50, 100, 200, 500, 1000]
+    
+    print("\n--- Nearest Neighbor (KNN) ---")
+    for size in sizes_nn:
+        matrix, _ = generate_tsp_data(size, size)
+        start_time = time.time()
+        cost, path = tsp_nearest_neighbor(matrix)
+        elapsed = time.time() - start_time
+        print(f"n={size}: koszt={cost}, czas={elapsed:.6f} s")
+
+    print("\n--- Nearest Neighbor Best (wszystkie starty) ---")
+    for size in sizes_nn:
+        matrix, _ = generate_tsp_data(size, size)
+        start_time = time.time()
+        cost, path = tsp_nearest_neighbor_best(matrix)
+        elapsed = time.time() - start_time
+        print(f"n={size}: koszt={cost}, czas={elapsed:.6f} s")
+
     # Demonstracja wczytywania macierzy
     print("\n" + "=" * 60)
     print("DEMONSTRACJA WCZYTYWANIA MACIERZY")
@@ -456,4 +582,18 @@ if __name__ == "__main__":
     elapsed = time.time() - start_time
     print(f"Koszt (DP): {dp_cost}")
     print(f"Ścieżka: {dp_path}")
+    print(f"Czas: {elapsed:.6f} s")
+
+    start_time = time.time()
+    nn_cost, nn_path = tsp_nearest_neighbor(loaded_matrix)
+    elapsed = time.time() - start_time
+    print(f"\nKoszt (NN): {nn_cost}")
+    print(f"Ścieżka: {nn_path}")
+    print(f"Czas: {elapsed:.6f} s")
+
+    start_time = time.time()
+    nnb_cost, nnb_path = tsp_nearest_neighbor_best(loaded_matrix)
+    elapsed = time.time() - start_time
+    print(f"\nKoszt (NN Best): {nnb_cost}")
+    print(f"Ścieżka: {nnb_path}")
     print(f"Czas: {elapsed:.6f} s")
