@@ -4,6 +4,7 @@ TSP (Traveling Salesman Problem) - implementacje algorytmów:
 2. Branch and Bound (metoda podziału i ograniczeń)
 3. Programowanie dynamiczne (algorytm Held-Karp)
 """
+import heapq
 import itertools
 import time
 import sys
@@ -128,6 +129,9 @@ def tsp_bruteforce(matrix):
         return 0, []
     if n == 1:
         return 0, [0, 0]
+    if n == 2:
+        # Dla n=2 mamy tylko jedną możliwą trasę: 0 -> 1 -> 0
+        return matrix[0][1] + matrix[1][0], [0, 1, 0]
 
     min_cost = float('inf')
     best_path = None
@@ -163,50 +167,29 @@ def tsp_branch_and_bound(matrix):
         return 0, []
     if n == 1:
         return 0, [0, 0]
+    if n == 2:
+        return matrix[0][1] + matrix[1][0], [0, 1, 0]
 
     INF = float('inf')
 
-    def calculate_lower_bound(path, visited):
-        """
-        Oblicza dolne ograniczenie dla częściowej ścieżki.
-        Dla każdego nieodwiedzonego wierzchołka dodajemy minimalną krawędź wychodzącą.
-        """
+    def calc_initial_bound(path, visited):
+        """Oblicza początkowe dolne ograniczenie."""
         bound = 0
-
-        # Koszt aktualnej ścieżki
-        for i in range(len(path) - 1):
-            bound += matrix[path[i]][path[i + 1]]
-
-        # Dla wierzchołka końcowego - minimalna krawędź do nieodwiedzonych lub do 0
-        if len(path) > 0:
-            last = path[-1]
-            if len(visited) < n:
-                # Minimalna krawędź do nieodwiedzonego wierzchołka
-                min_edge = min(
-                    (matrix[last][j] for j in range(n) if j not in visited),
-                    default=matrix[last][0]
-                )
-                bound += min_edge
-
         # Dla każdego nieodwiedzonego wierzchołka - minimalna krawędź wychodząca
         for v in range(n):
             if v not in visited:
-                # Minimalna krawędź wychodząca z v (do nieodwiedzonych lub do 0)
                 possible = [matrix[v][j] for j in range(n) if j != v and (j not in visited or j == 0)]
                 if possible:
                     bound += min(possible)
-
         return bound
 
     best_cost = INF
     best_path = None
 
-    # Używamy stosu: (ścieżka, odwiedzone, koszt_dotychczasowy)
-    import heapq
     # Używamy kolejki priorytetowej dla lepszego przycinania
-    # (lower_bound, cost, path)
+    # (lower_bound, cost, path, visited)
     initial_visited = frozenset([0])
-    initial_bound = calculate_lower_bound([0], initial_visited)
+    initial_bound = calc_initial_bound([0], initial_visited)
     heap = [(initial_bound, 0, [0], initial_visited)]
 
     while heap:
@@ -271,15 +254,19 @@ def tsp_dynamic_programming(matrix):
         return 0, []
     if n == 1:
         return 0, [0, 0]
+    if n == 2:
+        return matrix[0][1] + matrix[1][0], [0, 1, 0]
 
     INF = float('inf')
 
     # dp[mask][i] = minimalny koszt dotarcia do wierzchołka i,
     # odwiedzając wierzchołki w masce 'mask', zaczynając od 0
+    # mask jest maską bitową, gdzie bit i oznacza czy wierzchołek i został odwiedzony
     dp = [[INF] * n for _ in range(1 << n)]
     parent = [[-1] * n for _ in range(1 << n)]
 
     # Bazowy przypadek: zaczynamy od wierzchołka 0
+    # mask=1 oznacza że tylko wierzchołek 0 jest odwiedzony (bit 0 ustawiony)
     dp[1][0] = 0
 
     for mask in range(1 << n):
