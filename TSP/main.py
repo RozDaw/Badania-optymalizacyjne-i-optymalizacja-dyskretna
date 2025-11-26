@@ -498,10 +498,22 @@ if __name__ == "__main__":
     if bf_cost == bb_cost == dp_cost:
         print("\nWszystkie algorytmy dokładne zwróciły ten sam koszt optymalny!")
         print(f"Koszt optymalny: {dp_cost}")
-        print(f"Koszt Nearest Neighbor: {nn_cost} (różnica: {nn_cost - dp_cost}, {100*(nn_cost - dp_cost)/dp_cost:.1f}%)")
-        print(f"Koszt Nearest Neighbor Best: {nnb_cost} (różnica: {nnb_cost - dp_cost}, {100*(nnb_cost - dp_cost)/dp_cost:.1f}%)")
+        if dp_cost > 0:
+            print(f"Koszt Nearest Neighbor: {nn_cost} (różnica: {nn_cost - dp_cost}, {100*(nn_cost - dp_cost)/dp_cost:.1f}%)")
+            print(f"Koszt Nearest Neighbor Best: {nnb_cost} (różnica: {nnb_cost - dp_cost}, {100*(nnb_cost - dp_cost)/dp_cost:.1f}%)")
+        else:
+            print(f"Koszt Nearest Neighbor: {nn_cost}")
+            print(f"Koszt Nearest Neighbor Best: {nnb_cost}")
     else:
         print(f"\nUWAGA: Różne koszty! BF={bf_cost}, BB={bb_cost}, DP={dp_cost}")
+        optimal_cost = min(bf_cost, bb_cost, dp_cost)
+        print(f"Najlepszy koszt: {optimal_cost}")
+        if optimal_cost > 0:
+            print(f"Koszt Nearest Neighbor: {nn_cost} (różnica: {nn_cost - optimal_cost}, {100*(nn_cost - optimal_cost)/optimal_cost:.1f}%)")
+            print(f"Koszt Nearest Neighbor Best: {nnb_cost} (różnica: {nnb_cost - optimal_cost}, {100*(nnb_cost - optimal_cost)/optimal_cost:.1f}%)")
+        else:
+            print(f"Koszt Nearest Neighbor: {nn_cost}")
+            print(f"Koszt Nearest Neighbor Best: {nnb_cost}")
 
     # Porównanie czasów dla różnych rozmiarów
     print("\n" + "=" * 60)
