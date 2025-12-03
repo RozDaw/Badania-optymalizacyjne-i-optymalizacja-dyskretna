@@ -1,0 +1,198 @@
+\documentclass[12pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{newclude}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{indentfirst}
+\usepackage{multirow}
+\usepackage{pgfplots}
+\usepackage{tikz}
+ \usepackage{url}
+\usepackage{titlesec}
+\usepackage{pdfpages}
+\usepackage{hyperref}
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage{minted}
+\usepackage{tabularx}
+\lstdefinestyle{mystyle}{
+    belowcaptionskip=1\baselineskip,
+    frame=single, 
+    frameround=tttt,
+    xleftmargin=\parindent,
+    language=[x86masm]Assembler,
+    basicstyle=\footnotesize\ttfamily,
+    commentstyle=\itshape\color{green!60!black},
+    keywordstyle=\color{blue!80!black},
+    identifierstyle=\color{red!80!black},
+    tabsize=4,
+    numbers=left,
+    numbersep=8pt,
+    stepnumber=1,
+    numberstyle=\tiny\color{gray}, 
+    columns = fullflexible,
+}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{setspace} % Pakiet do ustawiania interlinii
+\onehalfspacing
+\begin{document}
+
+\begin{titlepage}
+		\begin{figure}[h]
+			\begin{minipage}[l]{.5\textwidth}%
+				\includegraphics[width=0.3\textwidth]{pwr_logo}
+			\end{minipage}%
+			\begin{minipage}[r]{.5\textwidth}%
+				\includegraphics[width=1\textwidth]{wit_logo}
+			\end{minipage}%
+		\end{figure}
+		
+		\vspace*{3mm}
+		
+		\begin{center}
+			\rule{\textwidth}{0.8pt}\\ 
+			\vspace*{6mm}
+			{\LARGE \textbf{Badania operacyjne i optymalizacja dyskretna}\\
+            
+            \vspace*{6mm}
+            
+            Algorytm ścieżki krytycznej }\\
+            \vspace*{3mm}
+			\rule{\textwidth}{0.8pt}\\
+			
+			\vspace{1.5cm}
+			{\setstretch{2}
+				Politechnika Wrocławska
+				
+				Wydział Informatyki i Telekomunikacji
+				
+				Kierunek: Informatyczne Systemy Automatyki
+				
+				Grupa nr 1
+				
+				
+			}
+		\end{center}
+		
+		\vspace*{2cm}
+		
+		\begin{flushright}
+			{\setstretch{2}
+            	Konrad Pempera - $263948$\\
+				Dawid Różański - $263524$\\
+	
+                
+				\textbf{Termin zajęć}: Środa godz. $11^{\underline{15}}$ - $13^{\underline{00}}$ 
+				
+				\textbf{Prowadzący:} Dr inż. Mariusz Makuchowski
+				
+			}
+			
+		\end{flushright}
+		
+		\vfill
+		
+\end{titlepage}
+
+\tableofcontents
+\clearpage
+\section{Wstęp}
+
+Celem laboratorium było zaimplementowanie oraz porównanie metod Belmana–Forda oraz PERT w problemie wyznaczania najkrótszej ścieżki.
+
+Algorytm Belmana–Forda został zastosowany w wersji deterministycznej — zakłada on, że czasy trwania poszczególnych czynności są znane i stałe. Z kolei metoda PERT uwzględnia niepewność poprzez przypisanie każdemu zadaniu trzech wartości czasów: minimalnego, najbardziej prawdopodobnego oraz maksymalnego. Pozwala to na bardziej realistyczne odwzorowanie rzeczywistych procesów projektowych, w których czas trwania czynności może się zmieniać.
+
+W pracy przeprowadzono pomiary czasów wykonania obu metod w zależności od liczby wierzchołków oraz krawędzi w grafie, a także analizę rozkładu prawdopodobieństwa całkowitego czasu trwania projektu przy wykorzystaniu symulacji Monte Carlo. Uzyskane wyniki umożliwiają ocenę wydajności i dokładności badanych podejść w kontekście planowania i oceny ryzyka w harmonogramach projektowych.
+
+\section{Pomiary czasów}
+\subsection{Analiza wyników pomiarów czasu wykonania}
+
+Na rysunku \ref{fig:time_measurements_m} przedstawiono porównanie czasów wykonania algorytmów Belmana–Forda oraz PERT przy stałej liczbie wierzchołków $N = 1000$ i zmiennej liczbie krawędzi $M$. Z wykresu wynika, że czas wykonania obu algorytmów rośnie wraz ze wzrostem liczby krawędzi, co jest zgodne z ich złożonością obliczeniową. W przypadku algorytmu Belmana–Forda przyrost czasu jest początkowo prawie liniowy, a jego wzrost pozostaje relatywnie łagodny nawet dla dużych wartości $M$. Z kolei dla algorytmu PERT wzrost czasu wykonania jest znacznie bardziej zauważalny — szczególnie przy liczbie krawędzi powyżej $50{,}000$, gdzie czas obliczeń zaczyna gwałtownie rosnąć. 
+
+Można zauważyć, że dla wszystkich badanych wartości $M$ algorytm Belmana–Forda osiąga krótszy czas wykonania niż PERT. Wynika to z faktu, że PERT oprócz klasycznego przetwarzania wag krawędzi uwzględnia również ich charakterystykę probabilistyczną (czasy minimalny, oczekiwany i maksymalny), co wymaga dodatkowych operacji obliczeniowych.
+
+Na rysunku \ref{fig:time_measurements_n} zaprezentowano wyniki pomiarów dla rosnącej liczby wierzchołków $N$ przy ustalonej gęstości grafu. Obserwowany trend jest podobny — w obu przypadkach czas wykonania zwiększa się wraz z rozmiarem problemu. Dla małych wartości $N$ (poniżej $1000$) różnica między algorytmami jest niewielka, jednak dla większych grafów algorytm PERT staje się znacznie wolniejszy. Przy $N = 100{,}000$ czas jego wykonania przekracza 24 sekundy, podczas gdy Belman–Ford potrzebuje około 5 sekund.
+
+\subsection{Wnioski}
+
+\begin{itemize}
+    \item Czas wykonania obu algorytmów rośnie wraz ze wzrostem liczby wierzchołków i krawędzi, co jest zgodne z ich teoretyczną złożonością obliczeniową.
+    \item Algorytm Belmana–Forda jest zdecydowanie szybszy od PERT w każdym z analizowanych przypadków, co wynika z prostszej struktury obliczeń.
+    \item Algorytm PERT, mimo większego narzutu obliczeniowego, pozwala na modelowanie niepewności czasów trwania zadań poprzez wykorzystanie trzech wartości (minimalnej, oczekiwanej i maksymalnej), dzięki czemu dostarcza bardziej realistycznych wyników w kontekście analizy ścieżki krytycznej.
+    \item W zastosowaniach, gdzie priorytetem jest szybkość obliczeń, lepszym wyborem będzie algorytm Belmana–Forda. Natomiast PERT jest korzystniejszy w sytuacjach, gdy istotne jest uwzględnienie niepewności i zmienności czasów realizacji zadań.
+\end{itemize}
+
+\subsection{Porównanie złożoności obliczeniowej}
+
+Algorytm Belmana–Forda posiada złożoność czasową rzędu $O(N \cdot M)$, gdzie $N$ oznacza liczbę wierzchołków, a $M$ liczbę krawędzi w grafie. Każda iteracja analizuje wszystkie krawędzie, co zapewnia wyznaczenie najkrótszych ścieżek nawet w grafach zawierających ujemne wagi. 
+
+Z kolei algorytm PERT bazuje na podobnym schemacie przetwarzania grafu, jednak dla każdej krawędzi dokonuje dodatkowych obliczeń statystycznych związanych z trzema wartościami czasów ($t_{min}$, $t_{mean}$, $t_{max}$). W praktyce powoduje to zwiększenie liczby operacji arytmetycznych w przybliżeniu trzykrotnie, co można oszacować jako złożoność rzędu $O(3 \cdot N \cdot M) \approx O(N \cdot M)$, przy większej stałej ukrytej w notacji. 
+
+W efekcie oba algorytmy mają tę samą asymptotyczną złożoność, jednak PERT wymaga większej liczby operacji dla każdej krawędzi, co przekłada się na zauważalnie dłuższy czas wykonania w praktyce.
+\include*{time_measurements_m}
+
+\include*{time_measurements_n}
+
+
+\section{Analiza rozkładu czasów trwania projektu}
+
+W celu zbadania zmienności czasu trwania projektu wykonano symulację polegającą na wielokrotnym uruchomieniu algorytmu Belmana–Forda dla losowo generowanych instancji zadań. 
+
+Początkowo w symulacji wykorzystywano rozkład jednostajny do generowania losowych czasów trwania zadań. Okazało się jednak, że taki wybór prowadził do zbyt częstego występowania skrajnych wartości czasów (zarówno bardzo krótkich, jak i bardzo długich), co przekłamywało wyniki względem metody PERT. PERT zakłada, że czasy trwania zadań są modelowane za pomocą trzech wartości: minimalnej ($t_{min}$), najbardziej prawdopodobnej ($t_{mode}$) i maksymalnej ($t_{max}$), co naturalnie sugeruje wykorzystanie rozkładu trójkątnego. Po zaimplementowaniu rozkładu trójkątnego z parametrami odpowiadającymi wartościom $t_{min}$, $t_{mode}$ i $t_{max}$ dla każdego zadania, zaobserwowano znaczne poprawienie zgodności wyników symulacji Monte Carlo z przewidywaniami metody PERT. Rozkład trójkątny lepiej odzwierciedla rzeczywiste zachowanie czasów trwania zadań, gdzie wartości skrajne są mniej prawdopodobne niż wartości w pobliżu wartości modalnej.
+
+
+
+Dla każdej iteracji generowano indywidualne czasy trwania poszczególnych czynności na podstawie danych wejściowych, a następnie wyznaczano całkowity czas realizacji projektu. Symulację powtórzono $10^7$ razy, co pozwoliło uzyskać reprezentatywny rozkład wyników.
+
+Na podstawie uzyskanych czasów utworzono histogram (rys. \ref{fig:hist_belman}), który przedstawia częstość występowania poszczególnych wartości czasu realizacji projektu. Na histogram nałożono również teoretyczny rozkład normalny o parametrach $\mu$ i~$\sigma$, obliczonych na podstawie uzyskanych danych:
+\[
+\mu = \frac{1}{n}\sum_{i=1}^{n} t_i, \qquad
+\sigma = \sqrt{\frac{1}{n}\sum_{i=1}^{n}(t_i - \mu)^2}.
+\]
+Wizualizacja wyników została przedstawiona na rysunku~\ref{fig:hist_belman}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{Figure_1.png}
+\caption{Histogram czasów trwania projektu dla wielokrotnych uruchomień algorytmu Belmana–Forda z losowo generowanymi czasami zadań.}
+\label{fig:hist_belman}
+\end{figure}
+
+\subsection{Interpretacja wyników}
+
+Uzyskany rozkład czasów realizacji projektu wykazuje wyraźne podobieństwo do rozkładu normalnego. Oznacza to, że przy dużej liczbie powtórzeń i~losowości czasów trwania poszczególnych czynności, łączny czas realizacji projektu dąży do wartości oczekiwanej, a odchylenia od niej są symetryczne i~mało prawdopodobne dla wartości skrajnych.
+
+Wartość średnia $\mu$ reprezentuje najbardziej prawdopodobny czas zakończenia projektu, natomiast odchylenie standardowe $\sigma$ określa zakres niepewności planu. Niewielka wartość $\sigma$ oznacza, że czasy trwania poszczególnych czynności mają ograniczony wpływ na całkowity czas projektu, natomiast duże $\sigma$ oznacza istotną zmienność i~ryzyko opóźnień.
+
+\subsection{Wnioski}
+
+\begin{itemize}
+    \item Rozkład czasów trwania projektu jest zbliżony do rozkładu normalnego, co potwierdza, że sumowanie wielu losowych czasów czynności prowadzi do rozkładu Gaussa (zgodnie z centralnym twierdzeniem granicznym).
+    \item Najbardziej prawdopodobny czas zakończenia projektu odpowiada wartości średniej $\mu$, natomiast odchylenie standardowe $\sigma$ pozwala ocenić ryzyko przekroczenia planowanego terminu.
+    \item Wyniki potwierdzają zasadność wykorzystania metody PERT i~symulacji Monte Carlo do szacowania niepewności harmonogramu projektu.
+    \item W praktyce analiza taka umożliwia określenie prawdopodobieństwa ukończenia projektu w~określonym terminie oraz identyfikację czynności najbardziej wpływających na całkowity czas realizacji.
+\end{itemize}
+\section{Podsumowanie}
+
+W ramach przeprowadzonych badań przeanalizowano dwie metody wyznaczania ścieżki krytycznej tj. algorytm Belmana–Forda oraz metoda PERT. Otrzymane wyniki potwierdziły, że algorytm Belmana–Forda charakteryzuje się większą wydajnością obliczeniową i krótszym czasem działania, co czyni go korzystnym rozwiązaniem w przypadkach, gdy czasy trwania czynności są znane i niezmienne.
+
+Z kolei metoda PERT, mimo większego narzutu obliczeniowego, pozwala na bardziej realistyczne modelowanie niepewności w planowaniu projektów. Dzięki uwzględnieniu trzech wartości czasów dla każdego zadania umożliwia określenie rozkładu prawdopodobieństwa całkowitego czasu realizacji projektu oraz ocenę ryzyka opóźnień.
+
+Analiza histogramu czasów trwania projektu uzyskanego metodą symulacji Monte Carlo wykazała, że rozkład wyników jest zbliżony do rozkładu normalnego, co potwierdza poprawność zastosowanego podejścia i zgodność z założeniami metody PERT.
+
+Podsumowując, wybór odpowiedniej metody zależy od celu analizy:
+\begin{itemize}
+    \item gdy priorytetem jest szybkość obliczeń i prostota implementacji — korzystniejszy jest algorytm Belmana–Forda,
+    \item gdy istotna jest ocena niepewności, ryzyka i zmienności czasów — lepszym wyborem jest metoda PERT wsparta symulacją Monte Carlo.
+\end{itemize}
+
+
+
+\end{document}

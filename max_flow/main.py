@@ -247,12 +247,12 @@ def ford_fulkerson(capacity, s, t):
     return max_flow, flow
 
 
-sizes = [20, 40, 60, 80, 100, 120, ]   # możesz dodać więcej np. do 500
+sizes = [20, 40, 60, 80, 100, 150, 200, 300, 400, 500, 600]   # możesz dodać więcej np. do 500
 times_ek = []
 times_dinic = []
 times_ff = []
-n=20
-while n < 100:
+
+for n in sizes:
     print(f"\nBadanie dla n = {n}...")
 
     g = generate_random_graph(n)
@@ -271,20 +271,30 @@ while n < 100:
     start = time.time()
     ford_fulkerson(g, 0, n - 1)
     times_ff.append(time.time() - start)
-    n+=20
 
 # ============================================================
-# RYSOWANIE WYKRESU
+# RYSOWANIE I ZAPIS WYKRESU
 # ============================================================
 
 plt.figure(figsize=(10, 6))
-plt.plot(sizes, times_ek, label="Edmonds–Karp")
-plt.plot(sizes, times_dinic, label="Dinic")
-plt.plot(sizes, times_ff, label="Ford–Fulkerson")
+plt.plot(sizes, times_ek, label="Edmonds–Karp", marker='o')
+plt.plot(sizes, times_dinic, label="Dinic", marker='s')
+plt.plot(sizes, times_ff, label="Ford–Fulkerson", marker='^')
 
 plt.xlabel("n (liczba wierzchołków)")
 plt.ylabel("czas wykonania [s]")
 plt.title("Porównanie algorytmów maksymalnego przepływu")
 plt.legend()
 plt.grid(True)
+
+# Zapis wykresu do pliku PNG
+plt.savefig('max_flow_chart.png', dpi=300, bbox_inches='tight')
+print("\n" + "="*60)
+print("Wykres został zapisany do pliku: max_flow_chart.png")
+print("="*60)
+print("Plik jest gotowy do użycia w sprawozdaniu LaTeX.")
+print("Upewnij się, że plik max_flow_chart.png znajduje się")
+print("w tym samym katalogu co plik main.tex")
+print("="*60 + "\n")
+
 plt.show()

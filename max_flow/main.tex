@@ -1,0 +1,253 @@
+\documentclass[12pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{newclude}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{indentfirst}
+\usepackage{multirow}
+\usepackage{pgfplots}
+\usepackage{tikz}
+ \usepackage{url}
+\usepackage{titlesec}
+\usepackage{pdfpages}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{subcaption}
+
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage{minted}
+\usepackage{tabularx}
+\lstdefinestyle{mystyle}{
+    belowcaptionskip=1\baselineskip,
+    frame=single, 
+    frameround=tttt,
+    xleftmargin=\parindent,
+    language=[x86masm]Assembler,
+    basicstyle=\footnotesize\ttfamily,
+    commentstyle=\itshape\color{green!60!black},
+    keywordstyle=\color{blue!80!black},
+    identifierstyle=\color{red!80!black},
+    tabsize=4,
+    numbers=left,
+    numbersep=8pt,
+    stepnumber=1,
+    numberstyle=\tiny\color{gray}, 
+    columns = fullflexible,
+}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{setspace} % Pakiet do ustawiania interlinii
+\onehalfspacing
+\begin{document}
+
+\begin{titlepage}
+		\begin{figure}[h]
+			\begin{minipage}[l]{.5\textwidth}%
+				\includegraphics[width=0.3\textwidth]{../pwr_logo}
+			\end{minipage}%
+			\begin{minipage}[r]{.5\textwidth}%
+				\includegraphics[width=1\textwidth]{../wit_logo}
+			\end{minipage}%
+		\end{figure}
+		
+		\vspace*{3mm}
+		
+		\begin{center}
+			\rule{\textwidth}{0.8pt}\\ 
+			\vspace*{6mm}
+			{\LARGE \textbf{Badania operacyjne i optymalizacja dyskretna}\\
+            
+            \vspace*{6mm}
+            
+            Algorytmy maksymalnego przepływu }\\
+            \vspace*{3mm}
+			\rule{\textwidth}{0.8pt}\\
+			
+			\vspace{1.5cm}
+			{\setstretch{2}
+				Politechnika Wrocławska
+				
+				Wydział Informatyki i Telekomunikacji
+				
+				Kierunek: Informatyczne Systemy Automatyki
+				
+				
+			}
+		\end{center}
+		
+		\vspace*{2cm}
+		
+		\begin{flushright}
+			{\setstretch{2}
+            	Konrad Pempera - $263948$\\
+				Dawid Różański - $263524$\\
+	
+                
+				\textbf{Termin zajęć}: Środa godz. $11^{\underline{15}}$ - $13^{\underline{00}}$ 
+				
+				\textbf{Prowadzący:} Dr inż. Mariusz Makuchowski
+				
+			}
+			
+		\end{flushright}
+		
+		\vfill
+		
+\end{titlepage}
+
+\tableofcontents
+\clearpage
+\section{Wstęp}
+
+Celem laboratorium było zaimplementowanie oraz porównanie trzech algorytmów wyznaczania maksymalnego przepływu w grafie skierowanym: algorytmu Edmondsa–Karpa, algorytmu Dinica oraz algorytmu Forda–Fulkersona.
+
+Problem maksymalnego przepływu jest jednym z fundamentalnych zagadnień teorii grafów i optymalizacji kombinatorycznej. Polega on na znalezieniu największej możliwej wartości przepływu, który można przesłać z wierzchołka źródłowego do wierzchołka docelowego w sieci, przy uwzględnieniu ograniczeń przepustowości krawędzi. Problem ten znajduje szerokie zastosowanie w praktyce, m.in. w planowaniu tras w sieciach telekomunikacyjnych, optymalizacji przepływu w sieciach transportowych, dopasowywaniu w grafach dwudzielnych oraz w wielu innych dziedzinach.
+
+Algorytm Edmondsa–Karpa jest wariantem metody Forda–Fulkersona, który wykorzystuje przeszukiwanie wszerz (BFS) do znajdowania ścieżek powiększających. Gwarantuje on złożoność czasową $O(VE^2)$, gdzie $V$ to liczba wierzchołków, a $E$ to liczba krawędzi. Algorytm Dinica jest bardziej zaawansowaną metodą, która buduje graf poziomów i wysyła przepływ w wielu ścieżkach jednocześnie, osiągając złożoność $O(V^2E)$. Algorytm Forda–Fulkersona w wersji z przeszukiwaniem w głąb (DFS) ma teoretycznie nieograniczoną złożoność $O(E \cdot f_{max})$, gdzie $f_{max}$ to wartość maksymalnego przepływu, co może prowadzić do bardzo długich czasów wykonania dla niektórych instancji problemu.
+
+W pracy przeprowadzono pomiary czasów wykonania wszystkich trzech algorytmów w zależności od rozmiaru grafu. Grafy testowe były generowane losowo jako macierze sąsiedztwa z określoną gęstością krawędzi i losowymi przepustowościami. Eksperymenty obejmowały grafy o rozmiarach od 20 do 200 wierzchołków.
+
+\newpage
+
+\section{Opis implementacji algorytmów}
+
+\subsection{Algorytm Edmondsa–Karpa}
+
+Algorytm Edmondsa–Karpa jest wariantem metody Forda–Fulkersona, który wykorzystuje przeszukiwanie wszerz (BFS) do znajdowania najkrótszych ścieżek powiększających w grafie residualnym. Kluczową zaletą tego podejścia jest gwarancja, że algorytm zakończy działanie w skończonym czasie, nawet dla grafów z irracjonalnymi przepustowościami.
+
+Algorytm działa w następujący sposób:
+\begin{enumerate}
+    \item Inicjalizacja: wszystkie wartości przepływu są ustawione na 0.
+    \item Dopóki istnieje ścieżka powiększająca od źródła do ujścia:
+    \begin{itemize}
+        \item Użyj BFS do znalezienia najkrótszej ścieżki powiększającej w grafie residualnym.
+        \item Znajdź minimalną przepustowość residualną na tej ścieżce (wartość, o którą można zwiększyć przepływ).
+        \item Zwiększ przepływ wzdłuż ścieżki o znalezioną wartość.
+        \item Zaktualizuj graf residualny (zmniejsz przepustowość w kierunku przepływu, zwiększ w kierunku przeciwnym).
+    \end{itemize}
+    \item Zwróć wartość maksymalnego przepływu.
+\end{enumerate}
+
+Złożoność czasowa algorytmu wynosi $O(VE^2)$, gdzie $V$ to liczba wierzchołków, a $E$ to liczba krawędzi. W implementacji wykorzystano kolejkę (deque) do realizacji BFS oraz macierz do przechowywania przepustowości i przepływów.
+
+\subsection{Algorytm Dinica}
+
+Algorytm Dinica jest bardziej zaawansowaną metodą wyznaczania maksymalnego przepływu, która wykorzystuje koncepcję grafu poziomów. Dzięki temu może wysyłać przepływ wzdłuż wielu ścieżek jednocześnie w jednej iteracji, co prowadzi do lepszej wydajności w praktyce.
+
+Algorytm składa się z dwóch głównych faz:
+\begin{enumerate}
+    \item \textbf{Budowa grafu poziomów:} Użyj BFS do przypisania każdemu wierzchołkowi poziomu (odległości od źródła w grafie residualnym). Graf poziomów zawiera tylko te krawędzie, które prowadzą do wierzchołków na następnym poziomie.
+    \item \textbf{Wysyłanie przepływu:} Użyj DFS do wysłania maksymalnego możliwego przepływu wzdłuż ścieżek w grafie poziomów. Proces ten powtarza się, dopóki nie można już wysłać więcej przepływu w aktualnym grafie poziomów.
+    \item Powtarzaj fazy 1 i 2, dopóki istnieje ścieżka od źródła do ujścia w grafie residualnym.
+\end{enumerate}
+
+Kluczową optymalizacją w algorytmie Dinica jest użycie wskaźnika \texttt{next\_edge}, który zapobiega wielokrotnemu sprawdzaniu tych samych krawędzi w jednej iteracji DFS. Złożoność czasowa wynosi $O(V^2E)$, co w praktyce często okazuje się lepsze niż $O(VE^2)$ algorytmu Edmondsa–Karpa, szczególnie dla gęstych grafów.
+
+\subsection{Algorytm Forda–Fulkersona (DFS)}
+
+Algorytm Forda–Fulkersona w wersji z przeszukiwaniem w głąb (DFS) jest najprostszą implementacją metody znajdowania maksymalnego przepływu. W przeciwieństwie do algorytmu Edmondsa–Karpa, nie gwarantuje on użycia najkrótszych ścieżek, co może prowadzić do bardzo długich czasów wykonania.
+
+Algorytm działa następująco:
+\begin{enumerate}
+    \item Inicjalizacja: wszystkie wartości przepływu są ustawione na 0.
+    \item Dopóki istnieje ścieżka powiększająca:
+    \begin{itemize}
+        \item Użyj DFS do znalezienia dowolnej ścieżki powiększającej od źródła do ujścia.
+        \item Znajdź minimalną przepustowość residualną na tej ścieżce.
+        \item Zwiększ przepływ wzdłuż ścieżki o znalezioną wartość.
+        \item Zaktualizuj graf residualny.
+    \end{itemize}
+    \item Zwróć wartość maksymalnego przepływu.
+\end{enumerate}
+
+Złożoność czasowa algorytmu wynosi $O(E \cdot f_{max})$, gdzie $f_{max}$ to wartość maksymalnego przepływu. W najgorszym przypadku, gdy przepustowości są duże, algorytm może wykonać bardzo wiele iteracji, co czyni go niepraktycznym dla niektórych instancji problemu. W implementacji wykorzystano rekurencyjne przeszukiwanie w głąb z tablicą odwiedzonych wierzchołków.
+
+\subsection{Reprezentacja grafu i generowanie instancji}
+
+Problem został zaimplementowany przy użyciu macierzy sąsiedztwa, gdzie każda komórka $graph[i][j]$ reprezentuje przepustowość krawędzi od wierzchołka $i$ do wierzchołka $j$. Wartość 0 oznacza brak krawędzi. Macierz przepływów jest przechowywana osobno i aktualizowana podczas działania algorytmów.
+
+Do eksperymentów wykorzystano losowo generowane grafy za pomocą funkcji \texttt{generate\_random\_graph(n, max\_capacity=20, density=0.3)}, która:
+\begin{itemize}
+    \item Tworzy graf o $n$ wierzchołkach.
+    \item Dla każdej pary wierzchołków $(i, j)$, gdzie $i \neq j$, z prawdopodobieństwem równym \texttt{density} (0.3) tworzy krawędź o losowej przepustowości z zakresu $[1, max\_capacity]$.
+    \item Dla grafu o $n$ wierzchołkach i gęstości 0.3, oczekiwana liczba krawędzi wynosi około $E \approx 0.3 \cdot n^2$.
+\end{itemize}
+
+Wszystkie testy przeprowadzono dla grafów, w których źródłem jest wierzchołek 0, a ujściem wierzchołek $n-1$.
+
+\section{Pomiary czasów}
+
+\subsection{Analiza wyników pomiarów czasu wykonania}
+
+Na rysunku \ref{fig:max_flow_chart} przedstawiono porównanie czasów wykonania trzech algorytmów maksymalnego przepływu dla grafów o rozmiarach od 20 do 200 wierzchołków. Każdy pomiar został wykonany na losowo generowanych instancjach problemu z gęstością krawędzi 0.3 i maksymalną przepustowością 20.
+
+Z wykresu wynika, że czas wykonania wszystkich trzech algorytmów rośnie wraz ze wzrostem rozmiaru grafu, co jest zgodne z ich teoretyczną złożonością obliczeniową. Dla małych grafów (do około 60 wierzchołków) różnice w wydajności między algorytmami są stosunkowo niewielkie. Jednak wraz ze wzrostem rozmiaru problemu różnice te stają się coraz bardziej wyraźne.
+
+Algorytm Dinica wykazuje najlepszą wydajność dla większości badanych rozmiarów grafów. Dla grafów o rozmiarze 200 wierzchołków algorytm Dinica osiąga czas wykonania znacznie krótszy niż pozostałe dwa algorytmy. Ta przewaga wynika z faktu, że algorytm Dinica może wysyłać przepływ wzdłuż wielu ścieżek jednocześnie w jednej iteracji, co redukuje liczbę potrzebnych iteracji w porównaniu do algorytmu Edmondsa–Karpa.
+
+Algorytm Edmondsa–Karpa wykazuje stabilną wydajność, która jest gorsza niż Dinica, ale lepsza niż Ford–Fulkerson (DFS) dla większości instancji. Jego przewidywalność wynika z gwarancji użycia najkrótszych ścieżek powiększających.
+
+Algorytm Forda–Fulkersona (DFS) okazuje się najwolniejszy dla większości badanych rozmiarów grafów. Jego wydajność jest szczególnie słaba dla większych grafów, co wynika z możliwości wyboru długich ścieżek powiększających, co prowadzi do dużej liczby iteracji.
+
+\newpage
+
+\subsection{Wnioski}
+
+\begin{itemize}
+    \item Czas wykonania wszystkich trzech algorytmów rośnie wraz ze wzrostem rozmiaru grafu, co jest zgodne z ich teoretyczną złożonością obliczeniową.
+    \item Algorytm Dinica jest najszybszy dla większości badanych instancji problemu, szczególnie dla większych grafów, co wynika z możliwości równoległego wysyłania przepływu wzdłuż wielu ścieżek.
+    \item Algorytm Edmondsa–Karpa oferuje dobry kompromis między prostotą implementacji a wydajnością, gwarantując przy tym przewidywalne czasy wykonania.
+    \item Algorytm Forda–Fulkersona (DFS) jest najwolniejszy i może być niepraktyczny dla większych grafów ze względu na możliwość wyboru długich ścieżek powiększających.
+    \item Dla małych grafów (poniżej 60 wierzchołków) różnice w wydajności są niewielkie, jednak dla większych instancji wybór odpowiedniego algorytmu ma istotne znaczenie.
+    \item W zastosowaniach praktycznych, gdzie priorytetem jest szybkość obliczeń, najlepszym wyborem jest algorytm Dinica. W przypadku gdy istotna jest prostota implementacji i przewidywalność, algorytm Edmondsa–Karpa pozostaje solidnym rozwiązaniem.
+\end{itemize}
+
+\subsection{Porównanie złożoności obliczeniowej}
+
+Algorytm Edmondsa–Karpa posiada złożoność czasową rzędu $O(VE^2)$, gdzie $V$ oznacza liczbę wierzchołków, a $E$ liczbę krawędzi w grafie. W każdej iteracji algorytm wykonuje BFS, który ma złożoność $O(E)$, a liczba iteracji jest ograniczona przez $O(VE)$, co daje łączną złożoność $O(VE^2)$. Dla grafu o $n$ wierzchołkach i gęstości 0.3 mamy $E \approx 0.3 \cdot n^2$, co daje złożoność około $O(n^4)$.
+
+Algorytm Dinica ma złożoność czasową $O(V^2E)$. Budowa grafu poziomów wymaga $O(E)$ operacji, a wysyłanie przepływu w jednej fazie może wymagać $O(VE)$ operacji. Liczba faz jest ograniczona przez $O(V)$, co daje łączną złożoność $O(V^2E)$. Dla grafu o $n$ wierzchołkach i gęstości 0.3 otrzymujemy złożoność około $O(n^4)$, jednak ze znacznie mniejszą stałą ukrytą w notacji niż w przypadku algorytmu Edmondsa–Karpa.
+
+Algorytm Forda–Fulkersona (DFS) ma złożoność czasową $O(E \cdot f_{max})$, gdzie $f_{max}$ to wartość maksymalnego przepływu. W najgorszym przypadku, gdy przepustowości są duże, $f_{max}$ może być bardzo duże, co prowadzi do wykładniczej złożoności w stosunku do rozmiaru danych wejściowych. W praktyce, dla losowo generowanych grafów, algorytm ten często działa wolniej niż pozostałe dwa, szczególnie dla większych instancji.
+
+W efekcie, choć algorytmy Edmondsa–Karpa i Dinica mają podobną asymptotyczną złożoność dla gęstych grafów, algorytm Dinica jest szybszy w praktyce dzięki możliwości równoległego przetwarzania wielu ścieżek. Algorytm Forda–Fulkersona (DFS) ma gorszą złożoność teoretyczną i praktyczną, co czyni go mniej atrakcyjnym dla większości zastosowań.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{max_flow_chart.png}
+    \caption{Porównanie czasów wykonania algorytmów maksymalnego przepływu: Edmondsa–Karpa, Dinica oraz Forda–Fulkersona w zależności od liczby wierzchołków grafu}
+    \label{fig:max_flow_chart}
+\end{figure}
+
+\vspace{-10mm}
+\section{Podsumowanie}
+
+W ramach przeprowadzonych badań przeanalizowano trzy algorytmy wyznaczania maksymalnego przepływu w grafie skierowanym: algorytm Edmondsa–Karpa, algorytm Dinica oraz algorytm Forda–Fulkersona (DFS). Otrzymane wyniki pozwoliły na ocenę wydajności różnych podejść do rozwiązania tego fundamentalnego problemu optymalizacji kombinatorycznej.
+
+Algorytm Edmondsa–Karpa, będący wariantem metody Forda–Fulkersona z wykorzystaniem BFS, charakteryzuje się prostotą implementacji i gwarantuje znalezienie maksymalnego przepływu w czasie $O(VE^2)$. Jego przewidywalność i stabilność czynią go solidnym wyborem w wielu zastosowaniach praktycznych.
+
+Algorytm Dinica, wykorzystujący koncepcję grafu poziomów i możliwość równoległego wysyłania przepływu, okazał się najszybszy w przeprowadzonych eksperymentach. Jego złożoność $O(V^2E)$ w praktyce przekłada się na lepszą wydajność niż algorytm Edmondsa–Karpa, szczególnie dla większych grafów. Dla grafów o rozmiarze 200 wierzchołków algorytm Dinica wykazywał wyraźną przewagę nad pozostałymi metodami.
+
+Algorytm Forda–Fulkersona (DFS), pomimo swojej prostoty koncepcyjnej, okazał się najwolniejszy w praktyce. Jego złożoność $O(E \cdot f_{max})$ może prowadzić do bardzo długich czasów wykonania, szczególnie gdy przepustowości krawędzi są duże. W pomiarach dla większych grafów algorytm ten był znacznie wolniejszy od pozostałych dwóch metod.
+
+Podsumowując, wybór odpowiedniego algorytmu zależy od charakterystyki problemu:
+\begin{itemize}
+    \item Gdy priorytetem jest maksymalna wydajność — korzystniejszy jest algorytm Dinica.
+    \item Gdy istotna jest prostota implementacji i przewidywalność — lepszym wyborem jest algorytm Edmondsa–Karpa.
+    \item Algorytm Forda–Fulkersona (DFS) jest praktyczny głównie dla małych instancji lub gdy wymagana jest minimalna złożoność implementacyjna.
+\end{itemize}
+
+Wyniki badań potwierdzają, że teoretyczna analiza złożoności obliczeniowej znajduje odzwierciedlenie w praktycznych pomiarach wydajności, a wybór odpowiedniego algorytmu ma istotne znaczenie dla efektywności rozwiązania problemu maksymalnego przepływu.
+
+
+
+\end{document}
