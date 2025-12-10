@@ -595,14 +595,17 @@ def tsp_2opt(matrix, initial_path=None):
     4. Powtarza krok 2-3 aż nie można już poprawić trasy
     
     Parametry:
-        matrix: macierz kosztów przejść między miastami
+        matrix: macierz kosztów przejść między miastami (powinna być symetryczna)
         initial_path: opcjonalna początkowa trasa (lista indeksów miast).
                      Jeśli None, używa trasy sekwencyjnej.
     
     Złożoność czasowa: O(n^2) na iterację, liczba iteracji zależy od danych
     
-    Uwaga: Jest to algorytm heurystyczny znajdujący optimum lokalne.
-    Wynik zależy od początkowej trasy.
+    Uwaga: 
+    - Jest to algorytm heurystyczny znajdujący optimum lokalne.
+    - Wynik zależy od początkowej trasy.
+    - Algorytm jest przeznaczony dla symetrycznego TSP (matrix[i][j] == matrix[j][i]).
+      Dla asymetrycznego TSP może dawać niepoprawne wyniki.
     """
     n = len(matrix)
     if n == 0:
@@ -629,6 +632,8 @@ def tsp_2opt(matrix, initial_path=None):
         # Sprawdź wszystkie możliwe pary krawędzi do zamiany
         # W przypadku cyklu o długości n+1 (gdzie ostatni element = pierwszy),
         # sprawdzamy krawędzie od 0 do n-1
+        # Dla n miast mamy n krawędzi (indeksy 0 do n-1)
+        # i może być od 0 do n-2, j od i+2 do n-1 (aby krawędzie nie były sąsiednie)
         for i in range(n - 1):
             if improved:
                 break
