@@ -14,28 +14,26 @@ import math
 import time
 import sys
 
+# Import funkcji pomocniczych
+from data_utils import (
+    tsp_rand,
+    generate_tsp_data,
+    load_cost_matrix,
+    load_cost_matrix_raw,
+    save_cost_matrix,
+    load_coordinates_raw,
+    print_matrix,
+    verify_solution
+)
 
-# ============================================================
-# GENEROWANIE DANYCH TSP
-# ============================================================
-def tsp_rand(size, seed):
-    """
-    Generuje macierz kosztów dla problemu TSP.
-    Wykorzystuje pseudolosowy generator z podanym seedem.
-    """
-    print(f"data: {size}")
-    matrix = []
-    for a in range(size):
-        row = []
-        for b in range(size):
-            seed = (seed * 69069 + 1) & 0xFFFFFFFF
-            d = (seed % 99 + 1) * (a != b)
-            print('{:2d}'.format(d), end=" ")
-            row.append(d)
-        print()
-        matrix.append(row)
-    print()
-    return matrix, seed
+# Import algorytmów
+from bruteforce import tsp_bruteforce
+from branch_and_bound import tsp_branch_and_bound
+from dynamic_programming import tsp_dynamic_programming
+from nearest_neighbor import tsp_nearest_neighbor, tsp_nearest_neighbor_best
+from sequential import tsp_123
+from farthest_insertion import tsp_farthest_insertion
+from two_opt import tsp_2opt
 
 
 def generate_tsp_data(size, seed):
@@ -966,3 +964,7 @@ if __name__ == "__main__":
     print(f"Nearest Neighbor Best: {nnb_cost} (poprawa o {seq_cost - nnb_cost}, {100*(seq_cost - nnb_cost)/seq_cost:.1f}%)")
     print(f"Farthest Insertion: {fi_cost} (poprawa o {seq_cost - fi_cost}, {100*(seq_cost - fi_cost)/seq_cost:.1f}%)")
     print(f"Two opt: {opt2_cost} (poprawa o {nn_cost - opt2_cost}, {100*(nn_cost-opt2_cost)/fi_cost:.1f}%)")
+
+    for i in range(0,10):
+        x = 10000.2+i
+        print(f"{x:.30}")
