@@ -866,3 +866,7 @@ if __name__ == "__main__":
     print(f"Nearest Neighbor: {nn_cost} (poprawa o {seq_cost - nn_cost}, {100*(seq_cost - nn_cost)/seq_cost:.1f}%)")
     print(f"Nearest Neighbor Best: {nnb_cost} (poprawa o {seq_cost - nnb_cost}, {100*(seq_cost - nnb_cost)/seq_cost:.1f}%)")
     print(f"Farthest Insertion: {fi_cost} (poprawa o {seq_cost - fi_cost}, {100*(seq_cost - fi_cost)/seq_cost:.1f}%)")
+
+    for i in range(0,10):
+        x = 10000.2+i
+        print(f"{x:.30}")
