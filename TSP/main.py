@@ -952,13 +952,17 @@ if __name__ == "__main__":
     print(f"Ścieżka: {fi_path}")
     print(f"Czas: {elapsed:.6f} s")
 
+
+    #2opt
+    start_time = time.time()
+    opt2_cost, opt2_time = tsp_2opt(coords_matrix,nn_path)
+    elapsed = time.time() - start_time
+
+
     # Porównanie
     print(f"\n--- Porównanie dla danych ze współrzędnymi (n={len(coords)}) ---")
     print(f"Algorytm 123: {seq_cost}")
     print(f"Nearest Neighbor: {nn_cost} (poprawa o {seq_cost - nn_cost}, {100*(seq_cost - nn_cost)/seq_cost:.1f}%)")
     print(f"Nearest Neighbor Best: {nnb_cost} (poprawa o {seq_cost - nnb_cost}, {100*(seq_cost - nnb_cost)/seq_cost:.1f}%)")
     print(f"Farthest Insertion: {fi_cost} (poprawa o {seq_cost - fi_cost}, {100*(seq_cost - fi_cost)/seq_cost:.1f}%)")
-
-    for i in range(0,10):
-        x = 10000.2+i
-        print(f"{x:.30}")
+    print(f"Two opt: {opt2_cost} (poprawa o {nn_cost - opt2_cost}, {100*(nn_cost-opt2_cost)/fi_cost:.1f}%)")
