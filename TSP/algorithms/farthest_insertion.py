@@ -93,3 +93,4 @@ def tsp_farthest_insertion(matrix):
     
     return total_cost, tour
 
+
