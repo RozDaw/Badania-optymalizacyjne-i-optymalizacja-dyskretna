@@ -9,10 +9,13 @@ Dostępne algorytmy:
 5. Algorytm 123 (trasa sekwencyjna)
 6. Farthest Insertion (algorytm wstawiania najdalszego)
 7. 2-opt (algorytm poprawy dwu-optymalnej)
+8. Tabu Search (przeszukiwanie tabu)
+9. Simulated Annealing (symulowane wyżarzanie)
 
 Użycie:
     python main.py              - uruchom demonstrację algorytmów
     python main.py --benchmark  - uruchom benchmarki z wykresami
+    python main.py --experiments - uruchom eksperymenty badawcze (tylko wybrane algorytmy)
 """
 import sys
 import time
@@ -30,13 +33,15 @@ from data_utils import (
 )
 
 # Import algorytmów
-from bruteforce import tsp_bruteforce
-from branch_and_bound import tsp_branch_and_bound
-from dynamic_programming import tsp_dynamic_programming
-from nearest_neighbor import tsp_nearest_neighbor, tsp_nearest_neighbor_best
-from sequential import tsp_123
-from farthest_insertion import tsp_farthest_insertion
-from two_opt import tsp_2opt
+from algorithms.bruteforce import tsp_bruteforce
+from algorithms.branch_and_bound import tsp_branch_and_bound
+from algorithms.dynamic_programming import tsp_dynamic_programming
+from algorithms.nearest_neighbor import tsp_nearest_neighbor, tsp_nearest_neighbor_best
+from algorithms.sequential import tsp_123
+from algorithms.farthest_insertion import tsp_farthest_insertion
+from algorithms.two_opt import tsp_2opt
+from algorithms.tabu_search import tsp_tabu_search
+from algorithms.simulated_annealing import tsp_simulated_annealing_fast
 
 
 def run_demo_random_matrix():
@@ -159,6 +164,67 @@ def run_demo_random_matrix():
     return results
 
 
+def run_demo_metaheuristics():
+    """Demonstracja metaheurystyk na losowej macierzy kosztów."""
+    print("\n" + "=" * 60)
+    print("DEMONSTRACJA METAHEURYSTYK (Tabu Search & Simulated Annealing)")
+    print("=" * 60)
+    
+    # Generuj macierz testową
+    size = 20
+    test_matrix, _ = generate_tsp_data(size, seed=42)
+    print(f"\nMacierz testowa ({size}x{size})")
+    
+    results = {}
+    
+    # Nearest Neighbor jako baseline
+    print("\n--- Nearest Neighbor (baseline) ---")
+    start_time = time.time()
+    nn_cost, nn_path = tsp_nearest_neighbor(test_matrix)
+    nn_time = time.time() - start_time
+    print(f"Koszt: {nn_cost}")
+    print(f"Czas: {nn_time:.6f} s")
+    results['Nearest Neighbor'] = (nn_cost, nn_path, nn_time)
+    
+    # Tabu Search
+    print("\n--- Tabu Search ---")
+    print("Parametry: max_iterations=200, tabu_size=10")
+    start_time = time.time()
+    ts_cost, ts_path = tsp_tabu_search(test_matrix, nn_path, max_iterations=200, tabu_size=10)
+    ts_time = time.time() - start_time
+    print(f"Koszt: {ts_cost}")
+    print(f"Czas: {ts_time:.6f} s")
+    results['Tabu Search'] = (ts_cost, ts_path, ts_time)
+    
+    # Simulated Annealing
+    print("\n--- Simulated Annealing ---")
+    start_time = time.time()
+    sa_cost, sa_path = tsp_simulated_annealing_fast(test_matrix, nn_path)
+    sa_time = time.time() - start_time
+    print(f"Koszt: {sa_cost}")
+    print(f"Czas: {sa_time:.6f} s")
+    results['Simulated Annealing'] = (sa_cost, sa_path, sa_time)
+    
+    # Porównanie
+    print("\n" + "=" * 60)
+    print("PORÓWNANIE METAHEURYSTYK")
+    print("=" * 60)
+    baseline = nn_cost
+    best = min(r[0] for r in results.values())
+    print(f"Koszt bazowy (NN): {baseline}")
+    print(f"Najlepszy koszt: {best}")
+    print()
+    for name, (cost, _, exec_time) in results.items():
+        improvement = baseline - cost
+        improvement_pct = 100 * improvement / baseline if baseline > 0 else 0
+        diff_from_best = cost - best
+        diff_from_best_pct = 100 * diff_from_best / best if best > 0 else 0
+        print(f"{name:25s}: {cost:5d} (poprawa vs NN: {improvement_pct:+6.1f}%, " 
+              f"różnica od best: {diff_from_best_pct:+5.1f}%) - {exec_time:.6f}s")
+    
+    return results
+
+
 def run_demo_coordinates():
     """Demonstracja algorytmów na danych ze współrzędnymi."""
     print("\n" + "=" * 60)
@@ -232,6 +298,12 @@ def run_benchmarks():
     run_all_benchmarks()
 
 
+def run_experiments():
+    """Uruchamia eksperymenty badawcze."""
+    from run_experiments import run_experiments as run_exp
+    run_exp()
+
+
 def print_help():
     """Wyświetla pomoc."""
     print(__doc__)
@@ -242,6 +314,8 @@ if __name__ == "__main__":
         arg = sys.argv[1].lower()
         if arg in ['--benchmark', '-b', 'benchmark']:
             run_benchmarks()
+        elif arg in ['--experiments', '-e', 'experiments']:
+            run_experiments()
         elif arg in ['--help', '-h', 'help']:
             print_help()
         else:
@@ -250,9 +324,14 @@ if __name__ == "__main__":
     else:
         # Domyślnie uruchom demonstracje
         run_demo_random_matrix()
+        run_demo_metaheuristics()
         run_demo_coordinates()
         
         print("\n" + "=" * 60)
         print("Aby uruchomić benchmarki z wykresami:")
         print("  python main.py --benchmark")
+        print()
+        print("Aby uruchomić eksperymenty badawcze:")
+        print("  python main.py --experiments")
         print("=" * 60)
+
