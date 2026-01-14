@@ -81,23 +81,19 @@ def tsp_simulated_annealing(matrix, initial_path=None, initial_temp=1000,
     
     # Główna pętla algorytmu
     while temperature > min_temp:
-        # Generuj losowe ruchy swap
+        # Generuj losowe ruchy swap (wybierz dwa różne miasta)
         i = random.randint(1, n - 1)
         j = random.randint(1, n - 1)
         
-        if i == j or i >= len(path) - 1 or j >= len(path) - 1:
+        # Upewnij się, że i < j i różne
+        if i == j:
             temperature *= cooling_rate
             continue
-        
         if i > j:
             i, j = j, i
         
         # Oblicz zmianę kosztu
         delta = calculate_swap_delta(path, i, j)
-        
-        if delta == float('inf'):
-            temperature *= cooling_rate
-            continue
         
         # Kryterium akceptacji
         accept = False
@@ -187,21 +183,17 @@ def tsp_simulated_annealing_adaptive(matrix, initial_path=None, max_iterations=1
     temperature = initial_temp
     
     for iteration in range(max_iterations):
+        # Generuj losowe ruchy swap (wybierz dwa różne miasta)
         i = random.randint(1, n - 1)
         j = random.randint(1, n - 1)
         
-        if i == j or i >= len(path) - 1 or j >= len(path) - 1:
+        if i == j:
             temperature *= cooling_rate
             continue
-        
         if i > j:
             i, j = j, i
         
         delta = calculate_swap_delta(path, i, j)
-        
-        if delta == float('inf'):
-            temperature *= cooling_rate
-            continue
         
         accept = delta < 0 or random.random() < math.exp(-delta / temperature)
         

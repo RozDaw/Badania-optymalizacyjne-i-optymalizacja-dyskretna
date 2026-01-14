@@ -111,6 +111,8 @@ def tsp_tabu_search(matrix, initial_path=None, max_iterations=1000, tabu_size=10
                 new_cost = current_cost + delta
                 
                 is_tabu = move in tabu_list
+                # Kryterium aspiracji: pozwala na ruch z listy tabu,
+                # jeśli prowadzi do najlepszego dotychczas rozwiązania globalnego
                 aspiration_criterion = new_cost < best_cost
                 
                 if (not is_tabu or aspiration_criterion) and new_cost < best_move_cost:
