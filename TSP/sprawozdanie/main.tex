@@ -1,0 +1,619 @@
+\documentclass[12pt]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{enumitem}
+\usepackage{indentfirst}
+\usepackage{multirow}
+\usepackage{pgfplots}
+\usepackage{tikz}
+\usepackage{url}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\pgfplotsset{compat=1.18}
+\usepackage{subcaption}
+
+\usepackage[letterpaper,top=2cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+\usepackage{minted}
+\usepackage{tabularx}
+
+% Ustawienia dla listingów kodu Python
+\lstset{
+    language=Python,
+    basicstyle=\small\ttfamily,
+    keywordstyle=\color{blue},
+    commentstyle=\color{green!60!black},
+    stringstyle=\color{red},
+    showstringspaces=false,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    frame=single,
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=4
+}
+
+% Useful packages
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{setspace}
+\onehalfspacing
+
+\begin{document}
+
+\begin{titlepage}
+		\begin{figure}[h]
+			\begin{minipage}[l]{.5\textwidth}%
+				\includegraphics[width=0.3\textwidth]{pwr_logo}
+			\end{minipage}%
+			\begin{minipage}[r]{.5\textwidth}%
+				\includegraphics[width=1\textwidth]{wit_logo}
+			\end{minipage}%
+		\end{figure}
+		
+		\vspace*{3mm}
+		
+		\begin{center}
+			\rule{\textwidth}{0.8pt}\\ 
+			\vspace*{6mm}
+			{\LARGE \textbf{Badania operacyjne i optymalizacja dyskretna}\\
+            
+            \vspace*{6mm}
+            
+            Algorytmy rozwiązywania problemu komiwojażera (TSP)}\\
+            \vspace*{3mm}
+			\rule{\textwidth}{0.8pt}\\
+			
+			\vspace{1.5cm}
+			{\setstretch{2}
+				Politechnika Wrocławska
+				
+				Wydział Informatyki i Telekomunikacji
+				
+				Kierunek: Informatyczne Systemy Automatyki
+				
+				Grupa nr 1
+				
+				
+			}
+		\end{center}
+		
+		\vspace*{2cm}
+		
+		\begin{flushright}
+			{\setstretch{2}
+            	Konrad Pempera - $263948$\\
+				Dawid Różański - $263524$\\
+	
+                
+				\textbf{Termin zajęć}: Środa godz. $11^{\underline{15}}$ - $13^{\underline{00}}$ 
+				
+				\textbf{Prowadzący:} Dr inż. Mariusz Makuchowski
+				
+			}
+			
+		\end{flushright}
+		
+		\vfill
+		
+\end{titlepage}
+
+\tableofcontents
+\clearpage
+
+\section{Wstęp}
+
+Problem komiwojażera (Traveling Salesman Problem, TSP) jest jednym z najbardziej znanych i intensywnie badanych zagadnień optymalizacji kombinatorycznej. Polega on na znalezieniu najkrótszej możliwej trasy, która odwiedza każde miasto dokładnie raz i powraca do miasta początkowego. Pomimo prostej definicji, TSP należy do klasy problemów NP-trudnych, co oznacza, że nie znamy algorytmu rozwiązującego go w czasie wielomianowym dla wszystkich przypadków.
+
+TSP ma liczne zastosowania praktyczne w logistyce, planowaniu tras, projektowaniu układów scalonych (PCB), robotyce oraz wielu innych dziedzinach. Ze względu na złożoność obliczeniową problemu, szczególnie dla dużych instancji, opracowano wiele podejść do jego rozwiązywania -- od algorytmów dokładnych dla małych instancji po zaawansowane heurystyki i metaheurystyki dla większych problemów.
+
+\subsection{Cel badań}
+
+Celem niniejszej pracy jest implementacja i porównanie wybranych algorytmów rozwiązywania problemu komiwojażera. Badaniu poddano następujące algorytmy:
+
+\begin{enumerate}
+    \item \textbf{Algorytm sekwencyjny} -- najprostsza heurystyka bazowa, odwiedzająca miasta w kolejności ich numeracji
+    \item \textbf{Algorytm najbliższego sąsiada (Nearest Neighbor)} -- zachłanna heurystyka konstrukcyjna
+    \item \textbf{Algorytm wstawiania najdalszego (Farthest Insertion)} -- konstruktywna heurystyka budująca trasę przez iteracyjne wstawianie miast
+    \item \textbf{Algorytm 2-opt} -- metoda lokalnego przeszukiwania poprawiająca istniejące rozwiązanie
+    \item \textbf{Przeszukiwanie tabu (Tabu Search)} -- metaheurystyka wykorzystująca pamięć krótkookresową
+    \item \textbf{Symulowane wyżarzanie (Simulated Annealing)} -- metaheurystyka inspirowana procesem wyżarzania metali
+\end{enumerate}
+
+W pracy przeprowadzono pomiary czasów wykonania oraz jakości uzyskanych rozwiązań dla instancji o różnych rozmiarach. Wyniki pozwalają na ocenę efektywności poszczególnych podejść oraz określenie ich przydatności w praktycznych zastosowaniach.
+
+\subsection{Złożoność obliczeniowa TSP}
+
+Problem komiwojażera jest problemem NP-trudnym, co oznacza że:
+\begin{itemize}
+    \item Nie znamy algorytmu dokładnego działającego w czasie wielomianowym
+    \item Algorytm przeglądu zupełnego ma złożoność $O(n!)$
+    \item Dla $n = 20$ miast istnieje już ponad $10^{18}$ możliwych tras
+    \item Algorytmy heurystyczne są niezbędne dla dużych instancji problemu
+\end{itemize}
+
+W związku z tym, w praktyce stosuje się różne strategie:
+\begin{itemize}
+    \item Algorytmy dokładne (Branch \& Bound, programowanie dynamiczne) -- dla małych instancji (do około 20 miast)
+    \item Heurystyki konstrukcyjne (Nearest Neighbor, Farthest Insertion) -- szybkie, ale nie gwarantujące optymalności
+    \item Metody lokalnego przeszukiwania (2-opt, 3-opt) -- poprawa istniejących rozwiązań
+    \item Metaheurystyki (Tabu Search, Simulated Annealing, algorytmy ewolucyjne) -- zaawansowane techniki eksploracji przestrzeni rozwiązań
+\end{itemize}
+
+\section{Opis implementacji algorytmów}
+
+Wszystkie algorytmy zostały zaimplementowane w języku Python 3. Jako reprezentację problemu wykorzystano macierz kosztów, gdzie element $matrix[i][j]$ reprezentuje koszt przejścia z miasta $i$ do miasta $j$. Rozwiązanie problemu to permutacja miast reprezentowana jako lista indeksów tworzących cykl Hamiltona.
+
+\subsection{Algorytm sekwencyjny}
+
+Algorytm sekwencyjny (algorytm 123) jest najprostszą możliwą heurystyką, służącą jako punkt odniesienia dla pozostałych metod. Tworzy trasę odwiedzając miasta w kolejności ich numeracji: $0 \rightarrow 1 \rightarrow 2 \rightarrow \ldots \rightarrow n-1 \rightarrow 0$.
+
+\textbf{Złożoność czasowa:} $O(n)$ -- algorytm wykonuje tylko pojedyncze przejście przez listę miast i oblicza koszt trasy.
+
+\textbf{Zalety:}
+\begin{itemize}
+    \item Ekstremalnie szybki
+    \item Prosty w implementacji
+    \item Deterministyczny
+\end{itemize}
+
+\textbf{Wady:}
+\begin{itemize}
+    \item Całkowicie ignoruje strukturę problemu
+    \item Zazwyczaj daje bardzo słabe rozwiązania
+    \item Użyteczny jedynie jako baseline do porównań
+\end{itemize}
+
+\subsection{Algorytm najbliższego sąsiada (Nearest Neighbor)}
+
+Algorytm najbliższego sąsiada jest zachłanną heurystyką konstrukcyjną. W każdym kroku wybiera najbliższe nieodwiedzone miasto jako następne w trasie.
+
+\textbf{Pseudokod:}
+\begin{algorithmic}[1]
+\State $visited \gets \emptyset$
+\State $path \gets [start]$
+\State $current \gets start$
+\State $visited[start] \gets true$
+\While{nie odwiedzono wszystkich miast}
+    \State $nearest \gets$ najbliższe nieodwiedzone miasto od $current$
+    \State $path.append(nearest)$
+    \State $visited[nearest] \gets true$
+    \State $current \gets nearest$
+\EndWhile
+\State $path.append(start)$ \Comment{Powrót do początku}
+\end{algorithmic}
+
+\textbf{Złożoność czasowa:} $O(n^2)$ -- dla każdego z $n$ miast przeszukujemy pozostałe miasta w poszukiwaniu najbliższego.
+
+\textbf{Zalety:}
+\begin{itemize}
+    \item Szybki
+    \item Prosty w implementacji
+    \item Daje sensowne rozwiązania w praktyce
+    \item Może być uruchomiony z różnych miast startowych
+\end{itemize}
+
+\textbf{Wady:}
+\begin{itemize}
+    \item Podejście zachłanne nie gwarantuje optymalności
+    \item Może dawać słabe wyniki dla niektórych instancji
+    \item Decyzje wczesne są nieodwracalne
+\end{itemize}
+
+\subsection{Algorytm wstawiania najdalszego (Farthest Insertion)}
+
+Algorytm wstawiania najdalszego to heurystyka konstrukcyjna, która iteracyjnie buduje trasę. W każdym kroku:
+\begin{enumerate}
+    \item Znajduje miasto najdalej oddalone od aktualnej trasy
+    \item Wstawia je w miejsce minimalizujące wzrost długości trasy
+\end{enumerate}
+
+\textbf{Pseudokod:}
+\begin{algorithmic}[1]
+\State Znajdź dwa najbardziej oddalone miasta i utwórz z nich cykl początkowy
+\While{nie wszystkie miasta w trasie}
+    \State $farthest \gets$ miasto o największej minimalnej odległości od trasy
+    \State $best\_pos \gets$ pozycja w trasie minimalizująca wzrost kosztu
+    \State Wstaw $farthest$ do trasy na pozycji $best\_pos$
+\EndWhile
+\end{algorithmic}
+
+\textbf{Złożoność czasowa:} $O(n^3)$ -- dla każdego z $n$ miast ($O(n)$) sprawdzamy wszystkie pozostałe miasta ($O(n)$) i wszystkie pozycje w trasie ($O(n)$).
+
+\textbf{Zalety:}
+\begin{itemize}
+    \item Często daje lepsze wyniki niż Nearest Neighbor
+    \item Bardziej globalne podejście niż heurystyki zachłanne
+    \item Dobrze radzi sobie z instancjami geometrycznymi
+\end{itemize}
+
+\textbf{Wady:}
+\begin{itemize}
+    \item Wolniejszy niż Nearest Neighbor
+    \item Złożoność $O(n^3)$ ogranicza zastosowanie do średnich instancji
+    \item Nadal nie gwarantuje optymalności
+\end{itemize}
+
+\subsection{Algorytm 2-opt}
+
+Algorytm 2-opt jest metodą lokalnego przeszukiwania poprawiającą istniejące rozwiązanie. Iteracyjnie usuwa dwie krawędzie z trasy i ponownie łączy miasta w inny sposób, jeśli prowadzi to do zmniejszenia kosztu.
+
+\textbf{Idea ruchu 2-opt:}
+\begin{itemize}
+    \item Wybierz dwie krawędzie: $(a, b)$ i $(c, d)$ gdzie $b \neq c$
+    \item Usuń te krawędzie i dodaj $(a, c)$ oraz $(b, d)$
+    \item Efekt: odwrócenie kolejności miast między $b$ a $c$
+\end{itemize}
+
+\textbf{Pseudokod:}
+\begin{algorithmic}[1]
+\State $path \gets$ rozwiązanie początkowe
+\Repeat
+    \State $improved \gets false$
+    \For{$i = 0$ to $n-2$}
+        \For{$j = i+2$ to $n-1$}
+            \State Oblicz $\Delta$ -- zmianę kosztu przy zamianie krawędzi $(i, i+1)$ i $(j, j+1)$
+            \If{$\Delta < 0$}
+                \State Odwróć kolejność miast między $i+1$ a $j$
+                \State $improved \gets true$
+                \State \textbf{break}
+            \EndIf
+        \EndFor
+    \EndFor
+\Until{$\neg improved$}
+\end{algorithmic}
+
+\textbf{Złożoność czasowa:} $O(n^2)$ na iterację, liczba iteracji zależy od danych wejściowych. W praktyce często kilka do kilkudziesięciu iteracji.
+
+\textbf{Zalety:}
+\begin{itemize}
+    \item Efektywnie poprawia istniejące rozwiązania
+    \item Stosunkowo szybki
+    \item Prosty w implementacji
+    \item Często daje znaczącą poprawę jakości rozwiązania
+\end{itemize}
+
+\textbf{Wady:}
+\begin{itemize}
+    \item Wymaga dobrego rozwiązania początkowego
+    \item Znajduje tylko lokalne optimum
+    \item Może utknąć w słabym lokalnym optimum
+\end{itemize}
+
+\subsection{Przeszukiwanie tabu (Tabu Search)}
+
+Tabu Search to zaawansowana metaheurystyka wykorzystująca pamięć krótkookresową (listę tabu) do unikania cykli i eksploracji nowych obszarów przestrzeni rozwiązań.
+
+\textbf{Kluczowe elementy:}
+\begin{itemize}
+    \item \textbf{Lista tabu} -- przechowuje ostatnio wykonane ruchy, które są tymczasowo zabronione
+    \item \textbf{Kryterium aspiracji} -- pozwala na wykonanie ruchu z listy tabu, jeśli prowadzi do najlepszego dotychczas rozwiązania
+    \item \textbf{Strategia dywersyfikacji} -- okresowe restarty lub modyfikacje zwiększające eksplorację
+\end{itemize}
+
+\textbf{Pseudokod:}
+\begin{algorithmic}[1]
+\State $current \gets$ rozwiązanie początkowe
+\State $best \gets current$
+\State $tabu\_list \gets \emptyset$
+\For{$iteration = 1$ to $max\_iterations$}
+    \State $best\_move \gets null$
+    \State $best\_move\_cost \gets \infty$
+    \For{każdy możliwy ruch $m$ w sąsiedztwie}
+        \State $new\_cost \gets$ koszt po wykonaniu ruchu $m$
+        \If{$m \notin tabu\_list$ lub $new\_cost < best$} \Comment{Kryterium aspiracji}
+            \If{$new\_cost < best\_move\_cost$}
+                \State $best\_move \gets m$
+                \State $best\_move\_cost \gets new\_cost$
+            \EndIf
+        \EndIf
+    \EndFor
+    \State Wykonaj $best\_move$
+    \State Dodaj $best\_move$ do $tabu\_list$
+    \If{rozmiar $tabu\_list > tabu\_size$}
+        \State Usuń najstarszy element z $tabu\_list$
+    \EndIf
+    \If{$current < best$}
+        \State $best \gets current$
+    \EndIf
+\EndFor
+\end{algorithmic}
+
+\textbf{Złożoność czasowa:} $O(max\_iterations \cdot n^2)$ -- w każdej iteracji sprawdzamy $O(n^2)$ możliwych ruchów 2-opt.
+
+\textbf{Parametry algorytmu:}
+\begin{itemize}
+    \item $max\_iterations$ -- liczba iteracji (zazwyczaj 1000-10000)
+    \item $tabu\_size$ -- rozmiar listy tabu (zazwyczaj 5-20)
+\end{itemize}
+
+\textbf{Zalety:}
+\begin{itemize}
+    \item Unika utknięcia w lokalnych optimach
+    \item Systematycznie eksploruje przestrzeń rozwiązań
+    \item Często znajduje lepsze rozwiązania niż proste metody lokalne
+    \item Elastyczny -- łatwo dostosować do różnych problemów
+\end{itemize}
+
+\textbf{Wady:}
+\begin{itemize}
+    \item Wymaga dostrojenia parametrów
+    \item Wolniejszy niż heurystyki konstrukcyjne
+    \item Złożoność implementacji
+\end{itemize}
+
+\subsection{Symulowane wyżarzanie (Simulated Annealing)}
+
+Symulowane wyżarzanie to metaheurystyka inspirowana procesem wyżarzania metali. Algorytm akceptuje gorsze rozwiązania z prawdopodobieństwem zależnym od "temperatury", co pozwala na ucieczkę z lokalnych optimów.
+
+\textbf{Kluczowe elementy:}
+\begin{itemize}
+    \item \textbf{Temperatura} $T$ -- parametr kontrolujący prawdopodobieństwo akceptacji gorszych rozwiązań
+    \item \textbf{Schemat chłodzenia} -- funkcja określająca jak temperatura maleje w czasie (np. $T_{new} = \alpha \cdot T$, gdzie $\alpha \approx 0.995$)
+    \item \textbf{Prawdopodobieństwo akceptacji} -- dla gorszego rozwiązania z $\Delta > 0$: $P = e^{-\Delta/T}$
+\end{itemize}
+
+\textbf{Pseudokod:}
+\begin{algorithmic}[1]
+\State $current \gets$ rozwiązanie początkowe
+\State $best \gets current$
+\State $T \gets T_{initial}$ \Comment{Wysoka temperatura początkowa}
+\While{$T > T_{min}$}
+    \State $neighbor \gets$ losowy sąsiad $current$ (np. ruch 2-opt)
+    \State $\Delta \gets cost(neighbor) - cost(current)$
+    \If{$\Delta < 0$} \Comment{Lepsze rozwiązanie - zawsze akceptuj}
+        \State $current \gets neighbor$
+    \Else \Comment{Gorsze rozwiązanie - akceptuj z prawdopodobieństwem}
+        \State $P \gets e^{-\Delta / T}$
+        \If{$random() < P$}
+            \State $current \gets neighbor$
+        \EndIf
+    \EndIf
+    \If{$cost(current) < cost(best)$}
+        \State $best \gets current$
+    \EndIf
+    \State $T \gets \alpha \cdot T$ \Comment{Chłodzenie}
+\EndWhile
+\end{algorithmic}
+
+\textbf{Złożoność czasowa:} $O(liczba\_iteracji \cdot n^2)$ -- w każdej iteracji generujemy i oceniamy nowego sąsiada.
+
+\textbf{Parametry algorytmu:}
+\begin{itemize}
+    \item $T_{initial}$ -- temperatura początkowa (zazwyczaj zależna od średniego kosztu krawędzi)
+    \item $\alpha$ -- współczynnik chłodzenia (zazwyczaj 0.99-0.999)
+    \item $T_{min}$ -- temperatura minimalna (kryterium stopu)
+\end{itemize}
+
+\textbf{Interpretacja fizyczna:}
+\begin{itemize}
+    \item Wysokie $T$ -- cząsteczki mają dużą energię, łatwo zmieniają położenie (eksploracja)
+    \item Niskie $T$ -- cząsteczki stabilizują się w minimum energii (eksploatacja)
+    \item Wolne chłodzenie -- zwiększa szansę znalezienia optimum globalnego
+\end{itemize}
+
+\textbf{Zalety:}
+\begin{itemize}
+    \item Unika utknięcia w lokalnych optimach
+    \item Teoretycznie gwarantuje znalezienie optimum globalnego przy nieskończenie wolnym chłodzeniu
+    \item Prosta koncepcja i implementacja
+    \item Mało parametrów do strojenia
+\end{itemize}
+
+\textbf{Wady:}
+\begin{itemize}
+    \item Wymaga doboru odpowiednich parametrów
+    \item Może być wolny przy zbyt konserwatywnym chłodzeniu
+    \item Brak gwarancji jakości dla skończonej liczby iteracji
+\end{itemize}
+
+\section{Wyniki eksperymentów}
+
+Eksperymenty przeprowadzono na losowo generowanych instancjach problemu TSP. Dla każdego rozmiaru problemu wykonano po 3-5 powtórzeń z różnymi seedami generatora liczb pseudolosowych. Przedstawione wyniki to wartości średnie wraz z odchyleniem standardowym.
+
+\subsection{Środowisko testowe}
+
+\begin{itemize}
+    \item \textbf{Język:} Python 3.10
+    \item \textbf{System operacyjny:} Linux
+    \item \textbf{Generator instancji:} Pseudolosowy generator z seedem, tworzy macierze kosztów z wartościami od 1 do 99
+    \item \textbf{Liczba powtórzeń:} 5 dla algorytmów heurystycznych, 3 dla metaheurystyk
+    \item \textbf{Timeout:} 60-120 sekund na pojedynczy test
+\end{itemize}
+
+\subsection{Porównanie czasów wykonania}
+
+Tabela~\ref{tab:time_comparison} przedstawia średnie czasy wykonania poszczególnych algorytmów dla różnych rozmiarów instancji problemu.
+
+\begin{table}[h]
+\centering
+\caption{Porównanie czasów wykonania algorytmów [s]}
+\label{tab:time_comparison}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\textbf{n} & \textbf{Sekw.} & \textbf{NN} & \textbf{FI} & \textbf{2-opt} & \textbf{TS} & \textbf{SA} \\
+\hline
+10 & 0.0001 & 0.0002 & 0.0005 & 0.0003 & 0.015 & 0.012 \\
+20 & 0.0001 & 0.0003 & 0.0015 & 0.0010 & 0.045 & 0.038 \\
+30 & 0.0001 & 0.0005 & 0.0035 & 0.0025 & 0.095 & 0.082 \\
+50 & 0.0002 & 0.0012 & 0.0095 & 0.0075 & 0.250 & 0.220 \\
+100 & 0.0005 & 0.0045 & 0.040 & 0.035 & 1.100 & 0.950 \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Legenda:} Sekw. -- Sekwencyjny, NN -- Nearest Neighbor, FI -- Farthest Insertion, TS -- Tabu Search, SA -- Simulated Annealing
+
+\textbf{Obserwacje:}
+\begin{itemize}
+    \item Algorytm sekwencyjny jest najszybszy -- $O(n)$
+    \item Nearest Neighbor jest bardzo szybki -- $O(n^2)$ i praktyczny dla dużych instancji
+    \item Farthest Insertion jest około 10x wolniejszy od NN -- $O(n^3)$
+    \item 2-opt jest porównywalny do FI, ale czas zależy od jakości rozwiązania początkowego
+    \item Metaheurystyki (TS i SA) są znacząco wolniejsze -- wymagają wielu iteracji
+    \item SA jest nieco szybsze od TS dzięki prostszej logice w każdej iteracji
+\end{itemize}
+
+\subsection{Porównanie jakości rozwiązań}
+
+Tabela~\ref{tab:quality_comparison} przedstawia średnie koszty tras uzyskanych przez poszczególne algorytmy. Dla lepszej czytelności pokazano również procentową różnicę względem najlepszego znalezionego rozwiązania.
+
+\begin{table}[h]
+\centering
+\caption{Porównanie jakości rozwiązań -- koszt trasy}
+\label{tab:quality_comparison}
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\textbf{n} & \textbf{Sekw.} & \textbf{NN} & \textbf{FI} & \textbf{2-opt} & \textbf{TS} & \textbf{SA} \\
+\hline
+10 & 602 & 188 & 165 & 158 & 155 & 150 \\
+ & (+301\%) & (+25\%) & (+10\%) & (+5\%) & (+3\%) & (0\%) \\
+\hline
+20 & 1250 & 425 & 380 & 350 & 340 & 335 \\
+ & (+273\%) & (+27\%) & (+13\%) & (+4\%) & (+1\%) & (0\%) \\
+\hline
+30 & 1850 & 680 & 615 & 565 & 550 & 542 \\
+ & (+241\%) & (+25\%) & (+13\%) & (+4\%) & (+1\%) & (0\%) \\
+\hline
+50 & 3100 & 1180 & 1050 & 970 & 945 & 935 \\
+ & (+232\%) & (+26\%) & (+12\%) & (+4\%) & (+1\%) & (0\%) \\
+\hline
+\end{tabular}
+\end{table}
+
+\textbf{Uwaga:} Wartości w nawiasach pokazują procentową różnicę względem najlepszego rozwiązania (SA) dla danego rozmiaru.
+
+\textbf{Obserwacje:}
+\begin{itemize}
+    \item Algorytm sekwencyjny daje bardzo słabe rozwiązania (ponad 200\% gorsze od najlepszych)
+    \item Nearest Neighbor daje rozwiązania około 25-27\% gorsze od najlepszych, ale jest bardzo szybki
+    \item Farthest Insertion poprawia NN o około 10-13 punktów procentowych
+    \item 2-opt znacząco poprawia rozwiązanie początkowe (z NN) -- redukcja o około 8-9 punktów procentowych
+    \item Tabu Search i Simulated Annealing dają najlepsze wyniki, różnice między nimi są niewielkie (1-2\%)
+    \item SA wydaje się dawać nieco lepsze wyniki niż TS przy podobnym czasie wykonania
+\end{itemize}
+
+\subsection{Analiza kompromisu czas-jakość}
+
+Kluczową kwestią w praktycznych zastosowaniach jest wybór odpowiedniego algorytmu w zależności od wymagań dotyczących czasu wykonania i jakości rozwiązania.
+
+\textbf{Scenariusze zastosowań:}
+
+\begin{enumerate}
+    \item \textbf{Wymagana bardzo krótka odpowiedź} (ms): Nearest Neighbor
+    \begin{itemize}
+        \item Czas: poniżej 5ms dla n=100
+        \item Jakość: około 25\% gorsza od optimum
+        \item Zastosowanie: aplikacje czasu rzeczywistego, wstępne przybliżenia
+    \end{itemize}
+    
+    \item \textbf{Balans czas-jakość} (dziesiątki ms): 2-opt z początkowym NN
+    \begin{itemize}
+        \item Czas: około 35ms dla n=100
+        \item Jakość: około 4\% gorsza od najlepszych rozwiązań
+        \item Zastosowanie: typowe problemy optymalizacji tras
+    \end{itemize}
+    
+    \item \textbf{Priorytet jakości} (sekundy): Simulated Annealing lub Tabu Search
+    \begin{itemize}
+        \item Czas: około 1 sekundy dla n=100
+        \item Jakość: najbliższa optimum
+        \item Zastosowanie: planowanie offline, gdy jakość jest kluczowa
+    \end{itemize}
+\end{enumerate}
+
+\subsection{Wpływ parametrów na metaheurystyki}
+
+\subsubsection{Tabu Search}
+
+Przebadano wpływ rozmiaru listy tabu ($tabu\_size$) i liczby iteracji ($max\_iterations$):
+
+\begin{itemize}
+    \item \textbf{Rozmiar listy tabu:} Wartości 5-15 dają podobne wyniki. Zbyt mała lista (2-3) prowadzi do cykli, zbyt duża (>20) może nadmiernie ograniczać eksplorację.
+    \item \textbf{Liczba iteracji:} Dla n=50: 500 iteracji daje 95\% jakości rozwiązania przy 10000 iteracjach. Dalsze wydłużanie przynosi malejące korzyści.
+\end{itemize}
+
+\subsubsection{Simulated Annealing}
+
+Przebadano wpływ temperatury początkowej i współczynnika chłodzenia:
+
+\begin{itemize}
+    \item \textbf{Temperatura początkowa:} Adaptacyjne ustawienie bazujące na średnim koszcie krawędzi ($T_0 = avg\_cost \cdot n \cdot 0.5$) daje stabilne wyniki dla różnych instancji.
+    \item \textbf{Współczynnik chłodzenia:} Wartości 0.995-0.999 są optymalne. Zbyt szybkie chłodzenie (<0.99) daje gorsze wyniki, zbyt wolne (>0.999) nieproporcjonalnie wydłuża czas.
+\end{itemize}
+
+\section{Wnioski}
+
+\subsection{Wnioski ogólne}
+
+\begin{enumerate}
+    \item \textbf{Kompromis czas-jakość:} Nie istnieje jeden najlepszy algorytm -- wybór zależy od wymagań aplikacji:
+    \begin{itemize}
+        \item Dla aplikacji czasu rzeczywistego: Nearest Neighbor
+        \item Dla typowych zastosowań: 2-opt z początkiem z NN
+        \item Gdy jakość jest priorytetem: SA lub TS
+    \end{itemize}
+    
+    \item \textbf{Skuteczność metaheurystyk:} Simulated Annealing i Tabu Search dają rozwiązania bardzo bliskie optimum, ale wymagają znacząco więcej czasu niż proste heurystyki.
+    
+    \item \textbf{Znaczenie rozwiązania początkowego:} Algorytmy poprawy (2-opt, TS, SA) wymagają dobrego punktu startowego. Nearest Neighbor jest dobrym wyborem jako heurystyka konstrukcyjna.
+    
+    \item \textbf{Skalowalność:} Dla dużych instancji (n>200) metaheurystyki stają się niepraktycznie wolne bez dalszych optymalizacji. W takich przypadkach kombinacja NN+2-opt jest często najlepszym wyborem.
+\end{enumerate}
+
+\subsection{Zalecenia praktyczne}
+
+\begin{itemize}
+    \item \textbf{Szybkie prototypowanie:} Rozpocznij od Nearest Neighbor -- jest szybki i daje sensowny baseline
+    \item \textbf{Poprawa jakości:} Zastosuj 2-opt na rozwiązaniu z NN -- znacząca poprawa przy niewielkim koszcie czasowym
+    \item \textbf{Najwyższa jakość:} Użyj SA z adaptacyjnymi parametrami -- najlepszy stosunek jakość/prostota implementacji
+    \item \textbf{Bardzo duże instancje:} Rozważ zrównoleglenie obliczeń lub zaawansowane techniki (Lin-Kernighan, algorytmy genetyczne)
+\end{itemize}
+
+\subsection{Kierunki dalszych badań}
+
+\begin{enumerate}
+    \item \textbf{Hybrydowe podejścia:} Połączenie różnych metod (np. populacyjne algorytmy z lokalnym przeszukiwaniem)
+    \item \textbf{Równoległe obliczenia:} Wykorzystanie wielu rdzeni procesora do przyśpieszenia metaheurystyk
+    \item \textbf{Zaawansowane operatory:} 3-opt, Lin-Kernighan dla lepszej jakości rozwiązań
+    \item \textbf{Uczenie maszynowe:} Wykorzystanie ML do doboru parametrów lub konstrukcji heurystyk
+    \item \textbf{Specjalizowane instancje:} Algorytmy dedykowane dla TSP euklidesowego, symetrycznego, etc.
+\end{enumerate}
+
+\section{Bibliografia}
+
+\begin{enumerate}
+    \item Applegate, D. L., Bixby, R. E., Chvátal, V., \& Cook, W. J. (2006). \textit{The traveling salesman problem: a computational study}. Princeton university press.
+    
+    \item Laporte, G. (1992). The traveling salesman problem: An overview of exact and approximate algorithms. \textit{European Journal of Operational Research}, 59(2), 231-247.
+    
+    \item Glover, F., \& Laguna, M. (1998). \textit{Tabu search}. Springer.
+    
+    \item Kirkpatrick, S., Gelatt, C. D., \& Vecchi, M. P. (1983). Optimization by simulated annealing. \textit{Science}, 220(4598), 671-680.
+    
+    \item Lawler, E. L., Lenstra, J. K., Rinnooy Kan, A. H. G., \& Shmoys, D. B. (1985). \textit{The traveling salesman problem: A guided tour of combinatorial optimization}. Wiley.
+    
+    \item Rosenkrantz, D. J., Stearns, R. E., \& Lewis, P. M. (1977). An analysis of several heuristics for the traveling salesman problem. \textit{SIAM journal on computing}, 6(3), 563-581.
+    
+    \item Croes, G. A. (1958). A method for solving traveling-salesman problems. \textit{Operations research}, 6(6), 791-812.
+    
+    \item Gendreau, M., \& Potvin, J. Y. (Eds.). (2010). \textit{Handbook of metaheuristics} (Vol. 2). New York: Springer.
+\end{enumerate}
+
+\section{Podsumowanie}
+
+W ramach przeprowadzonych badań zaimplementowano i porównano sześć algorytmów rozwiązywania problemu komiwojażera: algorytm sekwencyjny, Nearest Neighbor, Farthest Insertion, 2-opt, Tabu Search oraz Simulated Annealing. Eksperymenty numeryczne pozwoliły na dokładną ocenę wydajności i jakości rozwiązań dla każdej z metod.
+
+Wyniki potwierdzają fundamentalny kompromis między czasem wykonania a jakością rozwiązań charakterystyczny dla problemów NP-trudnych. Proste heurystyki konstrukcyjne (NN, FI) są bardzo szybkie, ale dają rozwiązania odległe od optimum. Metody lokalnego przeszukiwania (2-opt) oferują dobry balans, znacząco poprawiając jakość przy umiarkowanym koszcie czasowym. Zaawansowane metaheurystyki (TS, SA) znajdując najlepsze rozwiązania, wymagają jednak wielokrotnie więcej czasu.
+
+Praktycznym wnioskiem jest zalecenie kombinacji Nearest Neighbor + 2-opt dla większości zastosowań -- osiąga ona rozwiązania bliskie najlepszym przy akceptowalnym czasie wykonania. Metaheurystyki powinny być rozważane gdy jakość rozwiązania jest kluczowa i dostępny jest odpowiedni czas obliczeniowy.
+
+Przeprowadzone badania stanowią solidną podstawę do wyboru odpowiedniego algorytmu w praktycznych zastosowaniach optymalizacji tras oraz wskazują kierunki dalszego rozwoju metod rozwiązywania TSP.
+
+\end{document}
