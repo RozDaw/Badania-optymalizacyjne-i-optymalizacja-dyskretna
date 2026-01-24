@@ -44,13 +44,28 @@ def tsp_2opt(matrix, initial_path=None):
     else:
         path = list(initial_path)  # Kopiujemy trasę
     
+    # Oblicz początkowy koszt
+    def calculate_path_cost(p):
+        cost = 0
+        for i in range(len(p) - 1):
+            cost += matrix[p[i]][p[i + 1]]
+        return cost
+    
+    initial_cost = calculate_path_cost(path)
+    best_cost = initial_cost
+    best_path = list(path)
+    
     improved = True
     iteration = 0
-    max_iterations = n * n * 10  # Limit bezpieczeństwa: O(n^2) iteracji
+    # Ograniczamy liczbę iteracji - dla większych n używamy proporcjonalnie mniej iteracji
+    max_iterations = min(200, n * 3)  # Maksymalnie 200 iteracji lub 3*n
     
     while improved and iteration < max_iterations:
         iteration += 1
         improved = False
+        best_delta = 0
+        best_i = -1
+        best_j = -1
         
         # Sprawdź wszystkie możliwe pary krawędzi do zamiany
         # W przypadku cyklu o długości n+1 (gdzie ostatni element = pierwszy),
@@ -58,8 +73,6 @@ def tsp_2opt(matrix, initial_path=None):
         # Dla n miast mamy n krawędzi (indeksy 0 do n-1)
         # i może być od 0 do n-2, j od i+2 do n-1 (aby krawędzie nie były sąsiednie)
         for i in range(n - 1):
-            if improved:
-                break
             for j in range(i + 2, n):
                 # Pobierz wierzchołki krawędzi
                 # Krawędź 1: path[i] -> path[i+1]
@@ -76,18 +89,26 @@ def tsp_2opt(matrix, initial_path=None):
                 delta = (matrix[a0][b0] + matrix[a1][b1] - 
                         matrix[a0][a1] - matrix[b0][b1])
                 
-                if delta < 0:
-                    # Znaleziono poprawę - od razu ją wykonaj
-                    # Odwróć fragment trasy od i+1 do j (włącznie)
-                    path[i + 1:j + 1] = reversed(path[i + 1:j + 1])
+                # Znajdź najlepszą poprawę (największą redukcję kosztu)
+                if delta < best_delta:
+                    best_delta = delta
+                    best_i = i
+                    best_j = j
                     improved = True
-                    break
+        
+        # Wykonaj najlepszą znalezioną poprawę
+        if improved:
+            # Odwróć fragment trasy od i+1 do j (włącznie)
+            # Używamy slice reversal zamiast reversed() iteratora
+            path[best_i + 1:best_j + 1] = path[best_i + 1:best_j + 1][::-1]
+            
+            # Oblicz nowy koszt i zaktualizuj najlepsze rozwiązanie
+            current_cost = calculate_path_cost(path)
+            if current_cost < best_cost:
+                best_cost = current_cost
+                best_path = list(path)
     
-    # Oblicz całkowity koszt trasy
-    total_cost = 0
-    for i in range(len(path) - 1):
-        total_cost += matrix[path[i]][path[i + 1]]
-    
-    return total_cost, path
+    # Zwróć najlepsze znalezione rozwiązanie (nigdy nie gorsze niż początkowe)
+    return best_cost, best_path
 
 

@@ -146,6 +146,8 @@ W związku z tym, w praktyce stosuje się różne strategie:
     \item Metaheurystyki (Tabu Search, Simulated Annealing, algorytmy ewolucyjne) -- zaawansowane techniki eksploracji przestrzeni rozwiązań
 \end{itemize}
 
+\newpage
+
 \section{Opis implementacji algorytmów}
 
 Wszystkie algorytmy zostały zaimplementowane w języku Python 3. Jako reprezentację problemu wykorzystano macierz kosztów, gdzie element $matrix[i][j]$ reprezentuje koszt przejścia z miasta $i$ do miasta $j$. Rozwiązanie problemu to permutacja miast reprezentowana jako lista indeksów tworzących cykl Hamiltona.
@@ -169,6 +171,8 @@ Algorytm sekwencyjny (algorytm 123) jest najprostszą możliwą heurystyką, sł
     \item Zazwyczaj daje bardzo słabe rozwiązania
     \item Użyteczny jedynie jako baseline do porównań
 \end{itemize}
+
+\newpage
 
 \subsection{Algorytm najbliższego sąsiada (Nearest Neighbor)}
 
@@ -206,6 +210,8 @@ Algorytm najbliższego sąsiada jest zachłanną heurystyką konstrukcyjną. W k
     \item Decyzje wczesne są nieodwracalne
 \end{itemize}
 
+\newpage
+
 \subsection{Algorytm wstawiania najdalszego (Farthest Insertion)}
 
 Algorytm wstawiania najdalszego to heurystyka konstrukcyjna, która iteracyjnie buduje trasę. W każdym kroku:
@@ -239,6 +245,8 @@ Algorytm wstawiania najdalszego to heurystyka konstrukcyjna, która iteracyjnie 
     \item Złożoność $O(n^3)$ ogranicza zastosowanie do średnich instancji
     \item Nadal nie gwarantuje optymalności
 \end{itemize}
+
+\newpage
 
 \subsection{Algorytm 2-opt}
 
@@ -348,6 +356,8 @@ Tabu Search to zaawansowana metaheurystyka wykorzystująca pamięć krótkookres
     \item Złożoność implementacji
 \end{itemize}
 
+\newpage
+
 \subsection{Symulowane wyżarzanie (Simulated Annealing)}
 
 Symulowane wyżarzanie to metaheurystyka inspirowana procesem wyżarzania metali. Algorytm akceptuje gorsze rozwiązania z prawdopodobieństwem zależnym od "temperatury", co pozwala na ucieczkę z lokalnych optimów.
@@ -383,7 +393,7 @@ Symulowane wyżarzanie to metaheurystyka inspirowana procesem wyżarzania metali
 \end{algorithmic}
 
 \textbf{Złożoność czasowa:} $O(liczba\_iteracji \cdot n^2)$ -- w każdej iteracji generujemy i oceniamy nowego sąsiada.
-
+\newpage
 \textbf{Parametry algorytmu:}
 \begin{itemize}
     \item $T_{initial}$ -- temperatura początkowa (zazwyczaj zależna od średniego kosztu krawędzi)
@@ -413,6 +423,8 @@ Symulowane wyżarzanie to metaheurystyka inspirowana procesem wyżarzania metali
     \item Brak gwarancji jakości dla skończonej liczby iteracji
 \end{itemize}
 
+\newpage
+
 \section{Wyniki eksperymentów}
 
 Eksperymenty przeprowadzono na losowo generowanych instancjach problemu TSP. Dla każdego rozmiaru problemu wykonano po 3-5 powtórzeń z różnymi seedami generatora liczb pseudolosowych. Przedstawione wyniki to wartości średnie wraz z odchyleniem standardowym.
@@ -429,9 +441,9 @@ Eksperymenty przeprowadzono na losowo generowanych instancjach problemu TSP. Dla
 
 \subsection{Porównanie czasów wykonania}
 
-Tabela~\ref{tab:time_comparison} przedstawia średnie czasy wykonania poszczególnych algorytmów dla różnych rozmiarów instancji problemu.
+Poniżej przedstawiono porównanie czasów wykonania poszczególnych algorytmów dla różnych rozmiarów instancji problemu. Tabela~\ref{tab:time_comparison} zawiera szczegółowe wartości, natomiast Rysunek~\ref{fig:time_plot} wizualizuje skalowalność algorytmów.
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \caption{Porównanie czasów wykonania algorytmów [s]}
 \label{tab:time_comparison}
@@ -448,7 +460,45 @@ Tabela~\ref{tab:time_comparison} przedstawia średnie czasy wykonania poszczegó
 \end{tabular}
 \end{table}
 
-\textbf{Legenda:} Sekw. -- Sekwencyjny, NN -- Nearest Neighbor, FI -- Farthest Insertion, TS -- Tabu Search, SA -- Simulated Annealing
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{semilogyaxis}[
+    width=14cm,
+    height=9cm,
+    xlabel={Rozmiar problemu $n$},
+    ylabel={Czas wykonania [s]},
+    legend pos=north west,
+    grid=major,
+    legend style={font=\footnotesize},
+    xmin=5, xmax=105,
+    ymin=0.00005, ymax=2,
+    xtick={10,20,30,50,100},
+]
+\addplot[color=red,mark=*,thick] coordinates {
+    (10,0.0001) (20,0.0001) (30,0.0001) (50,0.0002) (100,0.0005)
+};
+\addplot[color=blue,mark=square*,thick] coordinates {
+    (10,0.0002) (20,0.0003) (30,0.0005) (50,0.0012) (100,0.0045)
+};
+\addplot[color=green!60!black,mark=triangle*,thick] coordinates {
+    (10,0.0005) (20,0.0015) (30,0.0035) (50,0.0095) (100,0.040)
+};
+\addplot[color=orange,mark=diamond*,thick] coordinates {
+    (10,0.0003) (20,0.0010) (30,0.0025) (50,0.0075) (100,0.035)
+};
+\addplot[color=purple,mark=pentagon*,thick] coordinates {
+    (10,0.015) (20,0.045) (30,0.095) (50,0.250) (100,1.100)
+};
+\addplot[color=brown,mark=*,thick,dashed] coordinates {
+    (10,0.012) (20,0.038) (30,0.082) (50,0.220) (100,0.950)
+};
+\legend{Sekwencyjny, Nearest Neighbor, Farthest Insertion, 2-opt, Tabu Search, Simulated Annealing}
+\end{semilogyaxis}
+\end{tikzpicture}
+\caption{Czasy wykonania algorytmów w zależności od rozmiaru problemu (skala logarytmiczna na osi Y). Legenda: Sekw. -- Sekwencyjny, NN -- Nearest Neighbor, FI -- Farthest Insertion, TS -- Tabu Search, SA -- Simulated Annealing}
+\label{fig:time_plot}
+\end{figure}
 
 \textbf{Obserwacje:}
 \begin{itemize}
@@ -462,9 +512,9 @@ Tabela~\ref{tab:time_comparison} przedstawia średnie czasy wykonania poszczegó
 
 \subsection{Porównanie jakości rozwiązań}
 
-Tabela~\ref{tab:quality_comparison} przedstawia średnie koszty tras uzyskanych przez poszczególne algorytmy. Dla lepszej czytelności pokazano również procentową różnicę względem najlepszego znalezionego rozwiązania.
+Poniżej przedstawiono porównanie jakości rozwiązań uzyskanych przez poszczególne algorytmy. Tabela~\ref{tab:quality_comparison} zawiera szczegółowe wartości kosztów tras wraz z procentową różnicą względem najlepszego rozwiązania, natomiast Rysunek~\ref{fig:quality_plot} wizualizuje zależność jakości od rozmiaru problemu.
 
-\begin{table}[h]
+\begin{table}[H]
 \centering
 \caption{Porównanie jakości rozwiązań -- koszt trasy}
 \label{tab:quality_comparison}
@@ -487,7 +537,45 @@ Tabela~\ref{tab:quality_comparison} przedstawia średnie koszty tras uzyskanych 
 \end{tabular}
 \end{table}
 
-\textbf{Uwaga:} Wartości w nawiasach pokazują procentową różnicę względem najlepszego rozwiązania (SA) dla danego rozmiaru.
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    width=14cm,
+    height=9cm,
+    xlabel={Rozmiar problemu $n$},
+    ylabel={Koszt trasy},
+    legend pos=north west,
+    grid=major,
+    legend style={font=\footnotesize},
+    xmin=5, xmax=55,
+    ymin=0, ymax=3200,
+    xtick={10,20,30,50},
+]
+\addplot[color=red,mark=*,thick] coordinates {
+    (10,602) (20,1250) (30,1850) (50,3100)
+};
+\addplot[color=blue,mark=square*,thick] coordinates {
+    (10,188) (20,425) (30,680) (50,1180)
+};
+\addplot[color=green!60!black,mark=triangle*,thick] coordinates {
+    (10,165) (20,380) (30,615) (50,1050)
+};
+\addplot[color=orange,mark=diamond*,thick] coordinates {
+    (10,158) (20,350) (30,565) (50,970)
+};
+\addplot[color=purple,mark=pentagon*,thick] coordinates {
+    (10,155) (20,340) (30,550) (50,945)
+};
+\addplot[color=brown,mark=*,thick,dashed] coordinates {
+    (10,150) (20,335) (30,542) (50,935)
+};
+\legend{Sekwencyjny, Nearest Neighbor, Farthest Insertion, 2-opt, Tabu Search, Simulated Annealing}
+\end{axis}
+\end{tikzpicture}
+\caption{Jakość rozwiązań (koszt trasy) w zależności od rozmiaru problemu. Wartości w nawiasach w tabeli pokazują procentową różnicę względem najlepszego rozwiązania (SA) dla danego rozmiaru. Legenda: Sekw. -- Sekwencyjny, NN -- Nearest Neighbor, FI -- Farthest Insertion, TS -- Tabu Search, SA -- Simulated Annealing}
+\label{fig:quality_plot}
+\end{figure}
 
 \textbf{Obserwacje:}
 \begin{itemize}
@@ -567,25 +655,16 @@ Przebadano wpływ temperatury początkowej i współczynnika chłodzenia:
     \item \textbf{Skalowalność:} Dla dużych instancji (n>200) metaheurystyki stają się niepraktycznie wolne bez dalszych optymalizacji. W takich przypadkach kombinacja NN+2-opt jest często najlepszym wyborem.
 \end{enumerate}
 
-\subsection{Zalecenia praktyczne}
 
-\begin{itemize}
-    \item \textbf{Szybkie prototypowanie:} Rozpocznij od Nearest Neighbor -- jest szybki i daje sensowny baseline
-    \item \textbf{Poprawa jakości:} Zastosuj 2-opt na rozwiązaniu z NN -- znacząca poprawa przy niewielkim koszcie czasowym
-    \item \textbf{Najwyższa jakość:} Użyj SA z adaptacyjnymi parametrami -- najlepszy stosunek jakość/prostota implementacji
-    \item \textbf{Bardzo duże instancje:} Rozważ zrównoleglenie obliczeń lub zaawansowane techniki (Lin-Kernighan, algorytmy genetyczne)
-\end{itemize}
+\section{Podsumowanie}
 
-\subsection{Kierunki dalszych badań}
+W ramach przeprowadzonych badań zaimplementowano i porównano sześć algorytmów rozwiązywania problemu komiwojażera: algorytm sekwencyjny, Nearest Neighbor, Farthest Insertion, 2-opt, Tabu Search oraz Simulated Annealing. Eksperymenty numeryczne pozwoliły na dokładną ocenę wydajności i jakości rozwiązań dla każdej z metod.
 
-\begin{enumerate}
-    \item \textbf{Hybrydowe podejścia:} Połączenie różnych metod (np. populacyjne algorytmy z lokalnym przeszukiwaniem)
-    \item \textbf{Równoległe obliczenia:} Wykorzystanie wielu rdzeni procesora do przyśpieszenia metaheurystyk
-    \item \textbf{Zaawansowane operatory:} 3-opt, Lin-Kernighan dla lepszej jakości rozwiązań
-    \item \textbf{Uczenie maszynowe:} Wykorzystanie ML do doboru parametrów lub konstrukcji heurystyk
-    \item \textbf{Specjalizowane instancje:} Algorytmy dedykowane dla TSP euklidesowego, symetrycznego, etc.
-\end{enumerate}
+Wyniki potwierdzają fundamentalny kompromis między czasem wykonania a jakością rozwiązań charakterystyczny dla problemów NP-trudnych. Proste heurystyki konstrukcyjne (NN, FI) są bardzo szybkie, ale dają rozwiązania odległe od optimum. Metody lokalnego przeszukiwania (2-opt) oferują dobry balans, znacząco poprawiając jakość przy umiarkowanym koszcie czasowym. Zaawansowane metaheurystyki (TS, SA) znajdując najlepsze rozwiązania, wymagają jednak wielokrotnie więcej czasu.
 
+Praktycznym wnioskiem jest zalecenie kombinacji Nearest Neighbor + 2-opt dla większości zastosowań -- osiąga ona rozwiązania bliskie najlepszym przy akceptowalnym czasie wykonania. Metaheurystyki powinny być rozważane gdy jakość rozwiązania jest kluczowa i dostępny jest odpowiedni czas obliczeniowy.
+
+Przeprowadzone badania stanowią solidną podstawę do wyboru odpowiedniego algorytmu w praktycznych zastosowaniach optymalizacji tras oraz wskazują kierunki dalszego rozwoju metod rozwiązywania TSP.
 \section{Bibliografia}
 
 \begin{enumerate}
@@ -605,15 +684,5 @@ Przebadano wpływ temperatury początkowej i współczynnika chłodzenia:
     
     \item Gendreau, M., \& Potvin, J. Y. (Eds.). (2010). \textit{Handbook of metaheuristics} (Vol. 2). New York: Springer.
 \end{enumerate}
-
-\section{Podsumowanie}
-
-W ramach przeprowadzonych badań zaimplementowano i porównano sześć algorytmów rozwiązywania problemu komiwojażera: algorytm sekwencyjny, Nearest Neighbor, Farthest Insertion, 2-opt, Tabu Search oraz Simulated Annealing. Eksperymenty numeryczne pozwoliły na dokładną ocenę wydajności i jakości rozwiązań dla każdej z metod.
-
-Wyniki potwierdzają fundamentalny kompromis między czasem wykonania a jakością rozwiązań charakterystyczny dla problemów NP-trudnych. Proste heurystyki konstrukcyjne (NN, FI) są bardzo szybkie, ale dają rozwiązania odległe od optimum. Metody lokalnego przeszukiwania (2-opt) oferują dobry balans, znacząco poprawiając jakość przy umiarkowanym koszcie czasowym. Zaawansowane metaheurystyki (TS, SA) znajdując najlepsze rozwiązania, wymagają jednak wielokrotnie więcej czasu.
-
-Praktycznym wnioskiem jest zalecenie kombinacji Nearest Neighbor + 2-opt dla większości zastosowań -- osiąga ona rozwiązania bliskie najlepszym przy akceptowalnym czasie wykonania. Metaheurystyki powinny być rozważane gdy jakość rozwiązania jest kluczowa i dostępny jest odpowiedni czas obliczeniowy.
-
-Przeprowadzone badania stanowią solidną podstawę do wyboru odpowiedniego algorytmu w praktycznych zastosowaniach optymalizacji tras oraz wskazują kierunki dalszego rozwoju metod rozwiązywania TSP.
 
 \end{document}

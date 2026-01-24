@@ -138,11 +138,12 @@ def tsp_simulated_annealing_adaptive(matrix, initial_path=None, max_iterations=1
     if n == 2:
         return matrix[0][1] + matrix[1][0], [0, 1, 0]
     
-    # Inicjalizacja
+    # Inicjalizacja - użyj Nearest Neighbor jeśli nie podano rozwiązania początkowego
     if initial_path is None:
-        path = list(range(n))
-        random.shuffle(path)
-        path.append(path[0])
+        # Użyj Nearest Neighbor jako dobrego rozwiązania początkowego
+        from algorithms.nearest_neighbor import tsp_nearest_neighbor
+        _, initial_path = tsp_nearest_neighbor(matrix)
+        path = list(initial_path)
     else:
         path = list(initial_path)
     
@@ -174,13 +175,19 @@ def tsp_simulated_annealing_adaptive(matrix, initial_path=None, max_iterations=1
     best_path = list(path)
     best_cost = current_cost
     
-    # Adaptacyjne parametry
+    # Adaptacyjne parametry - lepsze ustawienia
     avg_edge_cost = sum(sum(row) for row in matrix) / (n * n)
-    initial_temp = avg_edge_cost * n * 0.5
-    min_temp = 0.01
-    cooling_rate = (min_temp / initial_temp) ** (1.0 / max_iterations)
+    # Wyższa temperatura początkowa - pozwala na większą eksplorację
+    initial_temp = avg_edge_cost * n * 5.0
+    min_temp = 0.1  # Wyższa minimalna temperatura - dłuższe chłodzenie
+    # Wolniejsze chłodzenie - temperatura spada wolniej
+    cooling_rate = 0.9995  # Stały współczynnik zamiast adaptacyjnego
     
     temperature = initial_temp
+    
+    # Licznik iteracji bez poprawy
+    no_improvement_count = 0
+    max_no_improvement = max(1000, max_iterations // 10)
     
     for iteration in range(max_iterations):
         # Generuj losowe ruchy swap (wybierz dwa różne miasta)
@@ -193,9 +200,27 @@ def tsp_simulated_annealing_adaptive(matrix, initial_path=None, max_iterations=1
         if i > j:
             i, j = j, i
         
+        # Sprawdź czy indeksy są poprawne
+        if j >= len(path):
+            temperature *= cooling_rate
+            continue
+        
         delta = calculate_swap_delta(path, i, j)
         
-        accept = delta < 0 or random.random() < math.exp(-delta / temperature)
+        if delta == float('inf'):
+            temperature *= cooling_rate
+            continue
+        
+        # Kryterium akceptacji - akceptuj lepsze rozwiązania lub gorsze z prawdopodobieństwem
+        accept = False
+        if delta < 0:
+            accept = True
+            no_improvement_count = 0  # Reset licznika przy poprawie
+        else:
+            # Prawdopodobieństwo akceptacji gorszego rozwiązania
+            probability = math.exp(-delta / temperature)
+            if random.random() < probability:
+                accept = True
         
         if accept:
             path[i], path[j] = path[j], path[i]
@@ -204,10 +229,19 @@ def tsp_simulated_annealing_adaptive(matrix, initial_path=None, max_iterations=1
             if current_cost < best_cost:
                 best_cost = current_cost
                 best_path = list(path)
+                no_improvement_count = 0
+            else:
+                no_improvement_count += 1
+        else:
+            no_improvement_count += 1
         
+        # Chłodzenie
         temperature *= cooling_rate
         
+        # Przerwij jeśli temperatura zbyt niska lub brak poprawy przez długi czas
         if temperature < min_temp:
+            break
+        if no_improvement_count >= max_no_improvement and temperature < initial_temp * 0.1:
             break
     
     final_cost = calculate_cost(best_path)
@@ -216,15 +250,18 @@ def tsp_simulated_annealing_adaptive(matrix, initial_path=None, max_iterations=1
 
 def tsp_simulated_annealing_fast(matrix, initial_path=None):
     """
-    Szybka wersja Simulated Annealing z mniejszą liczbą iteracji.
+    Zoptymalizowana wersja Simulated Annealing z adaptacyjną liczbą iteracji.
     
     Parametry:
         matrix: macierz kosztów przejść między miastami
-        initial_path: opcjonalna początkowa trasa
+        initial_path: opcjonalna początkowa trasa (jeśli None, użyje Nearest Neighbor)
     
     Zwraca:
         (koszt_najlepszej_trasy, najlepsza_trasa)
     """
     n = len(matrix)
-    max_iterations = min(5000, n * 100)
+    # Zwiększona liczba iteracji dla lepszych wyników
+    # Dla małych n: więcej iteracji, dla dużych n: proporcjonalnie więcej
+    # Więcej iteracji = więcej czasu na eksplorację i lepsze wyniki
+    max_iterations = max(50000, n * 500)
     return tsp_simulated_annealing_adaptive(matrix, initial_path, max_iterations)
