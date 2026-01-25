@@ -432,12 +432,16 @@ Eksperymenty przeprowadzono na losowo generowanych instancjach problemu TSP. Dla
 \subsection{Środowisko testowe}
 
 \begin{itemize}
-    \item \textbf{Język:} Python 3.10
-    \item \textbf{System operacyjny:} Linux
-    \item \textbf{Generator instancji:} Pseudolosowy generator z seedem, tworzy macierze kosztów z wartościami od 1 do 99
-    \item \textbf{Liczba powtórzeń:} 5 dla algorytmów heurystycznych, 3 dla metaheurystyk
-    \item \textbf{Timeout:} 60-120 sekund na pojedynczy test
+    \item \textbf{Język:} Python 3.12
+    \item \textbf{System operacyjny:} Windows 10
+    \item \textbf{Generator instancji:} Pseudolosowy generator z seedem, tworzy asymetryczne macierze kosztów z wartościami od 1 do 99
+    \item \textbf{Rozmiary testowane:} $n \in \{5, 10, 50, 75, 100, 150, 200, 300, 400, 500\}$
+    \item \textbf{Liczba powtórzeń:} 10 dla każdego rozmiaru (wyniki uśrednione)
+    \item \textbf{Timeout:} 100 sekund na pojedynczy test -- po przekroczeniu algorytm jest przerywany i oznaczany jako ``--''
+    \item \textbf{Seed generatora:} Dla każdego powtórzenia używany jest inny seed (bazowy seed + offset zależny od rozmiaru i numeru powtórzenia), co zapewnia różnorodność instancji przy zachowaniu powtarzalności eksperymentów
 \end{itemize}
+
+\textbf{Uwaga o asymetrii:} Generowane instancje są asymetryczne ($matrix[i][j] \neq matrix[j][i]$), co jest bardziej realistyczne dla wielu praktycznych zastosowań (np. ruch jednokierunkowy, różne koszty w zależności od kierunku). Asymetria może wpływać na skuteczność algorytmów opartych na 2-opt, które oryginalnie były projektowane dla symetrycznego TSP.
 
 \subsection{Porównanie czasów wykonania}
 
@@ -451,11 +455,16 @@ Poniżej przedstawiono porównanie czasów wykonania poszczególnych algorytmów
 \hline
 \textbf{n} & \textbf{Sekw.} & \textbf{NN} & \textbf{FI} & \textbf{2-opt} & \textbf{TS} & \textbf{SA} \\
 \hline
-10 & 0.0001 & 0.0002 & 0.0005 & 0.0003 & 0.015 & 0.012 \\
-20 & 0.0001 & 0.0003 & 0.0015 & 0.0010 & 0.045 & 0.038 \\
-30 & 0.0001 & 0.0005 & 0.0035 & 0.0025 & 0.095 & 0.082 \\
-50 & 0.0002 & 0.0012 & 0.0095 & 0.0075 & 0.250 & 0.220 \\
-100 & 0.0005 & 0.0045 & 0.040 & 0.035 & 1.100 & 0.950 \\
+5 & 0.000 & 0.000 & 0.000 & 0.000 & 0.000 & 0.015 \\
+10 & 0.000 & 0.000 & 0.000 & 0.000 & 0.011 & 0.093 \\
+50 & 0.000 & 0.000 & 0.011 & 0.011 & 1.133 & 4.855 \\
+75 & 0.000 & 0.000 & 0.011 & 0.019 & 1.042 & 5.400 \\
+100 & 0.000 & 0.000 & 0.020 & 0.140 & 4.163 & 6.518 \\
+150 & 0.000 & 0.002 & 0.066 & 0.160 & 5.081 & -- \\
+200 & 0.000 & 0.001 & 0.160 & 0.746 & 8.308 & -- \\
+300 & 0.000 & 0.000 & 0.526 & 3.069 & -- & -- \\
+400 & 0.000 & 0.008 & 1.303 & 3.732 & -- & -- \\
+500 & 0.000 & 0.003 & 2.597 & 7.417 & -- & -- \\
 \hline
 \end{tabular}
 \end{table}
@@ -468,46 +477,40 @@ Poniżej przedstawiono porównanie czasów wykonania poszczególnych algorytmów
     height=9cm,
     xlabel={Rozmiar problemu $n$},
     ylabel={Czas wykonania [s]},
-    legend pos=north west,
+    legend pos=south east,
     grid=major,
     legend style={font=\footnotesize},
-    xmin=5, xmax=105,
-    ymin=0.00005, ymax=2,
-    xtick={10,20,30,50,100},
+    xmin=0, xmax=520,
+    ymin=0.001, ymax=20,
+    xtick={5,10,50,75,100,150,200,300,400,500},
 ]
-\addplot[color=red,mark=*,thick] coordinates {
-    (10,0.0001) (20,0.0001) (30,0.0001) (50,0.0002) (100,0.0005)
-};
-\addplot[color=blue,mark=square*,thick] coordinates {
-    (10,0.0002) (20,0.0003) (30,0.0005) (50,0.0012) (100,0.0045)
-};
 \addplot[color=green!60!black,mark=triangle*,thick] coordinates {
-    (10,0.0005) (20,0.0015) (30,0.0035) (50,0.0095) (100,0.040)
+    (5,0.001) (10,0.001) (50,0.011) (75,0.011) (100,0.020) (150,0.066) (200,0.160) (300,0.526) (400,1.303) (500,2.597)
 };
 \addplot[color=orange,mark=diamond*,thick] coordinates {
-    (10,0.0003) (20,0.0010) (30,0.0025) (50,0.0075) (100,0.035)
+    (5,0.001) (10,0.001) (50,0.011) (75,0.019) (100,0.140) (150,0.160) (200,0.746) (300,3.069) (400,3.732) (500,7.417)
 };
 \addplot[color=purple,mark=pentagon*,thick] coordinates {
-    (10,0.015) (20,0.045) (30,0.095) (50,0.250) (100,1.100)
+    (5,0.001) (10,0.011) (50,1.133) (75,1.042) (100,4.163) (150,5.081) (200,8.308)
 };
 \addplot[color=brown,mark=*,thick,dashed] coordinates {
-    (10,0.012) (20,0.038) (30,0.082) (50,0.220) (100,0.950)
+    (5,0.015) (10,0.093) (50,4.855) (75,5.400) (100,6.518)
 };
-\legend{Sekwencyjny, Nearest Neighbor, Farthest Insertion, 2-opt, Tabu Search, Simulated Annealing}
+\legend{Farthest Insertion, 2-opt, Tabu Search, Simulated Annealing}
 \end{semilogyaxis}
 \end{tikzpicture}
-\caption{Czasy wykonania algorytmów w zależności od rozmiaru problemu (skala logarytmiczna na osi Y). Legenda: Sekw. -- Sekwencyjny, NN -- Nearest Neighbor, FI -- Farthest Insertion, TS -- Tabu Search, SA -- Simulated Annealing}
+\caption{Czasy wykonania algorytmów w zależności od rozmiaru problemu (skala logarytmiczna na osi Y). Algorytmy Sekwencyjny i Nearest Neighbor mają czasy bliskie 0 i nie są widoczne na wykresie. TS i SA przekraczają timeout dla większych $n$.}
 \label{fig:time_plot}
 \end{figure}
 
 \textbf{Obserwacje:}
 \begin{itemize}
-    \item Algorytm sekwencyjny jest najszybszy -- $O(n)$
-    \item Nearest Neighbor jest bardzo szybki -- $O(n^2)$ i praktyczny dla dużych instancji
-    \item Farthest Insertion jest około 10x wolniejszy od NN -- $O(n^3)$
-    \item 2-opt jest porównywalny do FI, ale czas zależy od jakości rozwiązania początkowego
-    \item Metaheurystyki (TS i SA) są znacząco wolniejsze -- wymagają wielu iteracji
-    \item SA jest nieco szybsze od TS dzięki prostszej logice w każdej iteracji
+    \item Algorytm sekwencyjny i Nearest Neighbor są najszybsze -- czasy bliskie 0 dla wszystkich testowanych rozmiarów
+    \item Farthest Insertion ma złożoność $O(n^3)$ -- czas rośnie od 0.01s dla $n=50$ do 2.6s dla $n=500$
+    \item 2-opt ma podobną charakterystykę do FI -- czas rośnie do 7.4s dla $n=500$
+    \item Tabu Search jest znacząco wolniejszy -- przekracza timeout (100s) dla $n \geq 300$
+    \item Simulated Annealing jest najwolniejszy -- przekracza timeout już dla $n \geq 150$
+    \item Metaheurystyki (TS i SA) wymagają znacznie więcej czasu, ale dla mniejszych instancji dają lepsze wyniki
 \end{itemize}
 
 \subsection{Porównanie jakości rozwiązań}
@@ -522,17 +525,26 @@ Poniżej przedstawiono porównanie jakości rozwiązań uzyskanych przez poszcze
 \hline
 \textbf{n} & \textbf{Sekw.} & \textbf{NN} & \textbf{FI} & \textbf{2-opt} & \textbf{TS} & \textbf{SA} \\
 \hline
-10 & 602 & 188 & 165 & 158 & 155 & 150 \\
- & (+301\%) & (+25\%) & (+10\%) & (+5\%) & (+3\%) & (0\%) \\
+5 & 241 & 241 & 241 & 241 & 191 & 191 \\
+ & (+26\%) & (+26\%) & (+26\%) & (+26\%) & (0\%) & (0\%) \\
 \hline
-20 & 1250 & 425 & 380 & 350 & 340 & 335 \\
- & (+273\%) & (+27\%) & (+13\%) & (+4\%) & (+1\%) & (0\%) \\
+10 & 612 & 286 & 177 & 286 & 184 & 232 \\
+ & (+233\%) & (+55\%) & (-4\%) & (+55\%) & (0\%) & (+26\%) \\
 \hline
-30 & 1850 & 680 & 615 & 565 & 550 & 542 \\
- & (+241\%) & (+25\%) & (+13\%) & (+4\%) & (+1\%) & (0\%) \\
+50 & 2770 & 380 & 458 & 380 & 325 & 380 \\
+ & (+752\%) & (+17\%) & (+41\%) & (+17\%) & (0\%) & (+17\%) \\
 \hline
-50 & 3100 & 1180 & 1050 & 970 & 945 & 935 \\
- & (+232\%) & (+26\%) & (+12\%) & (+4\%) & (+1\%) & (0\%) \\
+75 & 4086 & 421 & 612 & 421 & 421 & 421 \\
+ & (+871\%) & (0\%) & (+45\%) & (0\%) & (0\%) & (0\%) \\
+\hline
+100 & 4860 & 609 & 753 & 548 & 489 & 489 \\
+ & (+894\%) & (+25\%) & (+54\%) & (+12\%) & (0\%) & (0\%) \\
+\hline
+150 & 7635 & 618 & 956 & 618 & 540 & -- \\
+ & (+1314\%) & (+14\%) & (+77\%) & (+14\%) & (0\%) & -- \\
+\hline
+200 & 9134 & 666 & 1012 & 663 & 577 & -- \\
+ & (+1483\%) & (+15\%) & (+75\%) & (+15\%) & (0\%) & -- \\
 \hline
 \end{tabular}
 \end{table}
@@ -540,51 +552,52 @@ Poniżej przedstawiono porównanie jakości rozwiązań uzyskanych przez poszcze
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}
-\begin{axis}[
+\begin{semilogyaxis}[
     width=14cm,
     height=9cm,
     xlabel={Rozmiar problemu $n$},
-    ylabel={Koszt trasy},
+    ylabel={Koszt trasy (skala log)},
     legend pos=north west,
     grid=major,
     legend style={font=\footnotesize},
-    xmin=5, xmax=55,
-    ymin=0, ymax=3200,
-    xtick={10,20,30,50},
+    xmin=0, xmax=520,
+    ymin=100, ymax=30000,
+    xtick={5,10,50,75,100,150,200,300,400,500},
 ]
 \addplot[color=red,mark=*,thick] coordinates {
-    (10,602) (20,1250) (30,1850) (50,3100)
+    (5,241) (10,612) (50,2770) (75,4086) (100,4860) (150,7635) (200,9134) (300,14059) (400,20001) (500,25493)
 };
 \addplot[color=blue,mark=square*,thick] coordinates {
-    (10,188) (20,425) (30,680) (50,1180)
+    (5,241) (10,286) (50,380) (75,421) (100,609) (150,618) (200,666) (300,735) (400,788) (500,1077)
 };
 \addplot[color=green!60!black,mark=triangle*,thick] coordinates {
-    (10,165) (20,380) (30,615) (50,1050)
+    (5,241) (10,177) (50,458) (75,612) (100,753) (150,956) (200,1012) (300,1322) (400,1475) (500,1764)
 };
 \addplot[color=orange,mark=diamond*,thick] coordinates {
-    (10,158) (20,350) (30,565) (50,970)
+    (5,241) (10,286) (50,380) (75,421) (100,548) (150,618) (200,663) (300,706) (400,788) (500,1077)
 };
 \addplot[color=purple,mark=pentagon*,thick] coordinates {
-    (10,155) (20,340) (30,550) (50,945)
+    (5,191) (10,184) (50,325) (75,421) (100,489) (150,540) (200,577)
 };
 \addplot[color=brown,mark=*,thick,dashed] coordinates {
-    (10,150) (20,335) (30,542) (50,935)
+    (5,191) (10,232) (50,380) (75,421) (100,489)
 };
 \legend{Sekwencyjny, Nearest Neighbor, Farthest Insertion, 2-opt, Tabu Search, Simulated Annealing}
-\end{axis}
+\end{semilogyaxis}
 \end{tikzpicture}
-\caption{Jakość rozwiązań (koszt trasy) w zależności od rozmiaru problemu. Wartości w nawiasach w tabeli pokazują procentową różnicę względem najlepszego rozwiązania (SA) dla danego rozmiaru. Legenda: Sekw. -- Sekwencyjny, NN -- Nearest Neighbor, FI -- Farthest Insertion, TS -- Tabu Search, SA -- Simulated Annealing}
+\caption{Jakość rozwiązań (koszt trasy) w zależności od rozmiaru problemu (skala logarytmiczna na osi Y). Wartości w nawiasach w tabeli pokazują procentową różnicę względem najlepszego rozwiązania dla danego rozmiaru. TS i SA nie mają wyników dla większych $n$ z powodu przekroczenia timeout.}
 \label{fig:quality_plot}
 \end{figure}
 
 \textbf{Obserwacje:}
 \begin{itemize}
-    \item Algorytm sekwencyjny daje bardzo słabe rozwiązania (ponad 200\% gorsze od najlepszych)
-    \item Nearest Neighbor daje rozwiązania około 25-27\% gorsze od najlepszych, ale jest bardzo szybki
-    \item Farthest Insertion poprawia NN o około 10-13 punktów procentowych
-    \item 2-opt znacząco poprawia rozwiązanie początkowe (z NN) -- redukcja o około 8-9 punktów procentowych
-    \item Tabu Search i Simulated Annealing dają najlepsze wyniki, różnice między nimi są niewielkie (1-2\%)
-    \item SA wydaje się dawać nieco lepsze wyniki niż TS przy podobnym czasie wykonania
+    \item Algorytm sekwencyjny daje katastrofalnie słabe rozwiązania -- od 26\% do ponad 1400\% gorsze od najlepszych
+    \item Nearest Neighbor daje dobre rozwiązania (0-55\% od najlepszych) przy minimalnym czasie wykonania
+    \item Farthest Insertion zaskakująco daje gorsze wyniki niż NN dla większych $n$ -- do 77\% gorsze od najlepszych
+    \item 2-opt poprawia rozwiązanie NN tylko nieznacznie (12-17\% od najlepszych dla $n \geq 100$)
+    \item Tabu Search daje najlepsze wyniki tam gdzie działa (do $n=200$)
+    \item Simulated Annealing daje wyniki porównywalne z TS dla małych $n$, ale szybko przekracza timeout
+    \item Dla dużych instancji ($n \geq 300$) jedynie algorytmy heurystyczne (NN, FI, 2-opt) są praktyczne
 \end{itemize}
 
 \subsection{Analiza kompromisu czas-jakość}
@@ -596,23 +609,30 @@ Kluczową kwestią w praktycznych zastosowaniach jest wybór odpowiedniego algor
 \begin{enumerate}
     \item \textbf{Wymagana bardzo krótka odpowiedź} (ms): Nearest Neighbor
     \begin{itemize}
-        \item Czas: poniżej 5ms dla n=100
-        \item Jakość: około 25\% gorsza od optimum
+        \item Czas: poniżej 10ms nawet dla $n=500$
+        \item Jakość: 15-25\% gorsza od najlepszych rozwiązań dla większych $n$
         \item Zastosowanie: aplikacje czasu rzeczywistego, wstępne przybliżenia
     \end{itemize}
     
-    \item \textbf{Balans czas-jakość} (dziesiątki ms): 2-opt z początkowym NN
+    \item \textbf{Balans czas-jakość} (setki ms do sekund): 2-opt z początkowym NN
     \begin{itemize}
-        \item Czas: około 35ms dla n=100
-        \item Jakość: około 4\% gorsza od najlepszych rozwiązań
-        \item Zastosowanie: typowe problemy optymalizacji tras
+        \item Czas: 0.14s dla $n=100$, do 7.4s dla $n=500$
+        \item Jakość: 12-17\% od najlepszych rozwiązań dla średnich $n$
+        \item Zastosowanie: typowe problemy optymalizacji tras dla $n \leq 500$
     \end{itemize}
     
-    \item \textbf{Priorytet jakości} (sekundy): Simulated Annealing lub Tabu Search
+    \item \textbf{Priorytet jakości} (sekundy): Tabu Search
     \begin{itemize}
-        \item Czas: około 1 sekundy dla n=100
-        \item Jakość: najbliższa optimum
-        \item Zastosowanie: planowanie offline, gdy jakość jest kluczowa
+        \item Czas: 4-8 sekund dla $n=100-200$
+        \item Jakość: najlepsza spośród testowanych algorytmów
+        \item Zastosowanie: planowanie offline dla mniejszych instancji ($n \leq 200$)
+    \end{itemize}
+    
+    \item \textbf{Duże instancje} ($n > 200$): tylko heurystyki
+    \begin{itemize}
+        \item Metaheurystyki przekraczają praktyczne limity czasowe
+        \item Kombinacja NN + 2-opt jest najlepszym wyborem
+        \item Dla $n=500$: koszt 1077 przy czasie 7.4s
     \end{itemize}
 \end{enumerate}
 
@@ -620,51 +640,69 @@ Kluczową kwestią w praktycznych zastosowaniach jest wybór odpowiedniego algor
 
 \subsubsection{Tabu Search}
 
-Przebadano wpływ rozmiaru listy tabu ($tabu\_size$) i liczby iteracji ($max\_iterations$):
+Implementacja wykorzystuje następujące parametry:
 
 \begin{itemize}
-    \item \textbf{Rozmiar listy tabu:} Wartości 5-15 dają podobne wyniki. Zbyt mała lista (2-3) prowadzi do cykli, zbyt duża (>20) może nadmiernie ograniczać eksplorację.
-    \item \textbf{Liczba iteracji:} Dla n=50: 500 iteracji daje 95\% jakości rozwiązania przy 10000 iteracjach. Dalsze wydłużanie przynosi malejące korzyści.
+    \item \textbf{Rozmiar listy tabu:} Adaptacyjny, zależny od $n$ (7-20)
+    \item \textbf{Liczba iteracji:} Adaptacyjna -- od 1500 dla małych $n$ do 500 dla dużych
+    \item \textbf{Sąsiedztwo:} Ruchy 2-opt z próbkowaniem dla większych instancji
+    \item \textbf{Kryterium aspiracji:} Akceptacja ruchu z listy tabu jeśli daje globalne najlepsze rozwiązanie
 \end{itemize}
+
+Głównym ograniczeniem jest czas wykonania -- dla $n > 200$ algorytm przekracza praktyczne limity czasowe.
 
 \subsubsection{Simulated Annealing}
 
-Przebadano wpływ temperatury początkowej i współczynnika chłodzenia:
+Implementacja wykorzystuje następujące parametry:
 
 \begin{itemize}
-    \item \textbf{Temperatura początkowa:} Adaptacyjne ustawienie bazujące na średnim koszcie krawędzi ($T_0 = avg\_cost \cdot n \cdot 0.5$) daje stabilne wyniki dla różnych instancji.
-    \item \textbf{Współczynnik chłodzenia:} Wartości 0.995-0.999 są optymalne. Zbyt szybkie chłodzenie (<0.99) daje gorsze wyniki, zbyt wolne (>0.999) nieproporcjonalnie wydłuża czas.
+    \item \textbf{Temperatura początkowa:} $T_0 = avg\_cost \cdot n \cdot 50$ (adaptacyjna)
+    \item \textbf{Współczynnik chłodzenia:} Obliczany adaptacyjnie na podstawie liczby iteracji
+    \item \textbf{Sąsiedztwo:} Próbkowanie najlepszego z wielu losowych ruchów 2-opt
+    \item \textbf{Lokalna optymalizacja:} 2-opt na końcu, jeśli SA znalazło poprawę
 \end{itemize}
+
+SA okazał się najbardziej czasochłonny spośród testowanych algorytmów, przekraczając timeout już dla $n \geq 150$. Strategia próbkowania wielu sąsiadów poprawia jakość kosztem czasu.
 
 \section{Wnioski}
 
 \subsection{Wnioski ogólne}
 
 \begin{enumerate}
-    \item \textbf{Kompromis czas-jakość:} Nie istnieje jeden najlepszy algorytm -- wybór zależy od wymagań aplikacji:
+    \item \textbf{Kompromis czas-jakość:} Nie istnieje jeden najlepszy algorytm -- wybór zależy od wymagań aplikacji i rozmiaru problemu:
     \begin{itemize}
-        \item Dla aplikacji czasu rzeczywistego: Nearest Neighbor
-        \item Dla typowych zastosowań: 2-opt z początkiem z NN
-        \item Gdy jakość jest priorytetem: SA lub TS
+        \item Dla aplikacji czasu rzeczywistego i dużych $n$: Nearest Neighbor
+        \item Dla typowych zastosowań ($n \leq 500$): 2-opt z początkiem z NN
+        \item Gdy jakość jest priorytetem i $n \leq 200$: Tabu Search
+        \item Simulated Annealing jest praktyczny tylko dla $n < 150$
     \end{itemize}
     
-    \item \textbf{Skuteczność metaheurystyk:} Simulated Annealing i Tabu Search dają rozwiązania bardzo bliskie optimum, ale wymagają znacząco więcej czasu niż proste heurystyki.
+    \item \textbf{Skuteczność metaheurystyk:} Tabu Search daje najlepsze wyniki spośród testowanych algorytmów, ale jest ograniczony do mniejszych instancji ($n \leq 200$). Simulated Annealing przekracza timeout jeszcze szybciej.
     
-    \item \textbf{Znaczenie rozwiązania początkowego:} Algorytmy poprawy (2-opt, TS, SA) wymagają dobrego punktu startowego. Nearest Neighbor jest dobrym wyborem jako heurystyka konstrukcyjna.
+    \item \textbf{Zaskakująca wydajność heurystyk:} Nearest Neighbor okazał się lepszy niż Farthest Insertion dla większych instancji, mimo że FI ma wyższą złożoność obliczeniową. 2-opt daje tylko nieznaczną poprawę względem NN.
     
-    \item \textbf{Skalowalność:} Dla dużych instancji (n>200) metaheurystyki stają się niepraktycznie wolne bez dalszych optymalizacji. W takich przypadkach kombinacja NN+2-opt jest często najlepszym wyborem.
+    \item \textbf{Skalowalność:} Dla instancji $n > 200$ jedynie algorytmy heurystyczne (Sekwencyjny, NN, FI, 2-opt) są praktyczne. Metaheurystyki przekraczają timeout 100s.
+    
+    \item \textbf{Asymetryczny TSP:} Testowane instancje były asymetryczne (macierz kosztów niesymetryczna), co może wpływać na skuteczność niektórych algorytmów, szczególnie tych opartych na 2-opt.
 \end{enumerate}
 
 
 \section{Podsumowanie}
 
-W ramach przeprowadzonych badań zaimplementowano i porównano sześć algorytmów rozwiązywania problemu komiwojażera: algorytm sekwencyjny, Nearest Neighbor, Farthest Insertion, 2-opt, Tabu Search oraz Simulated Annealing. Eksperymenty numeryczne pozwoliły na dokładną ocenę wydajności i jakości rozwiązań dla każdej z metod.
+W ramach przeprowadzonych badań zaimplementowano i porównano sześć algorytmów rozwiązywania problemu komiwojażera: algorytm sekwencyjny, Nearest Neighbor, Farthest Insertion, 2-opt, Tabu Search oraz Simulated Annealing. Eksperymenty numeryczne na instancjach o rozmiarach od 5 do 500 miast pozwoliły na dokładną ocenę wydajności i jakości rozwiązań dla każdej z metod.
 
-Wyniki potwierdzają fundamentalny kompromis między czasem wykonania a jakością rozwiązań charakterystyczny dla problemów NP-trudnych. Proste heurystyki konstrukcyjne (NN, FI) są bardzo szybkie, ale dają rozwiązania odległe od optimum. Metody lokalnego przeszukiwania (2-opt) oferują dobry balans, znacząco poprawiając jakość przy umiarkowanym koszcie czasowym. Zaawansowane metaheurystyki (TS, SA) znajdując najlepsze rozwiązania, wymagają jednak wielokrotnie więcej czasu.
+Wyniki potwierdzają fundamentalny kompromis między czasem wykonania a jakością rozwiązań. Algorytm sekwencyjny i Nearest Neighbor są najszybsze (czas bliski 0), przy czym NN daje znacząco lepsze rozwiązania. Farthest Insertion, mimo wyższej złożoności obliczeniowej, okazał się gorszy od NN dla większych instancji. Algorytm 2-opt oferuje nieznaczną poprawę względem NN przy akceptowalnym czasie (do 7.4s dla $n=500$).
 
-Praktycznym wnioskiem jest zalecenie kombinacji Nearest Neighbor + 2-opt dla większości zastosowań -- osiąga ona rozwiązania bliskie najlepszym przy akceptowalnym czasie wykonania. Metaheurystyki powinny być rozważane gdy jakość rozwiązania jest kluczowa i dostępny jest odpowiedni czas obliczeniowy.
+Metaheurystyki (Tabu Search i Simulated Annealing) dają najlepsze wyniki, ale są ograniczone do mniejszych instancji -- TS przekracza timeout dla $n \geq 300$, a SA już dla $n \geq 150$. Tabu Search okazał się najbardziej skuteczny spośród testowanych metaheurystyk.
 
-Przeprowadzone badania stanowią solidną podstawę do wyboru odpowiedniego algorytmu w praktycznych zastosowaniach optymalizacji tras oraz wskazują kierunki dalszego rozwoju metod rozwiązywania TSP.
+Praktycznym wnioskiem jest zalecenie:
+\begin{itemize}
+    \item Dla małych instancji ($n \leq 100$): Tabu Search dla najlepszej jakości
+    \item Dla średnich instancji ($100 < n \leq 200$): Tabu Search lub 2-opt z NN
+    \item Dla dużych instancji ($n > 200$): kombinacja Nearest Neighbor + 2-opt
+\end{itemize}
+
+Przeprowadzone badania stanowią solidną podstawę do wyboru odpowiedniego algorytmu w praktycznych zastosowaniach optymalizacji tras.
 \section{Bibliografia}
 
 \begin{enumerate}

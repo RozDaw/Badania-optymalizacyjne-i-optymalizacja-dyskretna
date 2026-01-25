@@ -1,34 +1,28 @@
 """
 Algorytm 2-opt (poprawa dwu-optymalna) dla TSP.
+
+Referencja: https://en.wikipedia.org/wiki/2-opt
 """
 
 
-def tsp_2opt(matrix, initial_path=None):
+def tsp_2opt(matrix, initial_path=None, use_restart=False):
     """
     Rozwiązuje TSP metodą 2-opt (algorytm poprawy dwu-optymalnej).
     
     Algorytm 2-opt to metoda lokalnego przeszukiwania, która iteracyjnie
     poprawia istniejącą trasę poprzez usuwanie dwóch krawędzi i ponowne
-    łączenie trasy w inny sposób.
-    
-    Algorytm działa w następujący sposób:
-    1. Rozpoczyna od początkowej trasy (jeśli nie podano, używa trasy sekwencyjnej)
-    2. Sprawdza wszystkie możliwe pary krawędzi do zamiany
-    3. Jeśli zamiana zmniejsza długość trasy, wykonuje ją (odwraca fragment trasy)
-    4. Powtarza krok 2-3 aż nie można już poprawić trasy
+    łączenie trasy w inny sposób (odwracając segment między nimi).
     
     Parametry:
-        matrix: macierz kosztów przejść między miastami (powinna być symetryczna)
+        matrix: macierz kosztów przejść między miastami
         initial_path: opcjonalna początkowa trasa (lista indeksów miast).
                      Jeśli None, używa trasy sekwencyjnej.
+        use_restart: jeśli True, używa random restart z kilkoma punktami startowymi
     
-    Złożoność czasowa: O(n^2) na iterację, liczba iteracji zależy od danych
+    Złożoność czasowa: O(n^2) na iterację, aż do zbieżności
     
-    Uwaga: 
-    - Jest to algorytm heurystyczny znajdujący optimum lokalne.
-    - Wynik zależy od początkowej trasy.
-    - Algorytm jest przeznaczony dla symetrycznego TSP (matrix[i][j] == matrix[j][i]).
-      Dla asymetrycznego TSP może dawać niepoprawne wyniki.
+    Zwraca:
+        (koszt_najlepszej_trasy, najlepsza_trasa)
     """
     n = len(matrix)
     if n == 0:
@@ -38,77 +32,130 @@ def tsp_2opt(matrix, initial_path=None):
     if n == 2:
         return matrix[0][1] + matrix[1][0], [0, 1, 0]
     
-    # Jeśli nie podano początkowej trasy, użyj trasy sekwencyjnej
-    if initial_path is None:
-        path = list(range(n)) + [0]
-    else:
-        path = list(initial_path)  # Kopiujemy trasę
+    # Random restart dla większych n - próbuj z kilkoma punktami startowymi
+    if use_restart and n > 20:
+        import random
+        best_cost = float('inf')
+        best_tour = None
+        
+        # Użyj podanego punktu startowego jako pierwszy
+        if initial_path is not None:
+            if len(initial_path) > n and initial_path[-1] == initial_path[0]:
+                start_tour = list(initial_path[:-1])
+            else:
+                start_tour = list(initial_path)
+            cost, tour = _tsp_2opt_single(matrix, start_tour)
+            if cost < best_cost:
+                best_cost = cost
+                best_tour = tour
+        else:
+            # Jeśli nie podano, użyj sekwencyjnej
+            start_tour = list(range(n))
+            cost, tour = _tsp_2opt_single(matrix, start_tour)
+            if cost < best_cost:
+                best_cost = cost
+                best_tour = tour
+        
+        # Dodatkowe losowe punkty startowe
+        num_restarts = min(3, max(1, n // 20))
+        for _ in range(num_restarts):
+            random_tour = list(range(n))
+            random.shuffle(random_tour)
+            cost, tour = _tsp_2opt_single(matrix, random_tour)
+            if cost < best_cost:
+                best_cost = cost
+                best_tour = tour
+        
+        return best_cost, best_tour + [best_tour[0]]
     
-    # Oblicz początkowy koszt
-    def calculate_path_cost(p):
+    # Standardowe wykonanie
+    if initial_path is None:
+        tour = list(range(n))
+    else:
+        if len(initial_path) > n and initial_path[-1] == initial_path[0]:
+            tour = list(initial_path[:-1])
+        else:
+            tour = list(initial_path)
+    
+    cost, result_tour = _tsp_2opt_single(matrix, tour)
+    return cost, result_tour + [result_tour[0]]
+
+
+def _tsp_2opt_single(matrix, tour):
+    """
+    Wykonuje pojedyncze uruchomienie 2-opt na danej trasie.
+    """
+    n = len(matrix)
+    
+    def calculate_tour_cost(t):
+        """Oblicza koszt trasy (cyklu)."""
         cost = 0
-        for i in range(len(p) - 1):
-            cost += matrix[p[i]][p[i + 1]]
+        for i in range(len(t)):
+            cost += matrix[t[i]][t[(i + 1) % len(t)]]
         return cost
     
-    initial_cost = calculate_path_cost(path)
-    best_cost = initial_cost
-    best_path = list(path)
+    def two_opt_swap(t, i, j):
+        """
+        Wykonuje 2-opt swap: odwraca segment od i+1 do j (włącznie).
+        """
+        return t[:i+1] + t[i+1:j+1][::-1] + t[j+1:]
     
+    current_cost = calculate_tour_cost(tour)
+    initial_cost = current_cost
+    best_tour = list(tour)
+    best_cost = current_cost
+    
+    # Główna pętla 2-opt - kontynuuj dopóki są poprawy
+    # Zwiększona liczba iteracji dla lepszych wyników (wolniejsze, ale lepsze)
     improved = True
+    if n <= 50:
+        max_iterations = n * n * 10  # Więcej iteracji dla średnich n
+    elif n <= 100:
+        max_iterations = n * n * 8
+    elif n <= 200:
+        max_iterations = n * n * 5
+    else:
+        max_iterations = n * n * 3
     iteration = 0
-    # Ograniczamy liczbę iteracji - dla większych n używamy proporcjonalnie mniej iteracji
-    max_iterations = min(200, n * 3)  # Maksymalnie 200 iteracji lub 3*n
     
     while improved and iteration < max_iterations:
-        iteration += 1
         improved = False
-        best_delta = 0
-        best_i = -1
-        best_j = -1
+        iteration += 1
         
-        # Sprawdź wszystkie możliwe pary krawędzi do zamiany
-        # W przypadku cyklu o długości n+1 (gdzie ostatni element = pierwszy),
-        # sprawdzamy krawędzie od 0 do n-1
-        # Dla n miast mamy n krawędzi (indeksy 0 do n-1)
-        # i może być od 0 do n-2, j od i+2 do n-1 (aby krawędzie nie były sąsiednie)
+        # Znajdź najlepszą poprawę w tej iteracji
+        best_delta = 0
+        best_i, best_j = -1, -1
+        
         for i in range(n - 1):
             for j in range(i + 2, n):
-                # Pobierz wierzchołki krawędzi
-                # Krawędź 1: path[i] -> path[i+1]
-                # Krawędź 2: path[j] -> path[j+1]
-                a0 = path[i]
-                a1 = path[i + 1]
-                b0 = path[j]
-                b1 = path[j + 1]
+                # Nie zamieniaj jeśli i=0 i j=n-1 (to by odwróciło całą trasę)
+                if i == 0 and j == n - 1:
+                    continue
                 
-                # Oblicz zmianę kosztu przy zamianie:
-                # Usuwamy krawędzie: a0->a1 i b0->b1
-                # Dodajemy krawędzie: a0->b0 i a1->b1
-                # (co odpowiada odwróceniu fragmentu trasy między i+1 a j)
-                delta = (matrix[a0][b0] + matrix[a1][b1] - 
-                        matrix[a0][a1] - matrix[b0][b1])
+                # Wykonaj swap i oblicz nowy koszt
+                new_tour = two_opt_swap(tour, i, j)
+                new_cost = calculate_tour_cost(new_tour)
+                delta = new_cost - current_cost
                 
-                # Znajdź najlepszą poprawę (największą redukcję kosztu)
                 if delta < best_delta:
                     best_delta = delta
-                    best_i = i
-                    best_j = j
-                    improved = True
+                    best_i, best_j = i, j
         
-        # Wykonaj najlepszą znalezioną poprawę
-        if improved:
-            # Odwróć fragment trasy od i+1 do j (włącznie)
-            # Używamy slice reversal zamiast reversed() iteratora
-            path[best_i + 1:best_j + 1] = path[best_i + 1:best_j + 1][::-1]
+        # Wykonaj najlepszą poprawę
+        if best_delta < -1e-10:
+            tour = two_opt_swap(tour, best_i, best_j)
+            current_cost = calculate_tour_cost(tour)
+            improved = True
             
-            # Oblicz nowy koszt i zaktualizuj najlepsze rozwiązanie
-            current_cost = calculate_path_cost(path)
             if current_cost < best_cost:
                 best_cost = current_cost
-                best_path = list(path)
+                best_tour = list(tour)
     
-    # Zwróć najlepsze znalezione rozwiązanie (nigdy nie gorsze niż początkowe)
-    return best_cost, best_path
-
-
+    # Upewnij się, że koszt jest poprawnie obliczony
+    final_cost = calculate_tour_cost(best_tour)
+    
+    # Zwróć najlepsze rozwiązanie (nie gorsze niż początkowe)
+    if final_cost > initial_cost:
+        return initial_cost, list(tour)
+    
+    return final_cost, best_tour

@@ -35,8 +35,8 @@ ALGORITHMS = [
 SIZES = [5, 10, 50, 75, 100, 150, 200, 300, 400, 500]
 
 # Parametry testów
-REPETITIONS = 5
-TIMEOUT = 5.0  # sekundy
+REPETITIONS = 10
+TIMEOUT = 100.0  # sekundy
 
 
 def test_algorithm(algorithm_func, algorithm_name, sizes, seed_base=42, 

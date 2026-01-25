@@ -1,36 +1,28 @@
 """
-Algorytm Tabu Search dla TSP (dla asymetrycznego TSP).
+Algorytm Tabu Search dla TSP.
+
+Referencja: https://en.wikipedia.org/wiki/Tabu_search
 """
 import random
+from collections import deque
 
 
-def tsp_tabu_search(matrix, initial_path=None, max_iterations=None, tabu_size=10):
+def tsp_tabu_search(matrix, initial_path=None, max_iterations=None, tabu_size=None):
     """
     Rozwiązuje TSP metodą przeszukiwania tabu (Tabu Search).
-    
-    Używa operatora swap (zamiana dwóch miast) który działa dla asymetrycznego TSP.
     
     Tabu Search to algorytm metaheurystyczny, który wykorzystuje lokalną
     pamięć przeszukiwania (listę tabu) do unikania cykli i eksploracji
     nowych obszarów przestrzeni rozwiązań.
     
-    Algorytm działa w następujący sposób:
-    1. Rozpoczyna od początkowej trasy
-    2. W każdej iteracji:
-       - Sprawdza sąsiedztwo aktualnego rozwiązania (zamiany swap)
-       - Wybiera najlepszy ruch, który nie jest na liście tabu
-       - Dodaje ruch do listy tabu
-       - Aktualizuje najlepsze znalezione rozwiązanie
-    3. Kończy po osiągnięciu maksymalnej liczby iteracji
+    Używa 2-opt moves jako sąsiedztwa i sprawdza wszystkie możliwe ruchy
+    w każdej iteracji (best improvement strategy).
     
     Parametry:
-        matrix: macierz kosztów przejść między miastami (może być asymetryczna)
-        initial_path: opcjonalna początkowa trasa (lista indeksów miast).
-                     Jeśli None, generuje losową permutację.
+        matrix: macierz kosztów przejść między miastami
+        initial_path: opcjonalna początkowa trasa
         max_iterations: maksymalna liczba iteracji algorytmu
-        tabu_size: rozmiar listy tabu (liczba zabronionych ruchów)
-    
-    Złożoność czasowa: O(max_iterations * n^2) gdzie n to liczba miast
+        tabu_size: rozmiar listy tabu
     
     Zwraca:
         (koszt_najlepszej_trasy, najlepsza_trasa)
@@ -45,165 +37,196 @@ def tsp_tabu_search(matrix, initial_path=None, max_iterations=None, tabu_size=10
     
     # Inicjalizacja początkowej trasy
     if initial_path is None:
-        # Losowa permutacja miast
-        path = list(range(n))
-        random.shuffle(path)
-        path.append(path[0])  # Zamknij cykl
-    else:
-        path = list(initial_path)
+        # Użyj Nearest Neighbor jako dobrego rozwiązania początkowego
+        from algorithms.nearest_neighbor import tsp_nearest_neighbor
+        _, initial_path = tsp_nearest_neighbor(matrix)
     
-    # Oblicz koszt trasy
-    def calculate_cost(tour):
+    # Usuń ostatni element jeśli jest powtórzeniem pierwszego
+    if len(initial_path) > n and initial_path[-1] == initial_path[0]:
+        tour = list(initial_path[:-1])
+    else:
+        tour = list(initial_path)
+    
+    def calculate_tour_cost(t):
+        """Oblicza koszt trasy (cyklu)."""
         cost = 0
-        for i in range(len(tour) - 1):
-            cost += matrix[tour[i]][tour[i + 1]]
+        for i in range(len(t)):
+            cost += matrix[t[i]][t[(i + 1) % len(t)]]
         return cost
     
-    # Oblicz zmianę kosztu przy zamianie dwóch miast
-    def calculate_swap_delta(tour, i, j):
-        """
-        Oblicza zmianę kosztu przy zamianie tour[i] z tour[j].
-        Zakłada i < j i że nie zamieniamy pierwszego/ostatniego elementu.
-        """
-        if i == 0 or j == len(tour) - 1:
-            return float('inf')
-        if i >= j:
-            return float('inf')
-            
-        old_cost = 0
-        new_cost = 0
-        
-        if j == i + 1:
-            # Sąsiednie miasta
-            old_cost = matrix[tour[i-1]][tour[i]] + matrix[tour[i]][tour[j]] + matrix[tour[j]][tour[j+1]]
-            new_cost = matrix[tour[i-1]][tour[j]] + matrix[tour[j]][tour[i]] + matrix[tour[i]][tour[j+1]]
-        else:
-            # Nie sąsiadują
-            old_cost = (matrix[tour[i-1]][tour[i]] + matrix[tour[i]][tour[i+1]] +
-                       matrix[tour[j-1]][tour[j]] + matrix[tour[j]][tour[j+1]])
-            new_cost = (matrix[tour[i-1]][tour[j]] + matrix[tour[j]][tour[i+1]] +
-                       matrix[tour[j-1]][tour[i]] + matrix[tour[i]][tour[j+1]])
-        
-        return new_cost - old_cost
+    def two_opt_swap(t, i, j):
+        """Wykonuje 2-opt swap: odwraca segment od i+1 do j."""
+        return t[:i+1] + t[i+1:j+1][::-1] + t[j+1:]
     
-    current_cost = calculate_cost(path)
-    best_path = list(path)
+    # Parametry domyślne - adaptacyjne w zależności od rozmiaru
+    # Zwiększona liczba iteracji dla lepszych wyników (wolniejsze, ale lepsze)
+    if max_iterations is None:
+        if n > 200:
+            max_iterations = min(500, n * 5)
+        elif n > 100:
+            max_iterations = min(800, n * 8)
+        elif n > 50:
+            max_iterations = min(1000, n * 10)
+        else:
+            max_iterations = min(1500, n * 15)
+    
+    if tabu_size is None:
+        tabu_size = max(7, min(n, 20))
+    
+    current_tour = tour
+    current_cost = calculate_tour_cost(current_tour)
+    initial_cost = current_cost
+    
+    best_tour = list(current_tour)
     best_cost = current_cost
     
-    # Adaptacyjna liczba iteracji - dla większych n używamy proporcjonalnie mniej iteracji
-    if max_iterations is None:
-        max_iterations = min(500, n * 10)  # Maksymalnie 500 iteracji lub 10*n
-    
-    # Lista tabu - adaptacyjny rozmiar
-    if tabu_size is None or tabu_size <= 0:
-        tabu_size = max(5, min(20, n // 5))  # 5-20 w zależności od n
-    
-    # Lista tabu - używamy setu dla szybszego sprawdzania
+    # Lista tabu - przechowuje pary (i, j) reprezentujące 2-opt moves
+    tabu_list = deque(maxlen=tabu_size)
     tabu_set = set()
-    tabu_list = []  # Lista do zarządzania kolejnością (FIFO)
     
-    # Licznik iteracji bez poprawy
+    # Licznik iteracji bez globalnej poprawy - zwiększony dla większej eksploracji
     no_improvement_count = 0
-    max_no_improvement = max(50, n)  # Przerwij jeśli brak poprawy przez wiele iteracji
+    max_no_improvement = max(100, n * 2)
     
-    # Główna pętla
     for iteration in range(max_iterations):
         best_move = None
         best_move_cost = float('inf')
-        best_move_delta = float('inf')
+        best_i, best_j = -1, -1
         
-        # Dla większych n, sprawdzamy tylko losową próbkę swapów dla szybkości
+        # Dla dużych n, sprawdzamy tylko próbkę swapów dla wydajności
         # Dla małych n sprawdzamy wszystkie
         if n > 50:
-            # Sprawdź losową próbkę swapów (około n*2 swapów)
-            num_samples = min(n * 2, (n * (n - 1)) // 2)
-            samples_checked = 0
-            max_samples = num_samples
+            # Losowa próbka swapów - ograniczona liczba dla wydajności
+            # Dla większych n zmniejszamy liczbę próbek
+            if n > 150:
+                num_samples = min(n * 5, 1000)
+            elif n > 100:
+                num_samples = min(n * 7, 1500)
+            else:
+                num_samples = min(n * 10, (n * (n - 1)) // 2)
+            moves_to_check = []
             
-            while samples_checked < max_samples:
-                i = random.randint(1, n - 1)
-                j = random.randint(i + 1, n)
-                if j >= len(path):
+            # Generuj losową próbkę unikalnych swapów
+            seen = set()
+            attempts = 0
+            max_attempts = num_samples * 10  # Ograniczenie prób
+            
+            while len(moves_to_check) < num_samples and attempts < max_attempts:
+                i = random.randint(0, n - 2)
+                # j musi być co najmniej i+2 i maksymalnie n-1
+                if i + 2 > n - 1:
+                    attempts += 1
+                    continue
+                j = random.randint(i + 2, n - 1)
+                if i == 0 and j == n - 1:
                     continue
                 move = (i, j)
-                delta = calculate_swap_delta(path, i, j)
-                
-                if delta == float('inf'):
-                    continue
-                
-                samples_checked += 1
-                new_cost = current_cost + delta
-                
-                is_tabu = move in tabu_set
-                # Kryterium aspiracji: pozwala na ruch z listy tabu,
-                # jeśli prowadzi do najlepszego dotychczas rozwiązania globalnego
-                aspiration_criterion = new_cost < best_cost
-                
-                if (not is_tabu or aspiration_criterion) and new_cost < best_move_cost:
-                    best_move = move
-                    best_move_cost = new_cost
-                    best_move_delta = delta
+                if move not in seen:
+                    seen.add(move)
+                    moves_to_check.append((i, j))
+                attempts += 1
         else:
-            # Dla małych n sprawdzamy wszystkie swapy
-            for i in range(1, n):
-                for j in range(i + 1, n):
-                    if j >= len(path):
+            # Dla małych n - wszystkie możliwe swapy
+            moves_to_check = []
+            for i in range(n - 1):
+                for j in range(i + 2, n):
+                    if i == 0 and j == n - 1:
                         continue
-                    move = (i, j)
-                    delta = calculate_swap_delta(path, i, j)
-                    
-                    if delta == float('inf'):
-                        continue
-                    
-                    new_cost = current_cost + delta
-                    
-                    is_tabu = move in tabu_set
-                    # Kryterium aspiracji: pozwala na ruch z listy tabu,
-                    # jeśli prowadzi do najlepszego dotychczas rozwiązania globalnego
-                    aspiration_criterion = new_cost < best_cost
-                    
-                    if (not is_tabu or aspiration_criterion) and new_cost < best_move_cost:
-                        best_move = move
-                        best_move_cost = new_cost
-                        best_move_delta = delta
+                    moves_to_check.append((i, j))
+        
+        # Przeglądaj wybrane swapy
+        for i, j in moves_to_check:
+            new_tour = two_opt_swap(current_tour, i, j)
+            new_cost = calculate_tour_cost(new_tour)
+            
+            move = (i, j)
+            is_tabu = move in tabu_set
+            
+            # Kryterium aspiracji: pozwól na ruch z listy tabu,
+            # jeśli prowadzi do najlepszego dotychczas rozwiązania
+            aspiration = new_cost < best_cost
+            
+            if (not is_tabu or aspiration) and new_cost < best_move_cost:
+                best_move = move
+                best_move_cost = new_cost
+                best_i, best_j = i, j
         
         if best_move is None:
-            no_improvement_count += 1
-            if no_improvement_count >= max_no_improvement:
-                break
-            continue
+            # Jeśli nie ma dozwolonego ruchu, wybierz najlepszy nawet z tabu
+            # Dla dużych n sprawdzamy tylko próbkę
+            if n > 50:
+                # Sprawdź losową próbkę
+                for _ in range(min(100, len(moves_to_check))):
+                    if not moves_to_check:
+                        break
+                    i, j = random.choice(moves_to_check)
+                    new_tour = two_opt_swap(current_tour, i, j)
+                    new_cost = calculate_tour_cost(new_tour)
+                    if new_cost < best_move_cost:
+                        best_move = (i, j)
+                        best_move_cost = new_cost
+                        best_i, best_j = i, j
+            else:
+                # Dla małych n sprawdź wszystkie
+                for i in range(n - 1):
+                    for j in range(i + 2, n):
+                        if i == 0 and j == n - 1:
+                            continue
+                        new_tour = two_opt_swap(current_tour, i, j)
+                        new_cost = calculate_tour_cost(new_tour)
+                        if new_cost < best_move_cost:
+                            best_move = (i, j)
+                            best_move_cost = new_cost
+                            best_i, best_j = i, j
         
-        no_improvement_count = 0  # Reset licznika gdy jest poprawa
+        if best_move is None:
+            break  # Brak możliwych ruchów
         
-        # Wykonaj zamianę
-        i, j = best_move
-        path[i], path[j] = path[j], path[i]
+        # Wykonaj ruch
+        current_tour = two_opt_swap(current_tour, best_i, best_j)
         current_cost = best_move_cost
         
-        # Aktualizuj listę tabu (używamy setu i listy)
+        # Dodaj ruch do listy tabu
         if best_move in tabu_set:
-            tabu_set.remove(best_move)
-            tabu_list.remove(best_move)
+            # Usuń stary wpis
+            tabu_list = deque([m for m in tabu_list if m != best_move], maxlen=tabu_size)
+            tabu_set.discard(best_move)
+        
+        # Dodaj na koniec listy tabu
+        if len(tabu_list) >= tabu_size:
+            old_move = tabu_list.popleft()
+            tabu_set.discard(old_move)
         
         tabu_list.append(best_move)
         tabu_set.add(best_move)
-        if len(tabu_list) > tabu_size:
-            old_move = tabu_list.pop(0)
-            tabu_set.remove(old_move)
         
         # Aktualizuj najlepsze rozwiązanie
         if current_cost < best_cost:
+            best_tour = list(current_tour)
             best_cost = current_cost
-            best_path = list(path)
+            no_improvement_count = 0
+        else:
+            no_improvement_count += 1
+            if no_improvement_count >= max_no_improvement:
+                break
     
-    final_cost = calculate_cost(best_path)
-    return final_cost, best_path
+    # Upewnij się, że koszt jest poprawnie obliczony
+    final_cost = calculate_tour_cost(best_tour)
+    
+    # Zawsze zwróć najlepsze znalezione (nie gorsze niż początkowe)
+    if final_cost > initial_cost:
+        return initial_cost, tour + [tour[0]]
+    
+    return final_cost, best_tour + [best_tour[0]]
 
 
 def tsp_tabu_search_with_restart(matrix, initial_path=None, max_iterations=1000, 
-                                  tabu_size=10, restart_interval=200):
+                                  tabu_size=None, num_restarts=3):
     """
-    Rozwiązuje TSP metodą Tabu Search z okresowym restartem.
+    Rozwiązuje TSP metodą Tabu Search z wieloma restartami.
+    
+    Wykonuje kilka przebiegów Tabu Search z różnymi punktami startowymi
+    i zwraca najlepsze znalezione rozwiązanie.
     """
     n = len(matrix)
     if n == 0:
@@ -216,13 +239,13 @@ def tsp_tabu_search_with_restart(matrix, initial_path=None, max_iterations=1000,
     best_overall_cost = float('inf')
     best_overall_path = None
     
-    num_restarts = max(1, max_iterations // restart_interval)
     iterations_per_restart = max_iterations // num_restarts
     
     for restart in range(num_restarts):
         if restart == 0 and initial_path is not None:
             start_path = initial_path
         else:
+            # Losowy punkt startowy
             start_path = list(range(n))
             random.shuffle(start_path)
             start_path.append(start_path[0])
