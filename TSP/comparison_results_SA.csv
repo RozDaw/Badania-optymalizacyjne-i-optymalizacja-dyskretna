@@ -1,0 +1,486 @@
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,5,10,106,0.000000
+Nearest Neighbor,5,10,47,0.000000
+Farthest Insertion,5,10,47,0.000000
+2-opt,5,10,47,0.000000
+Simulated Annealing,5,10,47,4.533970
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,5,20,118,0.000000
+Nearest Neighbor,5,20,98,0.000000
+Farthest Insertion,5,20,96,0.000000
+2-opt,5,20,95,0.000000
+Simulated Annealing,5,20,95,4.627616
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,5,30,137,0.000000
+Nearest Neighbor,5,30,75,0.000000
+Farthest Insertion,5,30,56,0.000000
+2-opt,5,30,53,0.000000
+Simulated Annealing,5,30,53,4.981597
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,5,40,89,0.000000
+Nearest Neighbor,5,40,92,0.000000
+Farthest Insertion,5,40,88,0.000000
+2-opt,5,40,88,0.000000
+Simulated Annealing,5,40,88,6.237107
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,5,50,128,0.000000
+Nearest Neighbor,5,50,71,0.000000
+Farthest Insertion,5,50,59,0.000000
+2-opt,5,50,71,0.000000
+Simulated Annealing,5,50,59,6.190791
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,5,60,60,0.000000
+Nearest Neighbor,5,60,57,0.000000
+Farthest Insertion,5,60,44,0.000000
+2-opt,5,60,44,0.000000
+Simulated Annealing,5,60,44,6.106839
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,5,70,113,0.000000
+Nearest Neighbor,5,70,99,0.000000
+Farthest Insertion,5,70,109,0.000000
+2-opt,5,70,99,0.000000
+Simulated Annealing,5,70,92,6.006093
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,5,80,88,0.000000
+Nearest Neighbor,5,80,88,0.000000
+Farthest Insertion,5,80,88,0.000000
+2-opt,5,80,88,0.000000
+Simulated Annealing,5,80,88,5.952562
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,5,90,122,0.000000
+Nearest Neighbor,5,90,119,0.000000
+Farthest Insertion,5,90,118,0.000000
+2-opt,5,90,105,0.000000
+Simulated Annealing,5,90,105,6.048754
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,10,10,484,0.000000
+Nearest Neighbor,10,10,242,0.000000
+Farthest Insertion,10,10,199,0.000000
+2-opt,10,10,237,0.000000
+Simulated Annealing,10,10,150,7.214145
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,10,20,392,0.000000
+Nearest Neighbor,10,20,318,0.000000
+Farthest Insertion,10,20,212,0.000000
+2-opt,10,20,252,0.001039
+Simulated Annealing,10,20,178,7.079799
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,10,30,605,0.000000
+Nearest Neighbor,10,30,305,0.000000
+Farthest Insertion,10,30,209,0.000000
+2-opt,10,30,173,0.001540
+Simulated Annealing,10,30,141,7.035912
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,10,40,367,0.000000
+Nearest Neighbor,10,40,242,0.000000
+Farthest Insertion,10,40,194,0.000000
+2-opt,10,40,153,0.000000
+Simulated Annealing,10,40,152,7.058110
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,10,50,437,0.000000
+Nearest Neighbor,10,50,324,0.000000
+Farthest Insertion,10,50,238,0.000000
+2-opt,10,50,284,0.000000
+Simulated Annealing,10,50,165,6.907466
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,10,60,453,0.000000
+Nearest Neighbor,10,60,250,0.000000
+Farthest Insertion,10,60,237,0.000000
+2-opt,10,60,177,0.000000
+Simulated Annealing,10,60,167,6.927278
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,10,70,346,0.000000
+Nearest Neighbor,10,70,248,0.000000
+Farthest Insertion,10,70,164,0.000000
+2-opt,10,70,188,0.000000
+Simulated Annealing,10,70,149,7.050755
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,10,80,546,0.000000
+Nearest Neighbor,10,80,268,0.000000
+Farthest Insertion,10,80,189,0.000000
+2-opt,10,80,210,0.000000
+Simulated Annealing,10,80,124,7.023137
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,10,90,569,0.000000
+Nearest Neighbor,10,90,231,0.000000
+Farthest Insertion,10,90,207,0.000000
+2-opt,10,90,184,0.000000
+Simulated Annealing,10,90,142,6.875374
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,50,10,13459,0.000000
+Nearest Neighbor,50,10,1995,0.000000
+Farthest Insertion,50,10,2486,0.004993
+2-opt,50,10,1877,0.031009
+Simulated Annealing,50,10,1422,14.792746
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,50,20,12158,0.000000
+Nearest Neighbor,50,20,2086,0.000000
+Farthest Insertion,50,20,2373,0.002998
+2-opt,50,20,2086,0.007046
+Simulated Annealing,50,20,1553,14.993212
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,50,30,12840,0.000000
+Nearest Neighbor,50,30,1883,0.000000
+Farthest Insertion,50,30,2433,0.002973
+2-opt,50,30,1883,0.006900
+Simulated Annealing,50,30,1503,15.439722
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,50,40,12399,0.000000
+Nearest Neighbor,50,40,1513,0.000000
+Farthest Insertion,50,40,2279,0.004996
+2-opt,50,40,1413,0.020998
+Simulated Annealing,50,40,1339,14.600149
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,50,50,12240,0.000000
+Nearest Neighbor,50,50,3107,0.000000
+Farthest Insertion,50,50,2675,0.003421
+2-opt,50,50,2261,0.021295
+Simulated Annealing,50,50,1950,15.254994
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,50,60,12865,0.000000
+Nearest Neighbor,50,60,1948,0.000000
+Farthest Insertion,50,60,2536,0.003062
+2-opt,50,60,1563,0.013264
+Simulated Annealing,50,60,1557,15.004940
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,50,70,14238,0.000000
+Nearest Neighbor,50,70,2292,0.000000
+Farthest Insertion,50,70,2284,0.002990
+2-opt,50,70,2060,0.014562
+Simulated Annealing,50,70,1704,15.502741
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,50,80,12168,0.000000
+Nearest Neighbor,50,80,2033,0.000000
+Farthest Insertion,50,80,2392,0.003371
+2-opt,50,80,1501,0.036707
+Simulated Annealing,50,80,1618,15.753963
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,50,90,10360,0.000000
+Nearest Neighbor,50,90,1949,0.000000
+Farthest Insertion,50,90,1718,0.003160
+2-opt,50,90,1949,0.006833
+Simulated Annealing,50,90,1689,15.031608
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,75,10,31345,0.000000
+Nearest Neighbor,75,10,3739,0.000000
+Farthest Insertion,75,10,4910,0.012446
+2-opt,75,10,2799,0.055630
+Simulated Annealing,75,10,2576,20.482111
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,75,20,29027,0.000000
+Nearest Neighbor,75,20,3573,0.000000
+Farthest Insertion,75,20,4094,0.009984
+2-opt,75,20,3573,0.024844
+Simulated Annealing,75,20,2783,20.617451
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,75,30,28872,0.000000
+Nearest Neighbor,75,30,3375,0.000000
+Farthest Insertion,75,30,4657,0.009914
+2-opt,75,30,3375,0.023269
+Simulated Annealing,75,30,2788,20.472851
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,75,40,31454,0.000000
+Nearest Neighbor,75,40,3411,0.000000
+Farthest Insertion,75,40,4322,0.011013
+2-opt,75,40,3411,0.025919
+Simulated Annealing,75,40,2967,20.137207
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,75,50,28999,0.000000
+Nearest Neighbor,75,50,2741,0.000000
+Farthest Insertion,75,50,3966,0.010019
+2-opt,75,50,2741,0.023294
+Simulated Annealing,75,50,2321,20.485385
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,75,60,27302,0.000000
+Nearest Neighbor,75,60,2803,0.000000
+Farthest Insertion,75,60,3849,0.009977
+2-opt,75,60,2803,0.023176
+Simulated Annealing,75,60,2676,20.398115
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,75,70,27840,0.000000
+Nearest Neighbor,75,70,3294,0.000000
+Farthest Insertion,75,70,4320,0.017021
+2-opt,75,70,3294,0.034995
+Simulated Annealing,75,70,2496,20.671145
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,75,80,27005,0.000000
+Nearest Neighbor,75,80,3774,0.000000
+Farthest Insertion,75,80,4205,0.010165
+2-opt,75,80,2703,0.090477
+Simulated Annealing,75,80,2532,20.278294
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,75,90,27540,0.000000
+Nearest Neighbor,75,90,3357,0.000000
+Farthest Insertion,75,90,4367,0.010032
+2-opt,75,90,3357,0.028165
+Simulated Annealing,75,90,2777,20.494914
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,100,10,52405,0.000000
+Nearest Neighbor,100,10,4486,0.001015
+Farthest Insertion,100,10,7141,0.021404
+2-opt,100,10,4214,0.111233
+Simulated Annealing,100,10,3638,25.265179
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,100,20,47116,0.000000
+Nearest Neighbor,100,20,5280,0.000000
+Farthest Insertion,100,20,6583,0.027315
+2-opt,100,20,5280,0.059117
+Simulated Annealing,100,20,4073,25.680151
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,100,30,51449,0.000000
+Nearest Neighbor,100,30,4152,0.000000
+Farthest Insertion,100,30,6653,0.025244
+2-opt,100,30,3735,0.122942
+Simulated Annealing,100,30,3645,25.712486
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,100,40,48559,0.000000
+Nearest Neighbor,100,40,4815,0.000000
+Farthest Insertion,100,40,7063,0.022093
+2-opt,100,40,4815,0.054632
+Simulated Annealing,100,40,4653,25.233361
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,100,50,51025,0.000000
+Nearest Neighbor,100,50,5326,0.000980
+Farthest Insertion,100,50,7006,0.034042
+2-opt,100,50,4782,0.111282
+Simulated Annealing,100,50,4502,26.040850
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,100,60,48528,0.000000
+Nearest Neighbor,100,60,3920,0.000000
+Farthest Insertion,100,60,6698,0.024360
+2-opt,100,60,3615,0.196000
+Simulated Annealing,100,60,3673,25.098347
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,100,70,53380,0.000000
+Nearest Neighbor,100,70,5089,0.000997
+Farthest Insertion,100,70,6840,0.022027
+2-opt,100,70,4212,0.173149
+Simulated Annealing,100,70,4222,25.377657
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,100,80,47744,0.000000
+Nearest Neighbor,100,80,3861,0.000000
+Farthest Insertion,100,80,6449,0.023069
+2-opt,100,80,3861,0.055147
+Simulated Annealing,100,80,3346,25.337178
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,100,90,48246,0.000000
+Nearest Neighbor,100,90,4410,0.000000
+Farthest Insertion,100,90,7257,0.022725
+2-opt,100,90,3945,0.166756
+Simulated Annealing,100,90,4077,25.605485
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,200,10,197453,0.000000
+Nearest Neighbor,200,10,9895,0.000892
+Farthest Insertion,200,10,17471,0.208082
+2-opt,200,10,8796,0.910537
+Simulated Annealing,200,10,8448,46.172088
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,200,20,204422,0.000000
+Nearest Neighbor,200,20,12154,0.002009
+Farthest Insertion,200,20,19706,0.186416
+2-opt,200,20,11244,1.431929
+Simulated Annealing,200,20,10457,46.346667
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,200,30,204814,0.000000
+Nearest Neighbor,200,30,10334,0.002002
+Farthest Insertion,200,30,17947,0.180101
+2-opt,200,30,8960,1.375157
+Simulated Annealing,200,30,8352,46.208166
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,200,40,195169,0.000000
+Nearest Neighbor,200,40,11713,0.002000
+Farthest Insertion,200,40,19882,0.179251
+2-opt,200,40,10414,0.928708
+Simulated Annealing,200,40,8624,46.908998
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,200,50,194028,0.000000
+Nearest Neighbor,200,50,9978,0.002001
+Farthest Insertion,200,50,19468,0.185212
+2-opt,200,50,9978,0.488807
+Simulated Annealing,200,50,8915,47.023344
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,200,60,204632,0.000000
+Nearest Neighbor,200,60,11938,0.002273
+Farthest Insertion,200,60,19381,0.191516
+2-opt,200,60,11938,0.444816
+Simulated Annealing,200,60,11184,46.690020
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,200,70,202940,0.000000
+Nearest Neighbor,200,70,10368,0.001904
+Farthest Insertion,200,70,18551,0.177105
+2-opt,200,70,10368,0.460097
+Simulated Annealing,200,70,8829,46.639220
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,200,80,207112,0.000000
+Nearest Neighbor,200,80,9352,0.002082
+Farthest Insertion,200,80,19687,0.169175
+2-opt,200,80,9352,0.467275
+Simulated Annealing,200,80,8405,46.362573
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,200,90,191140,0.000000
+Nearest Neighbor,200,90,8868,0.001102
+Farthest Insertion,200,90,19611,0.166986
+2-opt,200,90,8055,0.899848
+Simulated Annealing,200,90,8705,47.230338
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,300,10,453458,0.001013
+Nearest Neighbor,300,10,17659,0.004994
+Farthest Insertion,300,10,35232,0.602431
+2-opt,300,10,17166,3.288454
+Simulated Annealing,300,10,14820,68.774657
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,300,20,444365,0.000000
+Nearest Neighbor,300,20,17983,0.003040
+Farthest Insertion,300,20,37559,0.591453
+2-opt,300,20,17254,3.320816
+Simulated Annealing,300,20,14708,70.525386
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,300,30,453568,0.000000
+Nearest Neighbor,300,30,18714,0.003977
+Farthest Insertion,300,30,35358,0.587366
+2-opt,300,30,16817,3.325169
+Simulated Annealing,300,30,15993,68.890294
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,300,40,464207,0.001001
+Nearest Neighbor,300,40,14465,0.003244
+Farthest Insertion,300,40,34774,0.588169
+2-opt,300,40,14465,1.647950
+Simulated Annealing,300,40,13698,69.759700
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,300,50,462487,0.000000
+Nearest Neighbor,300,50,19515,0.003961
+Farthest Insertion,300,50,36876,0.596586
+2-opt,300,50,15626,13.582499
+Simulated Annealing,300,50,15479,68.385400
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,300,60,480733,0.000904
+Nearest Neighbor,300,60,17184,0.004994
+Farthest Insertion,300,60,34315,0.595310
+2-opt,300,60,17184,1.681959
+Simulated Annealing,300,60,14473,68.495215
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,300,70,446728,0.001092
+Nearest Neighbor,300,70,19493,0.002928
+Farthest Insertion,300,70,32076,0.590538
+2-opt,300,70,19014,5.143415
+Simulated Annealing,300,70,17191,70.020564
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,300,80,436239,0.001005
+Nearest Neighbor,300,80,13913,0.004994
+Farthest Insertion,300,80,32233,0.609751
+2-opt,300,80,12764,3.391033
+Simulated Annealing,300,80,12104,69.628850
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,300,90,457543,0.000000
+Nearest Neighbor,300,90,16792,0.003996
+Farthest Insertion,300,90,33260,0.592093
+2-opt,300,90,15346,3.449033
+Simulated Annealing,300,90,13926,69.564702
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,400,10,787583,0.000000
+Nearest Neighbor,400,10,20491,0.006986
+Farthest Insertion,400,10,58384,1.428589
+2-opt,400,10,20491,4.115682
+Simulated Annealing,400,10,17937,93.394065
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,400,20,790404,0.000000
+Nearest Neighbor,400,20,27368,0.005995
+Farthest Insertion,400,20,54889,1.407812
+2-opt,400,20,23813,12.339180
+Simulated Annealing,400,20,24672,92.716239
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,400,30,817163,0.000000
+Nearest Neighbor,400,30,24222,0.007006
+Farthest Insertion,400,30,53553,1.421618
+2-opt,400,30,24222,4.067101
+Simulated Annealing,400,30,20697,93.880728
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,400,40,789918,0.000000
+Nearest Neighbor,400,40,20275,0.007227
+Farthest Insertion,400,40,49060,1.443100
+2-opt,400,40,19647,8.446095
+Simulated Annealing,400,40,18284,92.864577
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,400,50,782394,0.000000
+Nearest Neighbor,400,50,22729,0.007036
+Farthest Insertion,400,50,55392,1.484136
+2-opt,400,50,22729,4.251199
+Simulated Annealing,400,50,21460,93.182567
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,400,60,813312,0.000000
+Nearest Neighbor,400,60,22185,0.007049
+Farthest Insertion,400,60,55302,1.442477
+2-opt,400,60,22185,4.245111
+Simulated Annealing,400,60,20062,92.537520
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,400,70,827299,0.000000
+Nearest Neighbor,400,70,19698,0.007555
+Farthest Insertion,400,70,53294,1.430734
+2-opt,400,70,19698,4.105981
+Simulated Annealing,400,70,18952,93.262122
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,400,80,794234,0.000000
+Nearest Neighbor,400,80,26890,0.007013
+Farthest Insertion,400,80,57111,1.401962
+2-opt,400,80,19290,13.087559
+Simulated Annealing,400,80,23215,92.908224
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,400,90,833344,0.000000
+Nearest Neighbor,400,90,23093,0.009120
+Farthest Insertion,400,90,57097,1.465316
+2-opt,400,90,23093,4.203932
+Simulated Annealing,400,90,21831,92.819985
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,500,10,1239150,0.000965
+Nearest Neighbor,500,10,34773,0.010996
+Farthest Insertion,500,10,73424,2.864333
+2-opt,500,10,34773,8.001958
+Simulated Annealing,500,10,29827,115.161411
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,500,20,1266003,0.000000
+Nearest Neighbor,500,20,29114,0.011242
+Farthest Insertion,500,20,72671,2.726897
+2-opt,500,20,26187,32.479265
+Simulated Annealing,500,20,28444,114.490144
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,500,30,1246355,0.000000
+Nearest Neighbor,500,30,31726,0.012141
+Farthest Insertion,500,30,72145,2.812662
+2-opt,500,30,31726,7.973186
+Simulated Annealing,500,30,29468,115.574375
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,500,40,1308373,0.000000
+Nearest Neighbor,500,40,42808,0.011036
+Farthest Insertion,500,40,78265,2.836034
+2-opt,500,40,33170,25.303051
+Simulated Annealing,500,40,33567,117.191220
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,500,50,1248556,0.000000
+Nearest Neighbor,500,50,38010,0.010718
+Farthest Insertion,500,50,73409,2.770671
+2-opt,500,50,36213,16.298699
+Simulated Annealing,500,50,34513,115.859299
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,500,60,1224041,0.000000
+Nearest Neighbor,500,60,35955,0.012951
+Farthest Insertion,500,60,75856,2.829241
+2-opt,500,60,31349,24.924554
+Simulated Annealing,500,60,29982,116.122984
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,500,70,1273617,0.000000
+Nearest Neighbor,500,70,31662,0.011013
+Farthest Insertion,500,70,75440,3.041538
+2-opt,500,70,31662,8.096081
+Simulated Annealing,500,70,28617,115.407188
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,500,80,1209239,0.000000
+Nearest Neighbor,500,80,35819,0.013704
+Farthest Insertion,500,80,77040,3.032868
+2-opt,500,80,28313,40.942513
+Simulated Annealing,500,80,30531,116.764126
+Metoda,n,seed,Koszt,Czas
+Algorytm 123,500,90,1249284,0.000000
+Nearest Neighbor,500,90,34847,0.010993
+Farthest Insertion,500,90,80239,3.023550
+2-opt,500,90,32038,25.002145
+Simulated Annealing,500,90,28860,116.901670

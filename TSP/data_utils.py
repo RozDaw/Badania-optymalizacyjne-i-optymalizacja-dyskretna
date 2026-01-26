@@ -34,10 +34,29 @@ def generate_tsp_data(size, seed):
         row = []
         for b in range(size):
             seed = (seed * 69069 + 1) & 0xFFFFFFFF
-            d = (seed % 99 + 1) * (a != b)
+            d = (seed % (size*10) + 1) * (a != b)
             row.append(d)
         matrix.append(row)
     return matrix, seed
+
+
+import random
+
+
+def generuj_macierz(n, seed):
+    # Ustawiamy ziarno losowości
+    random.seed(seed)
+
+    max_waga = 10 * n
+
+    # Generujemy macierz: 0 na przekątnej, losowa liczba w pozostałych polach
+    macierz = [
+        [0 if i == j else random.randint(1, max_waga) for j in range(n)]
+        for i in range(n)
+    ]
+
+    return macierz
+
 
 
 def load_cost_matrix(filename):
