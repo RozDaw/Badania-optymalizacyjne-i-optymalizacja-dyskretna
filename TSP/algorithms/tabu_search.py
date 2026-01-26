@@ -260,6 +260,7 @@
 #     return best_overall_cost, best_overall_path
 import random
 import copy
+import time
 
 
 # 1. Funkcja generująca macierz (z poprzedniego kroku, dla kompletności)
@@ -281,7 +282,7 @@ def oblicz_koszt(sciezka, macierz):
 
 
 # 3. Główny algorytm Tabu Search
-def tabu_search(sciezka_startowa, macierz, max_iter=1000, kadencja_tabu=15):
+def tabu_search(sciezka_startowa, macierz, max_time = 100, kadencja_tabu=15):
     """
     sciezka_startowa: lista np. [0, 21, ..., 0]
     macierz: macierz odległości NxN
@@ -303,13 +304,12 @@ def tabu_search(sciezka_startowa, macierz, max_iter=1000, kadencja_tabu=15):
     # Lista Tabu - przechowuje ruchy (pary indeksów), które są zabronione
     lista_tabu = []  # format: [(index1, index2), ...]
 
+    start_time = time.time()
 
-
-    for it in range(max_iter):
+    while time.time()-start_time < max_time:  # max_iter w milisekundach
         kandydat_trasa = []
         kandydat_koszt = float('inf')
         wykonany_ruch = None
-
         # Generowanie sąsiedztwa (SWAP)
         # Pętla od 1, bo nie ruszamy miasta startowego (index 0)
         for i in range(1, n):

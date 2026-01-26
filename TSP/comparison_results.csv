@@ -132,3 +132,18 @@ Tabu Search,50,10,1356,24.356507
 Metoda,n,seed,Koszt,Czas
 Nearest Neighbor,50,20,2086,0.000000
 Tabu Search,50,20,1483,24.432313
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,100,10,4486,0.000000
+Tabu Search,100,10,3547,3.727909
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,100,10,4486,0.001002
+Tabu Search,100,10,4486,0.908426
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,100,10,4486,0.000000
+Tabu Search,100,10,3547,3.680637
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,100,10,4486,0.000000
+Tabu Search,100,10,3547,1.006820
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,500,10,34773,0.009001
+Tabu Search,500,10,24409,102.467631

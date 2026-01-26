@@ -104,14 +104,14 @@ def run_comparison(seed, n, sequential = True, NN = True, farthest = True, opt2 
     if tabu:
         # Tabu Search
         print("\n--- Tabu Search ---")
-        max_iterations = n
-        if n == 500:
-            max_iterations = 50
         tabu_size = n // 2
-        print(f"Parametry: max_iterations={max_iterations*100}, tabu_size={tabu_size}")
+        max_time = 100
+        if n < 100:
+            max_time = 10
+        print(f"Parametry: max_time={max_time} s, tabu_size={tabu_size}")
         start_time = time.time()
         # ts_cost, ts_path = tsp_tabu_search(test_matrix, nn_path, max_iterations=2000, tabu_size=30)
-        _, ts_cost= tabu_search(nn_path, test_matrix, max_iter=max_iterations*100, kadencja_tabu=tabu_size)
+        _, ts_cost= tabu_search(nn_path, test_matrix, max_time=100, kadencja_tabu=tabu_size)
         ts_time = time.time() - start_time
         print(f"Koszt: {ts_cost}")
         print(f"Czas: {ts_time:.6f} s")
@@ -162,10 +162,6 @@ def run_comparison(seed, n, sequential = True, NN = True, farthest = True, opt2 
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        arg = sys.argv[1].lower()
-    else:
-        # for n in [5,10,50,75,100,200,300,400,500]:
-        #     for i in range(1,10):
-        #         run_comparison(i*10,n, sequential=False, farthest=False, opt2=False, tabu=True, sa=False, isLogging=True)
-        run_comparison(1 * 10, 500, sequential=False, farthest=False, opt2=False, tabu=True, sa=False, isLogging=True)
+    for n in [5,10,50,75,100,200,300,400,500]:
+        for i in range(1,10):
+            run_comparison(i*10,n, sequential=False, farthest=False, opt2=False, tabu=True, sa=False, isLogging=True)
