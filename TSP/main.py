@@ -111,7 +111,7 @@ def run_comparison(seed, n, sequential = True, NN = True, farthest = True, opt2 
         print(f"Parametry: max_time={max_time} s, tabu_size={tabu_size}")
         start_time = time.time()
         # ts_cost, ts_path = tsp_tabu_search(test_matrix, nn_path, max_iterations=2000, tabu_size=30)
-        _, ts_cost= tabu_search(nn_path, test_matrix, max_time=100, kadencja_tabu=tabu_size)
+        _, ts_cost= tabu_search(nn_path, test_matrix, max_time=10, kadencja_tabu=tabu_size)
         ts_time = time.time() - start_time
         print(f"Koszt: {ts_cost}")
         print(f"Czas: {ts_time:.6f} s")
