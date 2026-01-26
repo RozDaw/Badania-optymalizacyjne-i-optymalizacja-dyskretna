@@ -20,7 +20,7 @@ Użycie:
 import sys
 import time
 
-from TSP.algorithms.TSPSolver import  simulated_annealing
+from algorithms.TSPSolver import  simulated_annealing
 # Import funkcji pomocniczych
 from data_utils import (
     tsp_rand,
@@ -159,9 +159,75 @@ def run_comparison(seed, n, sequential = True, NN = True, farthest = True, opt2 
     return results
 
 
+def run_grid_search(seed, n, tabu = True, sa = True, isLogging = True):
+    """Demonstracja metaheurystyk na losowej macierzy kosztów."""
+    print("\n" + "=" * 60)
+    print("Porównanie metod pod względem jakosci rozwiązań oraz czasu wykonania")
+    print("=" * 60)
+
+
+    size = n
+    test_matrix, _ = generate_tsp_data(size, seed=seed)
+    test_matrix = generuj_macierz(size, seed)
+    print(f"\nMacierz testowa ({size}x{size})")
+
+    results = {}
+    nn_cost, nn_path = tsp_nearest_neighbor(test_matrix)
+
+    if tabu:
+        # Tabu Search
+        print("\n--- Tabu Search ---")
+        tabu_size = n // 2
+        max_time = 100
+        if n < 100:
+            max_time = 10
+        print(f"Parametry: max_time={max_time} s, tabu_size={tabu_size}")
+        start_time = time.time()
+        # ts_cost, ts_path = tsp_tabu_search(test_matrix, nn_path, max_iterations=2000, tabu_size=30)
+        _, ts_cost= tabu_search(nn_path, test_matrix, max_time=10, kadencja_tabu=tabu_size)
+        ts_time = time.time() - start_time
+        print(f"Koszt: {ts_cost}")
+        print(f"Czas: {ts_time:.6f} s")
+        results['Tabu Search'] = (ts_cost, ts_time)
+
+    if sa:
+        print("\n--- SA ---")
+        temp_pocz_values = [500, 2000, 3500]
+        temp_konc_values = [0.1, 0.01, 0.001]
+        alpha_values = [0.995, 0.9995, 0.9999]
+        for temp_pocz in temp_pocz_values:
+            for temp_konc in temp_konc_values:
+                for alpha in alpha_values:
+                    _, sa_cost = simulated_annealing(nn_path, test_matrix, temp_pocz=temp_pocz, temp_konc=temp_konc, alpha=alpha)
+                    results['Simulated Annealing'] = (sa_cost, temp_pocz, temp_konc, alpha)
+                    print(f"Koszt: {sa_cost} przy temp_pocz={temp_pocz}, temp_konc={temp_konc}, alpha={alpha}")
+
+        if isLogging:
+            with open(f"comparison_results_sa_params.csv", "a") as f:
+                f.write("n,seed,Koszt,temp_pocz,temp_konc,alpha\n")
+                for name, (cost,  temp_pocz, temp_konc, alpha) in results.items():
+                    f.write(f"{n},{seed},{cost},{temp_pocz},{temp_konc},{alpha}\n")
+
+        # print("\n" + "=" * 60)
+        # print("PORÓWNANIE")
+        # print("=" * 60)
+        # best = min(r[0] for r in results.values())
+
+
+        # for name, (cost, exec_time) in results.items():
+        #     improvement = nn_cost - cost
+        #     improvement_pct = 100 * improvement / nn_cost if nn_cost > 0 else 0
+        #     diff_from_best = cost - best
+        #     diff_from_best_pct = 100 * diff_from_best / best if best > 0 else 0
+        #     print(f"{name:25s}: {cost:5d} (poprawa vs NN: {improvement_pct:+6.1f}%, "
+        #           f"różnica od best: {diff_from_best_pct:+5.1f}%) - {exec_time:.6f}s")
+
+    return results
+
+
 
 
 if __name__ == "__main__":
     for n in [5,10,50,75,100,200,300,400,500]:
-        for i in range(1,10):
-            run_comparison(i*10,n, sequential=False, farthest=False, opt2=False, tabu=True, sa=False, isLogging=True)
+        for i in range(1,2):
+            run_grid_search(seed=i, n=n, tabu=False, sa=True, isLogging=True)

@@ -1,0 +1,243 @@
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,5,10,47,0.000006
+Tabu Search,5,10,47,10.000006
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,5,20,98,0.000004
+Tabu Search,5,20,95,10.000004
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,5,30,75,0.000003
+Tabu Search,5,30,53,10.000003
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,5,40,92,0.000003
+Tabu Search,5,40,88,10.000005
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,5,50,71,0.000003
+Tabu Search,5,50,71,10.000004
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,5,60,57,0.000003
+Tabu Search,5,60,44,10.000004
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,5,70,99,0.000003
+Tabu Search,5,70,92,10.000004
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,5,80,88,0.000003
+Tabu Search,5,80,88,10.000003
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,5,90,119,0.000005
+Tabu Search,5,90,105,10.000005
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,10,10,242,0.000005
+Tabu Search,10,10,170,10.000010
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,10,20,318,0.000005
+Tabu Search,10,20,178,10.000014
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,10,30,305,0.000005
+Tabu Search,10,30,141,10.000007
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,10,40,242,0.000005
+Tabu Search,10,40,152,10.000013
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,10,50,324,0.000005
+Tabu Search,10,50,165,10.000020
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,10,60,250,0.000005
+Tabu Search,10,60,168,10.000007
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,10,70,248,0.000005
+Tabu Search,10,70,164,10.000009
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,10,80,268,0.000005
+Tabu Search,10,80,168,10.000010
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,10,90,231,0.000005
+Tabu Search,10,90,142,10.000009
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,50,10,1995,0.000046
+Tabu Search,50,10,1356,10.002171
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,50,20,2086,0.000049
+Tabu Search,50,20,1483,10.000447
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,50,30,1883,0.000050
+Tabu Search,50,30,1399,10.001267
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,50,40,1513,0.000050
+Tabu Search,50,40,1151,10.001845
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,50,50,3107,0.000049
+Tabu Search,50,50,1667,10.000133
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,50,60,1948,0.000048
+Tabu Search,50,60,1628,10.001836
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,50,70,2292,0.000046
+Tabu Search,50,70,1629,10.001289
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,50,80,2033,0.000049
+Tabu Search,50,80,1553,10.001631
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,50,90,1949,0.000048
+Tabu Search,50,90,1572,10.000523
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,75,10,3739,0.000097
+Tabu Search,75,10,2429,10.001213
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,75,20,3573,0.000096
+Tabu Search,75,20,3054,10.004128
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,75,30,3375,0.000096
+Tabu Search,75,30,2778,10.001937
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,75,40,3411,0.000090
+Tabu Search,75,40,2974,10.004213
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,75,50,2741,0.000091
+Tabu Search,75,50,2321,10.003470
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,75,60,2803,0.000096
+Tabu Search,75,60,2413,10.006928
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,75,70,3294,0.000095
+Tabu Search,75,70,2716,10.001735
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,75,80,3774,0.000097
+Tabu Search,75,80,2532,10.005924
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,75,90,3357,0.000095
+Tabu Search,75,90,2969,10.004374
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,100,10,4486,0.000154
+Tabu Search,100,10,3547,10.002799
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,100,20,5280,0.000160
+Tabu Search,100,20,3530,10.009664
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,100,30,4152,0.000155
+Tabu Search,100,30,3128,10.014576
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,100,40,4815,0.000157
+Tabu Search,100,40,4394,10.013077
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,100,50,5326,0.000157
+Tabu Search,100,50,3896,10.013863
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,100,60,3920,0.000162
+Tabu Search,100,60,3452,10.002383
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,100,70,5089,0.000157
+Tabu Search,100,70,4222,10.003745
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,100,80,3861,0.000158
+Tabu Search,100,80,3208,10.013295
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,100,90,4410,0.000159
+Tabu Search,100,90,4086,10.005414
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,200,10,9895,0.000574
+Tabu Search,200,10,8004,10.088490
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,200,20,12154,0.000554
+Tabu Search,200,20,9568,10.115552
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,200,30,10334,0.000549
+Tabu Search,200,30,8492,10.059134
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,200,40,11713,0.000524
+Tabu Search,200,40,8219,10.080938
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,200,50,9978,0.000527
+Tabu Search,200,50,7815,10.122637
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,200,60,11938,0.000542
+Tabu Search,200,60,9621,10.029924
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,200,70,10368,0.000487
+Tabu Search,200,70,8829,10.067003
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,200,80,9352,0.000547
+Tabu Search,200,80,7576,10.089323
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,200,90,8868,0.000588
+Tabu Search,200,90,7653,10.120215
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,300,10,17659,0.001268
+Tabu Search,300,10,14772,10.321480
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,300,20,17983,0.001198
+Tabu Search,300,20,14100,10.223241
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,300,30,18714,0.001257
+Tabu Search,300,30,15272,10.261904
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,300,40,14465,0.001281
+Tabu Search,300,40,12847,10.276908
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,300,50,19515,0.001233
+Tabu Search,300,50,14383,10.346669
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,300,60,17184,0.001234
+Tabu Search,300,60,13917,10.186955
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,300,70,19493,0.001194
+Tabu Search,300,70,17116,10.253128
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,300,80,13913,0.001245
+Tabu Search,300,80,11850,10.225187
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,300,90,16792,0.001268
+Tabu Search,300,90,11939,10.282054
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,400,10,20491,0.002312
+Tabu Search,400,10,17937,10.142805
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,400,20,27368,0.002335
+Tabu Search,400,20,21321,10.060316
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,400,30,24222,0.002319
+Tabu Search,400,30,19325,10.231143
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,400,40,20275,0.002287
+Tabu Search,400,40,17688,10.208393
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,400,50,22729,0.002309
+Tabu Search,400,50,19895,10.342298
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,400,60,22185,0.002203
+Tabu Search,400,60,20034,10.268555
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,400,70,19698,0.002257
+Tabu Search,400,70,18638,10.152297
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,400,80,26890,0.002320
+Tabu Search,400,80,19747,11.092191
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,400,90,23093,0.002294
+Tabu Search,400,90,20201,10.180409
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,500,10,34773,0.003732
+Tabu Search,500,10,24409,11.605987
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,500,20,29114,0.003741
+Tabu Search,500,20,23924,11.677238
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,500,30,31726,0.003702
+Tabu Search,500,30,26472,11.504032
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,500,40,42808,0.003631
+Tabu Search,500,40,30596,11.587576
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,500,50,38010,0.003686
+Tabu Search,500,50,27390,11.714230
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,500,60,35955,0.003628
+Tabu Search,500,60,26891,11.545024
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,500,70,31662,0.003737
+Tabu Search,500,70,28267,11.768901
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,500,80,35819,0.003722
+Tabu Search,500,80,26033,11.620291
+Metoda,n,seed,Koszt,Czas
+Nearest Neighbor,500,90,34847,0.003690
+Tabu Search,500,90,26997,11.558299
